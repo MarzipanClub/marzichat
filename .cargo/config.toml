@@ -1,0 +1,12 @@
+# This file is used to configure cargo for the project.
+# For more info, see: https://doc.rust-lang.org/cargo/reference/config.html
+
+[term]
+# whether cargo shows progress bar
+progress.when = 'always'
+
+# width of progress bar
+progress.width = 100
+
+# whether cargo output is quiet
+quiet = true

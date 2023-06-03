@@ -1,0 +1,11 @@
+# This file is used to pin the rust toolchain to a specific nightly version.
+# For more info, see: https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file
+
+[toolchain]
+
+# List the nightly version that corresponds to the first day of the current month.
+# For simplicity, we use jsut the nightly of the first, and ignore all other nightly versions.
+channel = "nightly-2023-06-01"
+
+# Here we specifiy the additional targets for compiliation, the host target is by default included.
+targets = ["wasm32-unknown-unknown"]
