@@ -1,0 +1,12 @@
+cargo-features = ["workspace-inheritance"]
+
+[workspace]
+members = ["server"]
+
+[workspace.package]
+edition = "2021"
+publish = false
+rust-version = "1.70.0"
+version = "0.1.0"
+
+[workspace.dependencies]
