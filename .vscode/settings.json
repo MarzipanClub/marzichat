@@ -1,0 +1,9 @@
+{
+    // don't use the local cargo index, instead use the up-to-date one on the internet
+    "crates.useLocalCargoIndex": false,
+    "cSpell.words": [
+        "Leptos",
+        "marzichat",
+        "Redb"
+    ]
+}

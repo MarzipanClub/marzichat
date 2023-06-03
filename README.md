@@ -10,8 +10,8 @@ Marzichat is a lightweight and performant webapp for realtime chat. It's build e
 ## Technologies Used
 
 - [Axum](https://docs.rs/axum/latest/axum/) for the web server.
-- [Leptos](https://docs.rs/leptos/0.3.0/leptos/) for the frontend web framework
-- [Redb](https://docs.rs/redb/0.20.0/redb/) for the embedded key-value store
+- [Leptos](https://docs.rs/leptos/latest/leptos/) for the frontend web framework
+- [Redb](https://docs.rs/redb/latest/redb/) for the embedded key-value store
 
 ## Installation
 
