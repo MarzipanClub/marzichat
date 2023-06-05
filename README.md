@@ -17,7 +17,8 @@ Marzichat is a lightweight and performant webapp for realtime chat. It's build e
 
 1. Make sure you have Rust and PostgreSQL installed on your system.
 2. Clone this repository.
-3. TODO: list installation steps
+3. Install [wasm-opt](https://github.com/WebAssembly/binaryen).
+4. TODO: list installation steps
 
 ## Configuration
 
