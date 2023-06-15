@@ -12,7 +12,7 @@ pub fn App(cx: Scope) -> impl IntoView {
     provide_meta_context(cx);
 
     view! { cx,
-        // <Stylesheet id="leptos" href="/pkg/ssr_modes.css"/>
+        <Stylesheet href="/assets/style.css"/>
         <Title text="Welcome to Leptos"/>
 
         <Router>

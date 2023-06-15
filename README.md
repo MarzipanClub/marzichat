@@ -17,10 +17,11 @@ Marzichat is a lightweight and performant webapp for realtime chat. It's build e
 
 1. Make sure you have Rust and PostgreSQL installed on your system.
 2. Clone this repository.
-3. Install [just](https://github.com/casey/just)
-4. Install [cargo-watch](https://github.com/watchexec/cargo-watch)
+3. Install [just](https://github.com/casey/just).
+4. Install [cargo-watch](https://github.com/watchexec/cargo-watch).
 5. Install [wasm-bindgen](https://github.com/rustwasm/wasm-bindgen).
-6. Install [wasm-opt](https://github.com/WebAssembly/binaryen) from source. Make sure to ad `wasm-opt` to your PATH:
+6. Install [grass](https://docs.rs/grass/latest/grass/).
+7. Install [wasm-opt](https://github.com/WebAssembly/binaryen) from source. Make sure to ad `wasm-opt` to your PATH:
 ```
     # .zshrc
     export PATH="$HOME/binaryen/bin:$PATH"

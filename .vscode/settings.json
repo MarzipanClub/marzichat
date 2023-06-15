@@ -8,6 +8,7 @@
         "marzichat",
         "precompressed",
         "Redb",
+        "Stylesheet",
         "thiserror"
     ],
     "rust-analyzer.cargo.features": [

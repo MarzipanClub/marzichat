@@ -11,6 +11,11 @@ done_message := "✅ done"
 default:
     just --list
 
+# builds the css
+build-css:
+    @mkdir --parents target/assets/debug target/assets/release
+    @grass src/style.scss --style compressed | tee target/assets/debug/style.css target/assets/release/style.css > /dev/null
+
 # builds the app in debug mode
 build-app:
     @echo "Building app..."
