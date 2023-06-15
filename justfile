@@ -1,20 +1,29 @@
 export SERVER_CONFIG := "config.ron"
+export CSS_FILE_NAME := "style.css"
 
 alias a := watch-app
 alias s := watch-server
+alias c := check
 
 app_features := "hydrate"
 server_features := "ssr"
 done_message := "✅ done"
 
+debug_output := "target/assets/debug"
+release_output := "target/assets/release"
+
 # list all recipes
 default:
     just --list
 
+# check the code for compile errors
+check:
+    @cargo check --all-targets --all-features
+
 # builds the css
 build-css:
-    @mkdir --parents target/assets/debug target/assets/release
-    @grass src/style.scss --style compressed | tee target/assets/debug/style.css target/assets/release/style.css > /dev/null
+    @mkdir --parents {{debug_output}} {{release_output}}
+    @grass src/style.scss --style compressed | tee {{debug_output}}/$CSS_FILE_NAME {{release_output}}/$CSS_FILE_NAME > /dev/null
 
 # builds the app in debug mode
 build-app:
@@ -24,7 +33,7 @@ build-app:
         --target web \
         --weak-refs \
         --no-typescript \
-        --out-dir target/assets/debug \
+        --out-dir {{debug_output}} \
         target/wasm32-unknown-unknown/debug/app.wasm
     @echo {{done_message}}
 
@@ -36,9 +45,9 @@ build-app-release:
         --target web \
         --weak-refs \
         --no-typescript \
-        --out-dir target/assets/release \
+        --out-dir {{release_output}} \
         target/wasm32-unknown-unknown/release/app.wasm
-    @wasm-opt -Oz target/assets/release/app.wasm
+    @wasm-opt -Oz {{release_output}}/app.wasm
 
 # watch app for changes and rebuild continuously
 watch-app:

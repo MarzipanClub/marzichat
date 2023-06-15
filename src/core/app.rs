@@ -1,4 +1,6 @@
 use {
+    super::{ASSETS_PATH, CSS_FILE_NAME},
+    const_format::formatcp,
     leptos::*,
     leptos_meta::*,
     leptos_router::*,
@@ -12,7 +14,7 @@ pub fn App(cx: Scope) -> impl IntoView {
     provide_meta_context(cx);
 
     view! { cx,
-        <Stylesheet href="/assets/style.css"/>
+        <Stylesheet href=formatcp!("/{ASSETS_PATH}/{CSS_FILE_NAME}")/>
         <Title text="Welcome to Leptos"/>
 
         <Router>

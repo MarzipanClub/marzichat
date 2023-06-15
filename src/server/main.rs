@@ -1,7 +1,10 @@
 use {
     axum::routing::{get, post},
     const_format::formatcp,
-    core::app::{App, GetPost, ListPostMetadata},
+    core::{
+        app::{App, GetPost, ListPostMetadata},
+        ASSETS_PATH,
+    },
     hyper::server::{accept::Accept, conn::AddrIncoming},
     leptos::{leptos_config::Env, view, LeptosOptions, ServerFn},
     leptos_axum::{generate_route_list, LeptosRoutes},
@@ -27,13 +30,12 @@ async fn main() -> anyhow::Result<()> {
         "Hello, World!".to_string()
     }
 
-    const ASSETS: &str = "assets";
     let leptos_options = LeptosOptions {
         output_name: String::from("app"),
 
         site_root: ".".into(),
 
-        site_pkg_dir: ASSETS.into(),
+        site_pkg_dir: ASSETS_PATH.into(),
 
         env: if cfg!(debug_assertions) {
             Env::DEV
@@ -59,7 +61,7 @@ async fn main() -> anyhow::Result<()> {
         .route("/api/*fn_name", post(leptos_axum::handle_server_fns))
         .leptos_routes(leptos_options, routes, |cx| view! { cx, <App/> })
         .nest_service(
-            formatcp!("/{ASSETS}"),
+            formatcp!("/{ASSETS_PATH}"),
             ServeDir::new("target/assets/debug").precompressed_br(),
         )
         .layer(
