@@ -6,20 +6,28 @@ publish.workspace = true
 rust-version.workspace = true
 version.workspace = true
 
+[[bin]]
+name = "server"
+path = "src/main.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = {workspace = true}
-serde = {workspace = true}
+common = {path = "../common"}
+
+leptos = {workspace = true, features = ["ssr"]}
+leptos_meta = {workspace = true, features = ["ssr"]}
+leptos_router = {workspace = true, features = ["ssr"]}
 
 axum = "0.6.18"
 color-backtrace = "0.5.1"
-once_cell = "1.17.2"
+hyper = "0.14.26"
+leptos_axum = "0.3.0"
 ron = "0.8.0"
 sentry-tracing = "0.31.3"
 tokio = {version = "1.28.2", features = ["macros", "rt-multi-thread"]}
 tower = "0.4.13"
-tower-http = {version = "0.4.0", features = ["trace", "compression-br"]}
+tower-http = {version = "0.4.0", features = ["trace", "compression-br", "fs"]}
 tower_governor = "0.0.4"
 tracing = "0.1.37"
 tracing-journald = "0.3.0"

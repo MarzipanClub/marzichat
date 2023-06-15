@@ -2,8 +2,15 @@
     // don't use the local cargo index, instead use the up-to-date one on the internet
     "crates.useLocalCargoIndex": false,
     "cSpell.words": [
+        "bindgen",
         "Leptos",
         "marzichat",
-        "Redb"
-    ]
+        "precompressed",
+        "Redb",
+        "thiserror"
+    ],
+    "rust-analyzer.cargo.features": [
+        "hydrate",
+        "ssr"
+    ],
 }

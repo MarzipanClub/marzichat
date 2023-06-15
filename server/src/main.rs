@@ -1,5 +1,16 @@
-use axum::routing::get;
-
+use {
+    axum::routing::{get, post},
+    hyper::server::{accept::Accept, conn::AddrIncoming},
+    leptos::{leptos_config::Env, view, LeptosOptions, ServerFn},
+    leptos_axum::{generate_route_list, LeptosRoutes},
+    marzichat::{App, GetPost, ListPostMetadata},
+    std::{
+        net::{Ipv4Addr, Ipv6Addr, SocketAddr},
+        pin::Pin,
+        task::{Context, Poll},
+    },
+    tower_http::services::fs::ServeDir,
+};
 mod config;
 mod logging;
 
@@ -15,10 +26,36 @@ async fn main() -> anyhow::Result<()> {
         "Hello, World!".to_string()
     }
 
+    let leptos_options = LeptosOptions {
+        output_name: String::from("app"),
+
+        site_root: String::from("."),
+
+        site_pkg_dir: String::from("assets"),
+
+        env: Env::DEV,
+
+        site_addr: SocketAddr::new(Ipv4Addr::LOCALHOST.into(), 2506),
+
+        reload_port: 2506,
+    };
+
+    // Generate the list of routes in your Leptos App
+    let routes = generate_route_list(|cx| view! { cx, <App/> }).await;
+
+    GetPost::register().expect("failed to register GetPost");
+    ListPostMetadata::register().expect("failed to register ListPostMetadata");
+
     // build our application with a single route
     let app = axum::Router::new()
-        .route("/", get(handler))
-        .route("/foo", get(|| async { "foo" }))
+        .route("/hello", get(handler))
+        .route("/foo", get(|| async { "foobar" }))
+        .route("/api/*fn_name", post(leptos_axum::handle_server_fns))
+        .leptos_routes(leptos_options, routes, |cx| view! { cx, <App/> })
+        .nest_service(
+            "/assets",
+            ServeDir::new("target/assets/debug").precompressed_br(),
+        )
         .layer(
             tower::ServiceBuilder::new()
                 .layer(
@@ -51,9 +88,33 @@ async fn main() -> anyhow::Result<()> {
                 .layer(tower_http::compression::CompressionLayer::new()),
         );
 
-    axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
-        .serve(app.into_make_service_with_connect_info::<std::net::SocketAddr>())
-        .await?;
+    tracing::debug!("starting server");
+    axum::Server::builder(Listeners([
+        AddrIncoming::bind(&SocketAddr::new(Ipv4Addr::LOCALHOST.into(), 2506))?,
+        AddrIncoming::bind(&SocketAddr::new(Ipv6Addr::LOCALHOST.into(), 2506))?,
+    ]))
+    .serve(app.into_make_service_with_connect_info::<std::net::SocketAddr>())
+    .await?;
 
     Ok(())
+}
+
+struct Listeners<const N: usize>([AddrIncoming; N]);
+
+impl<const N: usize> Accept for Listeners<N> {
+    type Conn = <AddrIncoming as Accept>::Conn;
+    type Error = <AddrIncoming as Accept>::Error;
+
+    fn poll_accept(
+        mut self: Pin<&mut Self>,
+        cx: &mut Context<'_>,
+    ) -> Poll<Option<Result<Self::Conn, Self::Error>>> {
+        for listener in &mut self.0 {
+            if let Poll::Ready(Some(conn)) = Pin::new(listener).poll_accept(cx) {
+                return Poll::Ready(Some(conn));
+            }
+        }
+
+        Poll::Pending
+    }
 }

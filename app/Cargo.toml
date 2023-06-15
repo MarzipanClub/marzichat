@@ -1,0 +1,19 @@
+[package]
+name = "app"
+
+edition.workspace = true
+publish.workspace = true
+rust-version.workspace = true
+version.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+common = {path = "../common"}
+
+console_error_panic_hook = "0.1.7"
+leptos = {workspace = true, features = ["hydrate"]}
+leptos_meta = {workspace = true, features = ["hydrate"]}
+leptos_router = {workspace = true, features = ["hydrate"]}
+wasm-bindgen = "0.2.86"
+wasm-log = "0.3.1"
