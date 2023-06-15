@@ -1,24 +1,25 @@
 use {
     axum::routing::{get, post},
+    const_format::formatcp,
+    core::app::{App, GetPost, ListPostMetadata},
     hyper::server::{accept::Accept, conn::AddrIncoming},
     leptos::{leptos_config::Env, view, LeptosOptions, ServerFn},
     leptos_axum::{generate_route_list, LeptosRoutes},
-    marzichat::{App, GetPost, ListPostMetadata},
     std::{
         net::{Ipv4Addr, Ipv6Addr, SocketAddr},
         pin::Pin,
         task::{Context, Poll},
     },
-    tower_http::services::fs::ServeDir,
+    tower_governor::{governor::GovernorConfigBuilder, GovernorLayer},
+    tower_http::{compression::CompressionLayer, services::fs::ServeDir},
 };
+
 mod config;
 mod logging;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    // set up nice backtraces
     color_backtrace::install();
-
     config::init()?;
     logging::init()?;
 
@@ -26,18 +27,23 @@ async fn main() -> anyhow::Result<()> {
         "Hello, World!".to_string()
     }
 
+    const ASSETS: &str = "assets";
     let leptos_options = LeptosOptions {
         output_name: String::from("app"),
 
-        site_root: String::from("."),
+        site_root: ".".into(),
 
-        site_pkg_dir: String::from("assets"),
+        site_pkg_dir: ASSETS.into(),
 
-        env: Env::DEV,
+        env: if cfg!(debug_assertions) {
+            Env::DEV
+        } else {
+            Env::PROD
+        },
 
         site_addr: SocketAddr::new(Ipv4Addr::LOCALHOST.into(), 2506),
 
-        reload_port: 2506,
+        reload_port: 0,
     };
 
     // Generate the list of routes in your Leptos App
@@ -53,7 +59,7 @@ async fn main() -> anyhow::Result<()> {
         .route("/api/*fn_name", post(leptos_axum::handle_server_fns))
         .leptos_routes(leptos_options, routes, |cx| view! { cx, <App/> })
         .nest_service(
-            "/assets",
+            formatcp!("/{ASSETS}"),
             ServeDir::new("target/assets/debug").precompressed_br(),
         )
         .layer(
@@ -70,12 +76,12 @@ async fn main() -> anyhow::Result<()> {
                 )
                 .layer(
                     // rate limiting layer
-                    tower_governor::GovernorLayer {
+                    GovernorLayer {
                         config: Box::leak(Box::new(
                             // allow bursts with up to rate_limit_interval_per_second requests per
                             // ip address and replenishes one element
                             // every rate_limit_burst_size seconds
-                            tower_governor::governor::GovernorConfigBuilder::default()
+                            GovernorConfigBuilder::default()
                                 .per_second(
                                     crate::config::get().rate_limit_interval_per_second.into(),
                                 )
@@ -85,16 +91,24 @@ async fn main() -> anyhow::Result<()> {
                         )),
                     },
                 )
-                .layer(tower_http::compression::CompressionLayer::new()),
+                .layer(if cfg!(debug_assertions) {
+                    // disable brotli compression in debug mode to use source view in Firefox
+                    // (Cmd + U)
+                    CompressionLayer::new().no_br()
+                } else {
+                    CompressionLayer::new()
+                }),
         );
 
-    tracing::debug!("starting server");
-    axum::Server::builder(Listeners([
+    let server = axum::Server::builder(Listeners([
         AddrIncoming::bind(&SocketAddr::new(Ipv4Addr::LOCALHOST.into(), 2506))?,
         AddrIncoming::bind(&SocketAddr::new(Ipv6Addr::LOCALHOST.into(), 2506))?,
-    ]))
-    .serve(app.into_make_service_with_connect_info::<std::net::SocketAddr>())
-    .await?;
+    ]));
+
+    tracing::debug!("starting server");
+    server
+        .serve(app.into_make_service_with_connect_info::<SocketAddr>())
+        .await?;
 
     Ok(())
 }

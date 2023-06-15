@@ -1,5 +1,3 @@
-#![feature(result_flattening)]
-
 use {
     leptos::*,
     leptos_meta::*,
@@ -159,21 +157,21 @@ pub async fn list_post_metadata() -> Result<Vec<PostMetadata>, ServerFnError> {
             title: "My second post".to_string(),
             content: "This is my second post".to_string(),
         },
-        Post {
-            id: 2,
-            title: "My third post".to_string(),
-            content: "This is my third post".to_string(),
-        },
+        // Post {
+        //     id: 2,
+        //     title: "My third post".to_string(),
+        //     content: "This is my third post".to_string(),
+        // },
     ];
-    // Ok(posts
-    //     .iter()
-    //     .map(|data| PostMetadata {
-    //         id: data.id,
-    //         title: data.title.clone(),
-    //     })
-    //     .collect())
+    Ok(posts
+        .iter()
+        .map(|data| PostMetadata {
+            id: data.id,
+            title: data.title.clone(),
+        })
+        .collect())
 
-    Err(ServerFnError::ServerError("test".to_string()))
+    // Err(ServerFnError::ServerError("test".to_string()))
 }
 
 #[server(GetPost, "/api")]

@@ -3,6 +3,7 @@
     "crates.useLocalCargoIndex": false,
     "cSpell.words": [
         "bindgen",
+        "brotli",
         "Leptos",
         "marzichat",
         "precompressed",
@@ -13,4 +14,8 @@
         "hydrate",
         "ssr"
     ],
+    "rust-analyzer.linkedProjects": [
+        "./Cargo.toml"
+    ],
+    "rust-analyzer.showUnlinkedFileNotification": false,
 }
