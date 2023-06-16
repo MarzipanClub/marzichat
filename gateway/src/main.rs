@@ -1,10 +1,29 @@
+//! The main entry point for the gateway.
+
+// rustc lints
+// https://doc.rust-lang.org/rustc/lints/index.html
+#![forbid(unsafe_code, let_underscore_lock)]
+#![deny(unused_extern_crates, unused_crate_dependencies)]
+#![warn(
+    future_incompatible,
+    let_underscore_drop,
+    rust_2018_idioms,
+    single_use_lifetimes,
+    unused_import_braces,
+    unused_lifetimes,
+    unused_macro_rules,
+    unused_qualifications,
+    unused_tuple_struct_fields,
+    variant_size_differences
+)]
+
 use {
-    axum::routing::{get, post},
-    const_format::formatcp,
-    core::{
-        app::{App, GetPost, ListPostMetadata},
+    app::{
+        ui::{GetPost, ListPostMetadata, Main},
         ASSETS_PATH,
     },
+    axum::routing::{get, post},
+    const_format::formatcp,
     hyper::server::{accept::Accept, conn::AddrIncoming},
     leptos::{leptos_config::Env, view, LeptosOptions, ServerFn},
     leptos_axum::{generate_route_list, LeptosRoutes},
@@ -49,7 +68,7 @@ async fn main() -> anyhow::Result<()> {
     };
 
     // Generate the list of routes in your Leptos App
-    let routes = generate_route_list(|cx| view! { cx, <App/> }).await;
+    let routes = generate_route_list(|cx| view! { cx, <Main/> }).await;
 
     GetPost::register().expect("failed to register GetPost");
     ListPostMetadata::register().expect("failed to register ListPostMetadata");
@@ -59,7 +78,7 @@ async fn main() -> anyhow::Result<()> {
         .route("/hello", get(handler))
         .route("/foo", get(|| async { "foobar" }))
         .route("/api/*fn_name", post(leptos_axum::handle_server_fns))
-        .leptos_routes(leptos_options, routes, |cx| view! { cx, <App/> })
+        .leptos_routes(leptos_options, routes, |cx| view! { cx, <Main/> })
         .nest_service(
             formatcp!("/{ASSETS_PATH}"),
             ServeDir::new("target/assets/debug").precompressed_br(),
@@ -107,7 +126,7 @@ async fn main() -> anyhow::Result<()> {
         AddrIncoming::bind(&SocketAddr::new(Ipv6Addr::LOCALHOST.into(), 2506))?,
     ]));
 
-    tracing::debug!("starting server");
+    tracing::debug!("ready");
     server
         .serve(app.into_make_service_with_connect_info::<SocketAddr>())
         .await?;

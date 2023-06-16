@@ -1,3 +1,5 @@
+//! The main UI code.
+
 use {
     super::{ASSETS_PATH, CSS_FILE_NAME},
     const_format::formatcp,
@@ -8,8 +10,9 @@ use {
     thiserror::Error,
 };
 
+/// The topmost UI component.
 #[component]
-pub fn App(cx: Scope) -> impl IntoView {
+pub fn Main(cx: Scope) -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context(cx);
 

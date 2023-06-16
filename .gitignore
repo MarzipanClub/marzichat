@@ -1,4 +1,5 @@
 **/.DS_Store
 **/lcov.info
-config.ron
+*config.ron
+!dev_config.ron
 target

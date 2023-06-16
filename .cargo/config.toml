@@ -6,7 +6,7 @@
 progress.when = 'always'
 
 # width of progress bar
-progress.width = 100
+progress.width = 80
 
 # whether cargo output is quiet
 quiet = true

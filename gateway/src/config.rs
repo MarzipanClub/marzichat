@@ -15,22 +15,22 @@ use {
 };
 
 static CONFIG: OnceCell<Config> = OnceCell::new();
-const CONFIG_ENV_VAR_NAME: &str = "SERVER_CONFIG";
 
 /// The root configuration.
 #[derive(Debug, Deserialize)]
 pub struct Config {
-    /// Enable custom logging; acceptable directive must must follow
+    /// The logging directive to use.
+    /// Acceptable directive must must follow
     /// [this][1] format.
     ///
     /// [1]: https://docs.rs/env_logger/latest/env_logger/index.html#enabling-logging
     pub logging_directive: String,
 
-    /// Set the interval after which one element of the quota is replenished in
+    /// The interval after which one element of the quota is replenished in
     /// seconds for each ip address.
     pub rate_limit_interval_per_second: NonZeroU64,
 
-    /// Set quota size that defines how many requests for a given ip address can
+    /// The quota size that defines how many requests for a given ip address can
     /// occur before the governor middleware starts blocking requests from
     /// an IP address and clients have to wait until the elements of the
     /// quota are replenished.
@@ -59,7 +59,9 @@ where
 /// Initialize the config.
 #[deny(dead_code)]
 pub fn init() -> Result<()> {
-    let path = env_var::<PathBuf>(CONFIG_ENV_VAR_NAME)?;
+    let config_env_var_name = format!("{}_CONFIG", env!("CARGO_PKG_NAME").to_ascii_uppercase());
+
+    let path = env_var::<PathBuf>(&config_env_var_name)?;
 
     let config = ron::from_str(
         &std::fs::read_to_string(&path)

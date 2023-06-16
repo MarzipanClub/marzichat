@@ -1,86 +1,26 @@
-[package]
-name = "marzichat"
+[workspace]
+members = ["app", "gateway"]
 
+[workspace.package]
 edition = "2021"
 license = "gpl-3.0-only"
 license-file = "LICENSE"
 publish = false
 readme = "README.md"
+repository = "https://github.com/MarzipanClub/marzichat"
 rust-version = "1.70.0"
 version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[[bin]]
-name = "app"
-path = "src/app/main.rs"
-
-[[bin]]
-name = "server"
-path = "src/server/main.rs"
-
-[lib]
-name = "core"
-path = "src/core/lib.rs"
-
-[dependencies]
-# shared dependencies
-anyhow = "1.0.70"
+[workspace.dependencies]
+anyhow = "1.0.71"
 const_format = "0.2.31"
-leptos = {version = "0.3.0", default-features = false, features = [
+leptos = {version = "0.3.1", default-features = false, features = [
   "serde",
 ]}
-leptos_meta = {version = "0.3.0", default-features = false}
-leptos_router = {version = "0.3.0", default-features = false}
-serde = "1.0.163"
+leptos_meta = {version = "0.3.1", default-features = false}
+leptos_router = {version = "0.3.1", default-features = false}
+serde = "1.0.164"
 thiserror = "1.0.40"
-
-# client-only dependencies
-console_error_panic_hook = {version = "0.1.7", optional = true}
-wasm-bindgen = {version = "0.2.86", optional = true}
-wasm-log = {version = "0.3.1", optional = true}
-
-# server-only dependencies
-axum = {version = "0.6.18", optional = true}
-color-backtrace = {version = "0.5.1", optional = true}
-hyper = {version = "0.14.26", optional = true}
-leptos_axum = {version = "0.3.0", default-features = false, optional = true}
-once_cell = {version = "1.17.2", optional = true}
-ron = {version = "0.8.0", optional = true}
-sentry-tracing = {version = "0.31.3", optional = true}
-tokio = {version = "1.28.2", features = ["macros", "rt-multi-thread"], optional = true}
-tower = {verion = "0.4.13", optional = true}
-tower-http = {version = "0.4.0", features = ["trace", "compression-br", "fs"], optional = true}
-tower_governor = {version = "0.0.4", optional = true}
-tracing = {version = "0.1.37", optional = true}
-tracing-journald = {version = "0.3.0", optional = true}
-tracing-subscriber = {version = "0.3.17", features = ["env-filter"], optional = true}
-
-[features]
-hydrate = [
-  "dep:console_error_panic_hook",
-  "dep:wasm-bindgen",
-  "dep:wasm-log",
-  "leptos/hydrate",
-  "leptos_meta/hydrate",
-  "leptos_router/hydrate",
-]
-ssr = [
-  "dep:axum",
-  "dep:color-backtrace",
-  "dep:hyper",
-  "dep:leptos_axum",
-  "dep:once_cell",
-  "dep:ron",
-  "dep:sentry-tracing",
-  "dep:tokio",
-  "dep:tower",
-  "dep:tower-http",
-  "dep:tower_governor",
-  "dep:tracing",
-  "dep:tracing-journald",
-  "dep:tracing-subscriber",
-  "leptos/ssr",
-  "leptos_meta/ssr",
-  "leptos_router/ssr",
-]
+tokio = {version = "1.28.2", default-features = false}

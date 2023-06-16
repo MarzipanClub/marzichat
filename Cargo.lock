@@ -70,6 +70,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9c7d0618f0e0b7e8ff11427422b64564d5fb0be1940354bfe2e0529b18a9d9b8"
 
 [[package]]
+name = "app"
+version = "0.1.0"
+dependencies = [
+ "console_error_panic_hook",
+ "const_format",
+ "leptos",
+ "leptos_meta",
+ "leptos_router",
+ "serde",
+ "thiserror",
+ "tokio",
+ "wasm-bindgen",
+ "wasm-log",
+]
+
+[[package]]
 name = "async-compression"
 version = "0.3.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -736,6 +752,31 @@ dependencies = [
 ]
 
 [[package]]
+name = "gateway"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "app",
+ "axum",
+ "color-backtrace",
+ "const_format",
+ "hyper",
+ "leptos",
+ "leptos_axum",
+ "once_cell",
+ "ron 0.8.0",
+ "sentry-tracing",
+ "serde",
+ "tokio",
+ "tower",
+ "tower-http",
+ "tower_governor",
+ "tracing",
+ "tracing-journald",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "generic-array"
 version = "0.14.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1318,36 +1359,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b823e83b2affd8f40a9ee8c29dbc56404c1e34cd2710921f2801e2cf29527afa"
 dependencies = [
  "libc",
-]
-
-[[package]]
-name = "marzichat"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "axum",
- "color-backtrace",
- "console_error_panic_hook",
- "const_format",
- "hyper",
- "leptos",
- "leptos_axum",
- "leptos_meta",
- "leptos_router",
- "once_cell",
- "ron 0.8.0",
- "sentry-tracing",
- "serde",
- "thiserror",
- "tokio",
- "tower",
- "tower-http",
- "tower_governor",
- "tracing",
- "tracing-journald",
- "tracing-subscriber",
- "wasm-bindgen",
- "wasm-log",
 ]
 
 [[package]]

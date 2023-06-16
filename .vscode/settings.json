@@ -4,10 +4,12 @@
     "cSpell.words": [
         "bindgen",
         "brotli",
+        "concatcp",
         "Leptos",
         "marzichat",
         "precompressed",
         "Redb",
+        "rustc",
         "Stylesheet",
         "thiserror"
     ],
