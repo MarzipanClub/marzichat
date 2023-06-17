@@ -14,7 +14,7 @@ version.workspace = true
 
 [[bin]]
 name = "app"
-path = "src/main.rs"
+path = "src/bin/app.rs"
 
 [lib]
 name = "app"

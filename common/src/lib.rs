@@ -1,8 +1,4 @@
-// unstable feature: https://github.com/rust-lang/rust/issues/70142
-// Enables `Result::flatten()` method.
-#![feature(result_flattening)]
-
-//! App library code.
+//! Common code for all packages.
 
 // rustc lints
 // https://doc.rust-lang.org/rustc/lints/index.html
@@ -21,10 +17,4 @@
     variant_size_differences
 )]
 
-pub mod ui;
-
-/// The name of the CSS file.
-pub const CSS_FILE_NAME: &str = env!("CSS_FILE_NAME");
-
-/// The path segment for static assets.
-pub const ASSETS_PATH: &str = "assets";
+pub mod utils;

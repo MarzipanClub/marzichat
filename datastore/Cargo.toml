@@ -1,5 +1,5 @@
 [package]
-name = "gateway"
+name = "datastore"
 
 edition.workspace = true
 license-file.workspace = true
@@ -12,24 +12,33 @@ version.workspace = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[[bin]]
+name = "datastore"
+path = "src/bin/server.rs"
+
+[[bin]]
+name = "cli"
+path = "src/bin/cli.rs"
+
+[lib]
+name = "datastore"
+path = "src/lib.rs"
+
 [dependencies]
 anyhow = {workspace = true}
-app = {path = "../app", features = ["ssr"]}
-axum = "0.6.18"
+clap = {workspace = true, features = ["derive"]}
 color-backtrace = {workspace = true}
 common = {path = "../common"}
-const_format = {workspace = true}
-hyper = "0.14.26"
-leptos = {workspace = true}
-leptos_axum = {version = "0.3.0", default-features = false}
-ron = {workspace = true}
-sentry-tracing = "0.31.3"
+futures = {workspace = true}
 serde = {workspace = true}
-systemstat = "0.2.3"
-tokio = {workspace = true, features = ["macros", "rt-multi-thread"]}
-tower = "0.4.13"
-tower-http = {version = "0.4.0", features = ["trace", "compression-br", "fs"]}
-tower_governor = "0.0.4"
+tarpc = {workspace = true, features = [
+  "serde1",
+  "tokio1",
+  "serde-transport",
+  "serde-transport-bincode",
+  "tcp",
+  "unix",
+]}
+tokio = {workspace = true, features = ["macros", "net", "rt-multi-thread"]}
 tracing = {workspace = true}
-tracing-journald = {workspace = true}
 tracing-subscriber = {workspace = true, features = ["env-filter"]}

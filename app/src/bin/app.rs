@@ -6,7 +6,6 @@
 
 // rustc lints
 // https://doc.rust-lang.org/rustc/lints/index.html
-// note that unused_crate_dependencies causes false positives
 #![forbid(unsafe_code, let_underscore_lock)]
 #![deny(unused_extern_crates)]
 #![warn(

@@ -1,0 +1,5 @@
+Config(
+    /// Set the logging directive to use.
+    /// https://docs.rs/env_logger/latest/env_logger/index.html#enabling-logging
+    logging_directive: "datastore=trace,debug",
+)

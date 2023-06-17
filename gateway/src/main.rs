@@ -3,7 +3,7 @@
 // rustc lints
 // https://doc.rust-lang.org/rustc/lints/index.html
 #![forbid(unsafe_code, let_underscore_lock)]
-#![deny(unused_extern_crates, unused_crate_dependencies)]
+#![deny(unused_extern_crates)]
 #![warn(
     future_incompatible,
     let_underscore_drop,

@@ -1,7 +1,7 @@
 Config(
     /// Set the logging directive to use.
     /// https://docs.rs/env_logger/latest/env_logger/index.html#enabling-logging
-    logging_directive: "server=trace,hyper=info,debug",
+    logging_directive: "gateway=trace,hyper=info,debug",
 
     /// Set the interval after which one element of the quota is replenished in
     /// seconds for each ip address.

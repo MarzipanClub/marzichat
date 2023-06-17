@@ -17,17 +17,21 @@
         "thiserror",
         "watchexec"
     ],
-    "rust-analyzer.cargo.features": [
-        "hydrate",
-        "ssr"
-    ],
+    // "rust-analyzer.cargo.features": [
+    //     "hydrate",
+    //     "ssr"
+    // ],
     "rust-analyzer.linkedProjects": [
         "./Cargo.toml"
     ],
-    "rust-analyzer.check.command": "clippy",
+    "rust-analyzer.check.overrideCommand": [
+        "just",
+        "rust-analyzer-check"
+    ],
     "rust-analyzer.cargo.extraEnv": {
         // doen't require a value, just needs to be present for rust analyzer to not complain
         // The actual value is defined in the justfile.
         "CSS_FILE_NAME": "",
-    }
+    },
+    "rust-analyzer.check.allTargets": false
 }
