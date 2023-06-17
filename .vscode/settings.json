@@ -2,6 +2,7 @@
     // don't use the local cargo index, instead use the up-to-date one on the internet
     "crates.useLocalCargoIndex": false,
     "cSpell.words": [
+        "Bincode",
         "bindgen",
         "brotli",
         "concatcp",
@@ -12,6 +13,7 @@
         "rustc",
         "Stylesheet",
         "systemstat",
+        "tarpc",
         "thiserror",
         "watchexec"
     ],
@@ -22,8 +24,10 @@
     "rust-analyzer.linkedProjects": [
         "./Cargo.toml"
     ],
-    "rust-analyzer.check.overrideCommand": [
-        "just",
-        "check"
-    ],
+    "rust-analyzer.check.command": "clippy",
+    "rust-analyzer.cargo.extraEnv": {
+        // doen't require a value, just needs to be present for rust analyzer to not complain
+        // The actual value is defined in the justfile.
+        "CSS_FILE_NAME": "",
+    }
 }
