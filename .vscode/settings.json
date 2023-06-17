@@ -12,7 +12,8 @@
         "rustc",
         "Stylesheet",
         "systemstat",
-        "thiserror"
+        "thiserror",
+        "watchexec"
     ],
     "rust-analyzer.cargo.features": [
         "hydrate",

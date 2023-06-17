@@ -22,6 +22,11 @@ build-css:
     @mkdir --parents {{debug_output}} {{release_output}}
     @grass style/main.scss --style compressed | tee {{debug_output}}/$CSS_FILE_NAME {{release_output}}/$CSS_FILE_NAME > /dev/null
 
+# watch for css changes and rebuild continuously
+watch-css:
+    @echo "Building css continuously..."
+    @watchexec --watch style 'just build-css'
+
 # builds the app in debug mode
 build-app:
     @echo "Building app..."
