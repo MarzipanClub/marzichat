@@ -37,13 +37,12 @@ use {
 };
 
 mod config;
-mod logging;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     color_backtrace::install();
     config::init()?;
-    logging::init()?;
+    common::utils::logging::init(&crate::config::get().logging_directive)?;
 
     async fn handler() -> String {
         "Hello, World!".to_string()

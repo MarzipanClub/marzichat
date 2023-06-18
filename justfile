@@ -4,6 +4,7 @@ export CSS_FILE_NAME := "style.css"
 
 alias app := watch-app
 alias gateway := watch-gateway
+alias datastore := watch-datastore
 
 done_message := "✅ done"
 

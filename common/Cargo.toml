@@ -15,4 +15,10 @@ version.workspace = true
 [dependencies]
 anyhow = {workspace = true}
 ron = {workspace = true}
+sentry-tracing = "0.31.5"
 serde = {workspace = true}
+systemstat = "0.2.3"
+tokio = {workspace = true, features = ["time", "macros", "rt-multi-thread"]}
+tracing = {workspace = true}
+tracing-journald = "0.3.0"
+tracing-subscriber = {version = "0.3", default-features = false, features = ["env-filter"]}

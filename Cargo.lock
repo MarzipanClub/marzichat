@@ -526,7 +526,13 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "ron 0.8.0",
+ "sentry-tracing",
  "serde",
+ "systemstat",
+ "tokio",
+ "tracing",
+ "tracing-journald",
+ "tracing-subscriber",
 ]
 
 [[package]]
@@ -595,9 +601,9 @@ dependencies = [
 
 [[package]]
 name = "cpufeatures"
-version = "0.2.7"
+version = "0.2.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3e4c1eaa2012c47becbbad2ab175484c2a84d1185b566fb2cc5b8707343dfe58"
+checksum = "03e69e28e9f7f77debdedbaafa2866e1de9ba56df55a8bd7cfc724c25a09987c"
 dependencies = [
  "libc",
 ]
@@ -692,7 +698,6 @@ dependencies = [
  "tarpc",
  "tokio",
  "tracing",
- "tracing-subscriber",
 ]
 
 [[package]]
@@ -935,14 +940,11 @@ dependencies = [
  "ron 0.8.0",
  "sentry-tracing",
  "serde",
- "systemstat",
  "tokio",
  "tower",
  "tower-http",
  "tower_governor",
  "tracing",
- "tracing-journald",
- "tracing-subscriber",
 ]
 
 [[package]]
@@ -994,9 +996,9 @@ dependencies = [
 
 [[package]]
 name = "gloo-utils"
-version = "0.1.6"
+version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a8e8fc851e9c7b9852508bc6e3f690f452f474417e8545ec9857b7f7377036b5"
+checksum = "037fcb07216cb3a30f7292bd0176b050b7b9a052ba830ef7d5d65f6dc64ba58e"
 dependencies = [
  "js-sys",
  "serde",
@@ -1835,9 +1837,9 @@ checksum = "9b2a4787296e9989611394c33f193f676704af1686e70b8f8033ab5ba9a35a94"
 
 [[package]]
 name = "pest"
-version = "2.6.0"
+version = "2.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e68e84bfb01f0507134eac1e9b410a12ba379d064eab48c50ba4ce329a527b70"
+checksum = "16833386b02953ca926d19f64af613b9bf742c48dcd5e09b32fbfc9740bf84e2"
 dependencies = [
  "thiserror",
  "ucd-trie",
@@ -1845,9 +1847,9 @@ dependencies = [
 
 [[package]]
 name = "pest_derive"
-version = "2.6.0"
+version = "2.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6b79d4c71c865a25a4322296122e3924d30bc8ee0834c8bfc8b95f7f054afbfb"
+checksum = "7763190f9406839f99e5197afee8c9e759969f7dbfa40ad3b8dbee8757b745b5"
 dependencies = [
  "pest",
  "pest_generator",
@@ -1855,9 +1857,9 @@ dependencies = [
 
 [[package]]
 name = "pest_generator"
-version = "2.6.0"
+version = "2.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6c435bf1076437b851ebc8edc3a18442796b30f1728ffea6262d59bbe28b077e"
+checksum = "249061b22e99973da1f5f5f1410284419e283bb60b79255bf5f42a94b66a2e00"
 dependencies = [
  "pest",
  "pest_meta",
@@ -1868,9 +1870,9 @@ dependencies = [
 
 [[package]]
 name = "pest_meta"
-version = "2.6.0"
+version = "2.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "745a452f8eb71e39ffd8ee32b3c5f51d03845f99786fa9b68db6ff509c505411"
+checksum = "457c310cfc9cf3f22bc58901cc7f0d3410ac5d6298e432a4f9a6138565cb6df6"
 dependencies = [
  "once_cell",
  "pest",
@@ -2213,9 +2215,9 @@ checksum = "4c309e515543e67811222dbc9e3dd7e1056279b782e1dacffe4242b718734fb6"
 
 [[package]]
 name = "sentry-core"
-version = "0.31.4"
+version = "0.31.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fe345c342f17e48b65451f424ce0848405b6b3a84fa0007ba444b84754bf760a"
+checksum = "7163491708804a74446642ff2c80b3acd668d4b9e9f497f85621f3d250fd012b"
 dependencies = [
  "once_cell",
  "rand",
@@ -2226,9 +2228,9 @@ dependencies = [
 
 [[package]]
 name = "sentry-tracing"
-version = "0.31.4"
+version = "0.31.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dc167b6746500ea4bb86c2c13afe7ca6f75f2ed1bcfd84243e870780b8ced529"
+checksum = "5aca8b88978677a27ee1a91beafe4052306c474c06f582321fde72d2e2cc2f7f"
 dependencies = [
  "sentry-core",
  "tracing-core",
@@ -2237,9 +2239,9 @@ dependencies = [
 
 [[package]]
 name = "sentry-types"
-version = "0.31.4"
+version = "0.31.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "62d10a5962144f5fb65bb1290551623e6b976f442cb2fcb4e1dfe9fe6f8e8df4"
+checksum = "9e7a88e0c1922d19b3efee12a8215f6a8a806e442e665ada71cc222cab72985f"
 dependencies = [
  "debugid",
  "getrandom",
@@ -2285,9 +2287,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.96"
+version = "1.0.97"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "057d394a50403bcac12672b2b18fb387ab6d289d957dab67dd201875391e52f1"
+checksum = "bdf3bf93142acad5821c99197022e170842cdbc1c30482b98750c688c640842a"
 dependencies = [
  "itoa",
  "ryu",
@@ -2385,9 +2387,9 @@ dependencies = [
 
 [[package]]
 name = "sha2"
-version = "0.10.6"
+version = "0.10.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "82e6b795fe2e3b1e845bafcb27aa35405c4d47cdfc92af5fc8d3002f76cebdc0"
+checksum = "479fb9d862239e610720565ca91403019f2f00410f1864c5aa7479b950a76ed8"
 dependencies = [
  "cfg-if",
  "cpufeatures",

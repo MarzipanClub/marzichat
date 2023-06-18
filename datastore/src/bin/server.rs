@@ -52,6 +52,7 @@ impl Datastore for HelloServer {
 async fn main() -> anyhow::Result<()> {
     color_backtrace::install();
     config::init()?;
+    common::utils::logging::init(&crate::config::get().logging_directive)?;
 
     let socket_address = (IpAddr::V6(Ipv6Addr::LOCALHOST), 2507);
     let listener = tarpc::serde_transport::tcp::listen(&socket_address, Bincode::default).await?;

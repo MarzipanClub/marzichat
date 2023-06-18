@@ -24,16 +24,6 @@ pub struct Config {
     ///
     /// [1]: https://docs.rs/env_logger/latest/env_logger/index.html#enabling-logging
     pub logging_directive: String,
-
-    /// The interval after which one element of the quota is replenished in
-    /// seconds for each ip address.
-    pub rate_limit_interval_per_second: NonZeroU64,
-
-    /// The quota size that defines how many requests for a given ip address can
-    /// occur before the governor middleware starts blocking requests from
-    /// an IP address and clients have to wait until the elements of the
-    /// quota are replenished.
-    pub rate_limit_burst_size: NonZeroU32,
 }
 
 /// Returns the global configuration for the server.

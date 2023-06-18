@@ -41,4 +41,3 @@ tarpc = {workspace = true, features = [
 ]}
 tokio = {workspace = true, features = ["macros", "net", "rt-multi-thread"]}
 tracing = {workspace = true}
-tracing-subscriber = {workspace = true, features = ["env-filter"]}
