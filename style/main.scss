@@ -1,6 +1,7 @@
-@import './reset';
+@import './colors';
 
 body {
-    background-color: greenyellow;
-    color: red;
+    font-family: system-ui;
+    background-color: $background-light;
+    color: $text-dark;
 }

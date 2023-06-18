@@ -695,8 +695,10 @@ dependencies = [
  "color-backtrace",
  "common",
  "futures",
+ "redb",
  "serde",
  "tarpc",
+ "thiserror",
  "tokio",
  "tracing",
 ]
@@ -1972,6 +1974,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "pyo3-build-config"
+version = "0.19.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "713eccf888fb05f1a96eb78c0dbc51907fee42b3377272dc902eb38985f418d5"
+dependencies = [
+ "once_cell",
+ "target-lexicon",
+]
+
+[[package]]
 name = "quanta"
 version = "0.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2046,6 +2058,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6c297679cb867470fa8c9f67dbba74a78d78e3e98d7cf2b08d6d71540f797332"
 dependencies = [
  "bitflags",
+]
+
+[[package]]
+name = "redb"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "89ccfb694235b9b5214d32756192abe324083e49363f29bc7c91a69854effe4c"
+dependencies = [
+ "libc",
+ "pyo3-build-config",
 ]
 
 [[package]]
@@ -2515,6 +2537,12 @@ dependencies = [
  "time",
  "winapi",
 ]
+
+[[package]]
+name = "target-lexicon"
+version = "0.12.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fd1ba337640d60c3e96bc6f0638a939b9c9a7f2c316a1598c279828b3d1dc8c5"
 
 [[package]]
 name = "tarpc"

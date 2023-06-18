@@ -7,7 +7,7 @@ use {
     anyhow::Result,
     common::utils::config::parse,
     serde::Deserialize,
-    std::{net::SocketAddr, sync::OnceLock},
+    std::{net::SocketAddr, path::PathBuf, sync::OnceLock},
 };
 
 static CONFIG: OnceLock<Config> = OnceLock::new();
@@ -25,6 +25,9 @@ pub struct Config {
     /// The socket address to bind to.
     /// This is where clients will connect.
     pub socket_address: SocketAddr,
+
+    /// The file path to the database file.
+    pub database_file_path: PathBuf,
 }
 
 /// Returns the global configuration for the server.

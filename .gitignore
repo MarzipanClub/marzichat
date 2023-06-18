@@ -3,3 +3,4 @@
 *config.ron
 !dev_config.ron
 target
+*.redb

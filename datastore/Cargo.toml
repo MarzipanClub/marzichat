@@ -31,6 +31,7 @@ clap = {workspace = true, features = ["derive"]}
 color-backtrace = {workspace = true}
 common = {path = "../common"}
 futures = {workspace = true}
+redb = "1.0.0"
 serde = {workspace = true}
 tarpc = {workspace = true, features = [
   "serde1",
@@ -40,5 +41,6 @@ tarpc = {workspace = true, features = [
   "tcp",
   "unix",
 ]}
-tokio = {workspace = true, features = ["macros", "net", "rt-multi-thread"]}
+thiserror = {workspace = true}
+tokio = {workspace = true, features = ["macros", "net", "rt-multi-thread", "sync", "signal"]}
 tracing = {workspace = true}

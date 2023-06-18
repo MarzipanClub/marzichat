@@ -32,18 +32,22 @@ struct Cli {
     debug: u8,
 
     #[command(subcommand)]
-    command: Commands,
+    command: Command,
 }
 
 #[derive(Subcommand)]
-enum Commands {
+enum Command {
     /// Get a value from the datastore
     Get {
+        /// the name of the table
+        table: String,
         /// the key value to get
         key: String,
     },
     /// Set a value in the datastore
     Set {
+        /// the name of the table
+        table: String,
         /// the key value to set, will error if key is taken
         key: String,
         /// lists test values
@@ -52,6 +56,15 @@ enum Commands {
         #[arg(short, long)]
         force: bool,
     },
+    /// Delete a value from the datastore
+    Delete {
+        /// the name of the table
+        table: String,
+        /// the key value to delete
+        key: String,
+    },
+    /// List all tables in the datastore
+    List,
 }
 
 static DEBUG_LEVEL: OnceLock<u8> = OnceLock::new();
@@ -77,29 +90,61 @@ async fn main() -> Result<()> {
         println!("connecting to socket address: {}", socket_address);
     }
     let client = datastore::client(socket_address).await?;
+    let context: context::Context = context::current();
 
     // You can check for the existence of subcommands, and if found use their
     // matches just as you would the top level cmd
     match cli.command {
-        Commands::Get { key } => {
+        Command::Get { table, key } => {
             if debug_level() > 0 {
-                println!("Getting value for key: {key}");
+                println!("getting value for key: {key}");
             }
-            client.get(context::current(), key).await?;
+            match client.get(context, table, key).await?? {
+                Some(value) => println!("{value}"),
+                None => eprintln!("no value was set"),
+            }
         }
-        Commands::Set { key, value, force } => {
+        Command::Set {
+            table,
+            key,
+            value,
+            force,
+        } => {
             if debug_level() > 0 {
-                println!("Setting value for key: {key} to {value} with force: {force}");
+                println!("setting value for key: {key} to {value} with force: {force}");
             }
-            let context = context::current();
-            if client.get(context, key.clone()).await?.is_none() {
+
+            if client
+                .get(context, table.clone(), key.clone())
+                .await??
+                .is_some()
+            {
                 if force {
-                    client.set(context::current(), key, value).await?;
+                    client.set(context, table, key, value).await??;
                 } else {
-                    println!("key: {key} already exists, use --force to overwrite");
+                    eprintln!("key: {key} already exists, use --force to overwrite");
                 }
             } else {
-                client.set(context::current(), key, value).await?;
+                client.set(context, table, key, value).await??;
+            }
+        }
+        Command::Delete { table, key } => {
+            if debug_level() > 0 {
+                println!("deleting value for key: {key}");
+            }
+            client.delete(context, table, key).await??;
+        }
+        Command::List => {
+            if debug_level() > 0 {
+                println!("listing tables");
+            }
+            match client.list(context).await?? {
+                Some(tables) => {
+                    for table in tables {
+                        println!("{}", table);
+                    }
+                }
+                None => eprintln!("no tables found"),
             }
         }
     }
