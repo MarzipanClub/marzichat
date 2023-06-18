@@ -1,5 +1,5 @@
 [workspace]
-members = ["app", "common", "datastore", "gateway"]
+members = ["app", "common", "gateway"]
 
 [workspace.package]
 edition = "2021"
@@ -15,7 +15,6 @@ version = "0.1.0"
 
 [workspace.dependencies]
 anyhow = "1.0.71"
-bytesize = "1.2.0"
 clap = "4.3.4"
 color-backtrace = "0.5.1"
 const_format = "0.2.31"
