@@ -18,17 +18,15 @@
 )]
 
 use {
+    anyhow::Result,
     clap::{Parser, Subcommand},
-    std::{path::PathBuf, sync::OnceLock},
+    std::{net::SocketAddr, sync::OnceLock},
+    tarpc::context,
 };
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = "CLI for datastore operations")]
 struct Cli {
-    /// Sets a custom config file
-    #[arg(short, long, value_name = "CONFIG")]
-    config: Option<PathBuf>,
-
     /// Turn debugging information on
     #[arg(short, long, action = clap::ArgAction::Count)]
     debug: u8,
@@ -62,12 +60,11 @@ pub fn debug_level() -> u8 {
     *DEBUG_LEVEL.get().expect("debug level not set")
 }
 
-fn main() {
+#[tokio::main]
+async fn main() -> Result<()> {
     let cli = Cli::parse();
 
-    if let Some(config_path) = cli.config.as_deref() {
-        println!("Value for config: {}", config_path.display());
-    }
+    let socket_address = common::utils::config::env_var::<SocketAddr>("DATASTORE_SOCKET_ADDRESS")?;
 
     // You can see how many times a particular flag or argument occurred
     // Note, only flags can have multiple occurrences
@@ -76,14 +73,36 @@ fn main() {
         .set(cli.debug)
         .expect("unable to set debug level");
 
+    if debug_level() > 0 {
+        println!("connecting to socket address: {}", socket_address);
+    }
+    let client = datastore::client(socket_address).await?;
+
     // You can check for the existence of subcommands, and if found use their
     // matches just as you would the top level cmd
-    match &cli.command {
+    match cli.command {
         Commands::Get { key } => {
-            println!("Getting value for key: {key}");
+            if debug_level() > 0 {
+                println!("Getting value for key: {key}");
+            }
+            client.get(context::current(), key).await?;
         }
         Commands::Set { key, value, force } => {
-            println!("Setting value for key: {key} to {value} with force: {force}");
+            if debug_level() > 0 {
+                println!("Setting value for key: {key} to {value} with force: {force}");
+            }
+            let context = context::current();
+            if client.get(context, key.clone()).await?.is_none() {
+                if force {
+                    client.set(context::current(), key, value).await?;
+                } else {
+                    println!("key: {key} already exists, use --force to overwrite");
+                }
+            } else {
+                client.set(context::current(), key, value).await?;
+            }
         }
     }
+
+    Ok(())
 }

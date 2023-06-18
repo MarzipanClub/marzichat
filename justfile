@@ -2,6 +2,10 @@ export GATEWAY_CONFIG := "gateway/dev_config.ron"
 export DATASTORE_CONFIG := "datastore/dev_config.ron"
 export CSS_FILE_NAME := "style.css"
 
+# expected by the datastore cli
+# shoulce match the socket_address in the datastore config
+export DATASTORE_SOCKET_ADDRESS := "[::1]:2507"
+
 alias app := watch-app
 alias gateway := watch-gateway
 alias datastore := watch-datastore

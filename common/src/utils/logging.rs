@@ -5,12 +5,12 @@ use {
         CPU_LOAD_WARN_LIMIT, CPU_TEMP_WARN_THRESHOLD_CELSIUS, INTERVAL_PERIOD,
         MEMORY_USAGE_WARN_THRESHOLD_PERCENTAGE,
     },
-    std::time::Duration,
+    anyhow::Result,
     tracing_subscriber::{fmt::layer, layer::SubscriberExt, util::SubscriberInitExt},
 };
 
 /// Initialize logging using the logging directive specified in the config file.
-pub fn init(logging_directive: &str) -> anyhow::Result<()> {
+pub fn init(logging_directive: &str) -> Result<()> {
     let logging = tracing_subscriber::registry()
         .with(tracing_subscriber::EnvFilter::builder().parse(logging_directive)?)
         .with(sentry_tracing::layer());

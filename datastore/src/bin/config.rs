@@ -7,10 +7,7 @@ use {
     anyhow::Result,
     common::utils::config::parse,
     serde::Deserialize,
-    std::{
-        num::{NonZeroU32, NonZeroU64},
-        sync::OnceLock,
-    },
+    std::{net::SocketAddr, sync::OnceLock},
 };
 
 static CONFIG: OnceLock<Config> = OnceLock::new();
@@ -24,6 +21,10 @@ pub struct Config {
     ///
     /// [1]: https://docs.rs/env_logger/latest/env_logger/index.html#enabling-logging
     pub logging_directive: String,
+
+    /// The socket address to bind to.
+    /// This is where clients will connect.
+    pub socket_address: SocketAddr,
 }
 
 /// Returns the global configuration for the server.

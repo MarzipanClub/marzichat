@@ -18,6 +18,7 @@
 )]
 
 use {
+    anyhow::Result,
     app::{
         ui::{GetPost, ListPostMetadata, Main},
         ASSETS_PATH,
@@ -39,7 +40,7 @@ use {
 mod config;
 
 #[tokio::main]
-async fn main() -> anyhow::Result<()> {
+async fn main() -> Result<()> {
     color_backtrace::install();
     config::init()?;
     common::utils::logging::init(&crate::config::get().logging_directive)?;

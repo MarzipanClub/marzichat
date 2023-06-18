@@ -26,6 +26,7 @@ path = "src/lib.rs"
 
 [dependencies]
 anyhow = {workspace = true}
+bytesize = {workspace = true}
 clap = {workspace = true, features = ["derive"]}
 color-backtrace = {workspace = true}
 common = {path = "../common"}

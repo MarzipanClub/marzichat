@@ -5,6 +5,7 @@
         "Bincode",
         "bindgen",
         "brotli",
+        "bytesize",
         "concatcp",
         "Leptos",
         "marzichat",
