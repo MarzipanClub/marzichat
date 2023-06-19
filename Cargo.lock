@@ -415,21 +415,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "common"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "ron 0.8.0",
- "sentry-tracing",
- "serde",
- "systemstat",
- "tokio",
- "tracing",
- "tracing-journald",
- "tracing-subscriber",
-]
-
-[[package]]
 name = "common_macros"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -780,7 +765,6 @@ dependencies = [
  "app",
  "axum",
  "color-backtrace",
- "common",
  "const_format",
  "hyper",
  "leptos",
@@ -788,11 +772,14 @@ dependencies = [
  "ron 0.8.0",
  "sentry-tracing",
  "serde",
+ "systemstat",
  "tokio",
  "tower",
  "tower-http",
  "tower_governor",
  "tracing",
+ "tracing-journald",
+ "tracing-subscriber",
 ]
 
 [[package]]

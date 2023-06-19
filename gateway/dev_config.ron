@@ -12,4 +12,8 @@ Config(
     /// an IP address and clients have to wait until the elements of the
     /// quota are replenished.
     rate_limit_burst_size: 10,
+
+    /// The path to the static assets to serve.
+    /// This is where the favicons directory and css file should be located.
+    static_assets_path: "target/assets/debug",
 )

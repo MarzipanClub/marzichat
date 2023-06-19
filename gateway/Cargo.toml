@@ -17,7 +17,6 @@ anyhow = {workspace = true}
 app = {path = "../app", features = ["ssr"]}
 axum = "0.6.18"
 color-backtrace = {workspace = true}
-common = {path = "../common"}
 const_format = {workspace = true}
 hyper = "0.14.26"
 leptos = {workspace = true}
@@ -25,8 +24,11 @@ leptos_axum = {version = "0.3.0", default-features = false}
 ron = {workspace = true}
 sentry-tracing = "0.31.3"
 serde = {workspace = true}
+systemstat = "0.2.3"
 tokio = {workspace = true, features = ["macros", "rt-multi-thread"]}
 tower = "0.4.13"
 tower-http = {version = "0.4.0", features = ["trace", "compression-br", "fs"]}
 tower_governor = "0.0.4"
-tracing = {workspace = true}
+tracing = "0.1.37"
+tracing-journald = "0.3.0"
+tracing-subscriber = {version = "0.3.17", features = ["env-filter"]}

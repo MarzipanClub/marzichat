@@ -1,14 +1,8 @@
 export GATEWAY_CONFIG := "gateway/dev_config.ron"
-export DATASTORE_CONFIG := "datastore/dev_config.ron"
 export CSS_FILE_NAME := "style.css"
-
-# expected by the datastore cli
-# shoulce match the socket_address in the datastore config
-export DATASTORE_SOCKET_ADDRESS := "[::1]:2507"
 
 alias app := watch-app
 alias gateway := watch-gateway
-alias datastore := watch-datastore
 
 done_message := "✅ done"
 
@@ -24,14 +18,12 @@ default:
 check:
     @cargo clippy --package app --lib --bin app --all-features
     @cargo clippy --package common
-    @cargo clippy --package datastore --lib --bin cli --bin datastore
     @cargo clippy --package gateway
 
 # command for rust analyzer check
 rust-analyzer-check:
     @cargo clippy --package app --lib --bin app --all-features --message-format=json-diagnostic-rendered-ansi
     @cargo clippy --package common --message-format=json-diagnostic-rendered-ansi
-    @cargo clippy --package datastore --lib --bin cli --bin datastore --message-format=json-diagnostic-rendered-ansi
     @cargo clippy --package gateway --message-format=json-diagnostic-rendered-ansi
 
 #######################################
@@ -55,6 +47,7 @@ watch-css:
 # builds the app in debug mode
 build-app:
     @echo "Building app..."
+    @cp -r assets/* {{debug_output}}
     @cargo build --package app --bin app --target wasm32-unknown-unknown --features=hydrate
     @cd app && wasm-bindgen \
         --target web \
@@ -67,6 +60,7 @@ build-app:
 # builds the app in release mode
 build-app-release:
     @echo "Building app in release mode..."
+    @cp -r assets/* {{release_output}}
     @cargo build --package app --bin app --target wasm32-unknown-unknown --features=hydrate --release
     @cd app && wasm-bindgen \
         --target web \
@@ -79,29 +73,6 @@ build-app-release:
 # watch app for changes and rebuild continuously
 watch-app:
     @cargo watch --clear --delay {{recompile_delay_seconds}} --ignore src/gateway -- just build-app
-
-#######################################
-# datastore related recipes
-#######################################
-
-# run the datastore cli
-datastore-cli *args:
-    @cargo run --package datastore --bin cli -- {{args}}
-
-# runs the datastore in debug mode
-run-datastore:
-    @echo "Building datastore..."
-    @cargo run --package datastore --bin datastore
-
-# builds the datastore in release mode
-build-datastore-release:
-    @echo "Building datastore in release mode..."
-    @cargo build --package datastore --bin datastore --release
-    @echo {{done_message}}
-
-# watch datastore for changes and rebuild continuously
-watch-datastore:
-    @cargo watch --clear --delay {{recompile_delay_seconds}} --ignore src/bin/cli.rs -- just run-datastore
 
 #######################################
 # gateway related recipes

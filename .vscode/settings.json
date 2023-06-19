@@ -6,6 +6,7 @@
         "bindgen",
         "brotli",
         "concatcp",
+        "favicons",
         "Leptos",
         "marzichat",
         "oneshot",

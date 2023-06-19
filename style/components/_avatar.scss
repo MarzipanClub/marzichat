@@ -1,0 +1,106 @@
+@use "../common";
+@use "../variables/colors";
+@use "sass:color";
+
+.avatar {
+    height: 50px;
+    width: 50px;
+    position: relative;
+    background-color: lightsteelblue;
+    border-radius: 1em;
+}
+
+.avatar-image {
+    height: auto;
+    width: 100%;
+    border-radius: 1em;
+}
+
+.avatar-status {
+    width: 10px;
+    height: 10px;
+    border-top-left-radius: 50% 50%;
+    border-top-right-radius: 50% 50%;
+    border-bottom-right-radius: 50% 50%;
+    border-bottom-left-radius: 50% 50%;
+    margin-bottom: 2px;
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+
+    $light: colors.$light-grey;
+    $dark: color.scale(colors.$light-grey, $blackness: 15%);
+    @include common.theme(background-color, $light, $dark);
+
+    $light: 0.1em solid colors.$light;
+    $dark: 0.15em solid colors.$dark;
+    @include common.theme(border, $light, $dark);
+}
+
+@mixin animate {
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+$start-online-color: color.scale(colors.$green, $saturation: -30%);
+$end-online-color: colors.$green;
+
+@keyframes pulsate-online {
+    0% {
+        background-color: $start-online-color;
+    }
+    50% {
+        background-color: $end-online-color;
+    }
+    100% {
+        background-color: $start-online-color;
+    }
+}
+
+.avatar-status.online {
+    background-color: $start-online-color;
+    animation-name: pulsate-online;
+    @include animate;
+}
+
+$start-away-color: color.scale(colors.$yellow, $saturation: -30%);
+$end-away-color: colors.$yellow;
+
+@keyframes pulsate-away {
+    0% {
+        background-color: $start-away-color;
+    }
+    50% {
+        background-color: $end-away-color;
+    }
+    100% {
+        background-color: $start-away-color;
+    }
+}
+
+.avatar-status.away {
+    background-color: $start-away-color;
+    animation-name: pulsate-away;
+    @include animate;
+}
+
+$start-busy-color: color.scale(colors.$red, $saturation: -30%);
+$end-busy-color: colors.$red;
+
+@keyframes pulsate-busy {
+    0% {
+        background-color: $start-busy-color;
+    }
+    50% {
+        background-color: $end-busy-color;
+    }
+    100% {
+        background-color: $start-busy-color;
+    }
+}
+
+.avatar-status.busy {
+    background-color: $start-busy-color;
+    animation-name: pulsate-busy;
+    @include animate;
+}

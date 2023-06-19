@@ -1,0 +1,88 @@
+@use "../common";
+@use "../variables/colors";
+@use "../variables/durations";
+@use "../variables/sizes";
+@use "sass:color";
+
+.blurb-inception {
+    padding: 3em;
+    text-align: center;
+    color: color.scale(colors.$dark, $lightness: 50%);
+}
+
+.blurb {
+    padding: 1em;
+    padding-top: 0px;
+    font-size: sizes.$ui-font-size;
+    margin: 0px 0.75em;
+}
+
+@mixin blurb-positioning {
+    display: flex;
+    max-width: 85%;
+}
+
+.blurb-left {
+    @include blurb-positioning;
+}
+
+.blurb-right {
+    @include blurb-positioning;
+    margin-left: auto;
+    margin-right: 0px;
+    flex-direction: row-reverse;
+}
+
+.blurb-header {
+    min-height: sizes.$ui-element-height;
+    display: inherit;
+    flex-direction: inherit;
+}
+
+.blurb-header.empty {
+    visibility: hidden;
+}
+
+.blurb-body {
+    min-height: sizes.$ui-element-height;
+    display: inherit;
+    flex-direction: column;
+}
+
+.blurb-bubble {
+    margin: 0.5em;
+    margin-top: 0px;
+    padding: 1em;
+    border-radius: 1em;
+    min-height: 1em;
+    min-width: 1em;
+    @include common.theme(color, inherit, colors.$light);
+
+    .blurb-left & {
+        margin-right: auto;
+        background-color: color.scale(colors.$purple-weak, $alpha: -75%);
+    }
+
+    .blurb-right & {
+        margin-left: auto;
+        background-color: color.scale(colors.$pink-weak, $alpha: -75%);
+    }
+}
+
+.blurb-animate-up {
+    animation-duration: 1s;
+    animation-fill-mode: both;
+    opacity: 0;
+    animation-name: fadeInUp;
+}
+
+@keyframes fadeInUp {
+    from {
+        transform: translate3d(0px, 100vh, 0);
+    }
+
+    to {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+}

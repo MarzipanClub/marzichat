@@ -1,7 +1,114 @@
-@import './colors';
+@use "common";
+@use "components/navbar";
+@use "components/main";
+@use "components/chat";
+@use "components/sidebar";
+@use "components/messenger";
+@use "components/blurb";
+@use "components/avatar";
+@use "components/text";
+@use "components/link";
+@use "components/input";
+@use "components/footer";
+@use "components/toggle";
+@use "components/dialog";
+@use "components/toast";
+@use "variables/colors";
+@use "variables/durations";
+@use "sass:color";
+
+@font-face {
+    font-family: "Rubik";
+    src: url("/assets/fonts/rubik.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "JetBrains";
+    src: url("/assets/fonts/jet-brains.ttf") format("truetype");
+}
+
+* {
+    font-family: "Rubik", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+        "Helvetica Neue", sans-serif;
+    margin: 0px;
+}
+
+html {
+    font-size: 12px;
+}
+
+@mixin light {
+    background-color: colors.$light;
+}
+
+@mixin dark {
+    background-color: colors.$dark;
+}
 
 body {
-    font-family: system-ui;
-    background-color: $background-light;
-    color: $text-dark;
+    @media (prefers-color-scheme: light) {
+        & {
+            @include light;
+        }
+    }
+
+    @media (prefers-color-scheme: dark) {
+        & {
+            @include dark;
+        }
+    }
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    height: 100vh;
+    margin: auto;
+    transition: background-color durations.$theme-color-transition;
+
+    @media (prefers-color-scheme: light) {
+        & {
+            @include light;
+        }
+    }
+
+    @media (prefers-color-scheme: dark) {
+        & {
+            @include dark;
+        }
+    }
+
+    &[data-theme="light"] {
+        @include light;
+    }
+
+    &[data-theme="dark"] {
+        @include dark;
+    }
+}
+
+svg {
+    width: auto;
+    height: auto;
+    margin: auto;
+    font-size: unset;
+    viewbox: 0 0 300 300;
+}
+
+b {
+    font-weight: 550;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+}
+
+.is-not-selectable {
+    @include common.is-not-selectable;
+}
+
+.is-hidden {
+    display: none;
 }

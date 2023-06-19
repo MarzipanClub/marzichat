@@ -1,0 +1,38 @@
+@use "../common";
+@use "../variables/colors";
+@use "../variables/durations";
+@use "../variables/sizes";
+@use "sass:color";
+
+.messenger {
+    height: inherit;
+    display: flex;
+    flex-direction: column;
+}
+
+.messenger-blank {
+    margin: auto;
+    cursor: default;
+}
+
+h1.messenger-blank-header {
+    font-size: 2em;
+    font-weight: unset;
+    color: color.scale(colors.$dark, $lightness: 50%);
+}
+
+.messenger-conversation {
+    display: flex;
+    flex-direction: column;
+    overflow: scroll;
+}
+
+.messenger-bar {
+    margin: auto 0 0 0;
+    bottom: 0px;
+    display: flex;
+    flex-direction: row;
+
+    @include common.theme(background-color, colors.$light, colors.$dark);
+    @include common.theme(color, colors.$dark, colors.$light);
+}

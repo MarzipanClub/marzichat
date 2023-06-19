@@ -23,6 +23,9 @@
 
 pub mod ui;
 
+/// The official name of the product.
+pub const PRODUCT_NAME: &str = "Marzichat";
+
 /// The name of the CSS file.
 pub const CSS_FILE_NAME: &str = env!("CSS_FILE_NAME");
 

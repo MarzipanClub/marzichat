@@ -1,7 +1,7 @@
 //! The main UI code.
 
 use {
-    super::{ASSETS_PATH, CSS_FILE_NAME},
+    super::{ASSETS_PATH, CSS_FILE_NAME, PRODUCT_NAME},
     const_format::formatcp,
     leptos::*,
     leptos_meta::*,
@@ -18,7 +18,7 @@ pub fn Main(cx: Scope) -> impl IntoView {
 
     view! { cx,
         <Stylesheet href=formatcp!("/{ASSETS_PATH}/{CSS_FILE_NAME}")/>
-        <Title text="Welcome to Leptos"/>
+        <Title text={PRODUCT_NAME}/>
 
         <Router>
             <main>

@@ -1,0 +1,172 @@
+@use "../common";
+@use "../variables/colors";
+@use "../variables/durations";
+@use "../variables/sizes";
+@use "sass:color";
+
+$dialog-width: 500px;
+
+.dialog {
+    display: flex;
+    flex-direction: column;
+    padding: 1em 0px;
+    width: $dialog-width;
+    border-radius: sizes.$ui-border-radius;
+    margin: 3em auto;
+    height: auto;
+    transition: background-color durations.$theme-color-transition, border durations.$theme-color-transition;
+
+    $light: color.scale(colors.$purple-weak, $alpha: -95%);
+    $dark: color.scale(colors.$purple-strong, $alpha: -95%);
+    @include common.theme(background-color, $light, $dark);
+
+    $light: 1px solid color.scale(colors.$dark, $alpha: -80%);
+    $dark: 1px solid color.scale(colors.$light, $alpha: -80%);
+    @include common.theme(border-top, $light, $dark);
+    @include common.theme(border-bottom, $light, $dark);
+
+    @media (min-width: $dialog-width) {
+        & {
+            @include common.theme(border-left, $light, $dark);
+            @include common.theme(border-right, $light, $dark);
+        }
+    }
+
+    @media (max-width: $dialog-width) {
+        & {
+            border-radius: unset;
+            width: 100vw;
+        }
+    }
+}
+
+.dialog-header {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    margin: 0px auto;
+    position: relative;
+    transition: color durations.$theme-color-transition;
+
+    @include common.theme(color, colors.$dark, colors.$light);
+}
+
+.dialog-close {
+    display: inline-flex;
+    margin: 0px;
+    margin-right: -24px; // close svg is 24x24px
+    padding: 0.25em;
+    border: 0.15em solid transparent;
+    border-radius: sizes.$ui-border-radius;
+    transition: color durations.$hover-transition, border durations.$hover-transition;
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    $light: 0.15em solid colors.$pink-weak;
+    $dark: 0.15em solid colors.$pink-strong;
+    @include common.theme(border, $light, $dark, ":hover");
+
+    $light: 0.15em solid colors.$pink-strong;
+    $dark: 0.15em solid colors.$pink-weak;
+    @include common.theme(border, $light, $dark, ":active");
+}
+
+.dialog-header-title {
+    display: inline-flex;
+    font-size: sizes.$ui-font-size;
+    margin: auto;
+    pointer-events: none;
+}
+
+.dialog-body {
+    display: flex;
+    flex-direction: column;
+    font-size: sizes.$ui-font-size;
+    margin: auto 10% 5%;
+    align-items: center;
+    position: relative;
+    transition: color durations.$theme-color-transition;
+    @include common.theme(color, colors.$dark, colors.$light);
+}
+
+.dialog-image {
+    margin: auto;
+    height: 100%;
+    width: 100%;
+    pointer-events: none;
+}
+
+.dialog-image img {
+    display: flex;
+    margin: 2em auto;
+    height: 120px;
+}
+
+.dialog-message {
+    text-align: center;
+    margin: 1em 0px;
+
+    &.checkbox {
+        @include common.is-not-selectable;
+        cursor: pointer;
+        padding: 0.5em 1em;
+    }
+
+    &.min-height {
+        min-height: 2em;
+    }
+}
+
+.dialog-input {
+    display: flex;
+    border: 2px solid colors.$purple-weak;
+    border-radius: sizes.$ui-border-radius;
+    margin: 0.75em 0em;
+    width: 80%;
+    overflow: hidden;
+    transition: border durations.$theme-color-transition;
+
+    @media (max-width: $dialog-width) {
+        & {
+            margin: 0.5em 0em;
+            width: 90%;
+        }
+    }
+
+    & input {
+        padding: 0.25em 0.75em;
+
+        @media (max-width: $dialog-width) {
+            & {
+                padding: 0em 0.5em;
+            }
+        }
+    }
+
+    &.verification-code {
+        width: 8em;
+
+        & input {
+            text-align: center;
+
+            &:not(:placeholder-shown) {
+                letter-spacing: 0.1em;
+                font-family: "JetBrains";
+            }
+        }
+    }
+
+    $light: 2px solid colors.$purple-weak;
+    $dark: 2px solid color.scale(colors.$purple-strong, $blackness: 10%);
+    @include common.theme(border, $light, $dark);
+
+    $light: 2px solid colors.$red;
+    $dark: 2px solid color.scale(colors.$red, $lightness: -40%);
+    @include common.theme(border, $light, $dark, ".error");
+}
+
+.dialog-divider {
+    margin: 0.75em 0px;
+}

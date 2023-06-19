@@ -1,0 +1,22 @@
+@use "../common";
+@use "../variables/colors";
+@use "../variables/durations";
+@use "sass:color";
+
+a.link {
+    text-decoration: none;
+    transition: color durations.$hover-transition;
+
+    @include common.theme(color, colors.$blue-strong, colors.$blue-weak);
+
+    &:hover {
+        color: color.scale(colors.$blue-strong, $lightness: 30%);
+    }
+
+    @include common.theme(
+        color,
+        color.scale(colors.$blue-strong, $lightness: 30%),
+        color.scale(colors.$blue-weak, $lightness: 30%),
+        ":hover"
+    );
+}

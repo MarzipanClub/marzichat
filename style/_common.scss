@@ -1,0 +1,28 @@
+@mixin is-not-selectable {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+@mixin theme($property, $light, $dark, $pseudo: null) {
+    @media (prefers-color-scheme: light) {
+        &#{$pseudo} {
+            #{$property}: $light;
+        }
+    }
+
+    @media (prefers-color-scheme: dark) {
+        &#{$pseudo} {
+            #{$property}: $dark;
+        }
+    }
+
+    [data-theme="light"] &#{$pseudo} {
+        #{$property}: $light;
+    }
+
+    [data-theme="dark"] &#{$pseudo} {
+        #{$property}: $dark;
+    }
+}

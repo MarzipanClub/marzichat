@@ -1,0 +1,27 @@
+@use "sass:color";
+
+$dark: #333;
+$light: #f3f3f3;
+
+$pink-strong: #a5429d;
+$pink-weak: color.scale($pink-strong, $lightness: 50%);
+
+$purple-strong: #5442a5;
+$purple-weak: color.scale($purple-strong, $lightness: 50%);
+
+$blue-strong: rgb(52, 98, 214);
+$blue-weak: color.scale($blue-strong, $lightness: 50%);
+
+$green: rgb(40, 202, 65);
+$green-dark: color.scale($green, $lightness: -40%);
+
+$yellow: rgb(255, 191, 47);
+$yellow-dark: color.scale($yellow, $lightness: -30%);
+
+$red: rgb(253, 73, 67);
+$red-dark: color.scale($red, $lightness: -40%);
+
+$light-grey: rgb(225, 225, 225);
+
+$autofill-light: rgb(255, 248, 187);
+$autofill-dark: rgb(250, 236, 108);

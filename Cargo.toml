@@ -1,5 +1,5 @@
 [workspace]
-members = ["app", "common", "gateway"]
+members = ["app", "gateway"]
 
 [workspace.package]
 edition = "2021"
@@ -15,7 +15,6 @@ version = "0.1.0"
 
 [workspace.dependencies]
 anyhow = "1.0.71"
-clap = "4.3.4"
 color-backtrace = "0.5.1"
 const_format = "0.2.31"
 derive_more = "0.99.17"
@@ -30,4 +29,3 @@ serde = "1.0.164"
 tarpc = "0.33.0"
 thiserror = "1.0.40"
 tokio = {version = "1.28.2", default-features = false}
-tracing = "0.1.37"

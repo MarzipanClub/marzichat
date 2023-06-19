@@ -1,0 +1,33 @@
+@use "../common";
+@use "../variables/colors";
+@use "../variables/durations";
+@use "../variables/sizes";
+
+.main-center-wrapper {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+.main-center-content {
+    display: inline-flex;
+    margin: auto;
+}
+
+.main {
+    margin: auto;
+    width: 100%;
+    transition: filter durations.$hover-transition, background-color durations.$theme-color-transition;
+    @include common.theme(background-color, colors.$light, colors.$dark);
+
+    &.limit-content-width {
+        max-width: sizes.$max-ui-display-width;
+    }
+
+    @media (min-width: sizes.$mobile-ui-viewport-width) {
+        &.navbar-space {
+            margin-top: sizes.$navbar-height;
+            overflow-y: scroll;
+        }
+    }
+}

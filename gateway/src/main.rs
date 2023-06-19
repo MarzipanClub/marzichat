@@ -34,16 +34,20 @@ use {
         task::{Context, Poll},
     },
     tower_governor::{governor::GovernorConfigBuilder, GovernorLayer},
-    tower_http::{compression::CompressionLayer, services::fs::ServeDir},
+    tower_http::{
+        compression::CompressionLayer,
+        services::{fs::ServeDir, ServeFile},
+    },
 };
 
 mod config;
+mod logging;
 
 #[tokio::main]
 async fn main() -> Result<()> {
     color_backtrace::install();
     config::init()?;
-    common::utils::logging::init(&crate::config::get().logging_directive)?;
+    logging::init()?;
 
     async fn handler() -> String {
         "Hello, World!".to_string()
@@ -73,15 +77,20 @@ async fn main() -> Result<()> {
     GetPost::register().expect("failed to register GetPost");
     ListPostMetadata::register().expect("failed to register ListPostMetadata");
 
-    // build our application with a single route
+    let assets_path = &crate::config::get().static_assets_path;
     let app = axum::Router::new()
         .route("/hello", get(handler))
         .route("/foo", get(|| async { "foobar" }))
         .route("/api/*fn_name", post(leptos_axum::handle_server_fns))
         .leptos_routes(leptos_options, routes, |cx| view! { cx, <Main/> })
+        .nest_service(formatcp!("/{ASSETS_PATH}"), ServeDir::new(assets_path))
         .nest_service(
-            formatcp!("/{ASSETS_PATH}"),
-            ServeDir::new("target/assets/debug").precompressed_br(),
+            formatcp!("/favicon.ico"),
+            ServeDir::new(assets_path.join("favicons").join("favicon.ico")),
+        )
+        .nest_service(
+            formatcp!("/{ASSETS_PATH}/favicons"),
+            ServeDir::new(assets_path.join("favicons")),
         )
         .layer(
             tower::ServiceBuilder::new()

@@ -1,0 +1,114 @@
+@use "../common";
+@use "../variables/colors";
+@use "../variables/durations";
+@use "../variables/sizes";
+@use "sass:color";
+
+@mixin element {
+    background-color: inherit;
+    color: inherit;
+    transition: inherit;
+    display: inline-flex;
+    align-items: center;
+    font-size: sizes.$ui-font-size;
+    height: sizes.$ui-element-height;
+    padding: sizes.$ui-element-padding;
+    transition: color durations.$hover-transition, background-color durations.$hover-transition;
+}
+
+.input-button {
+    @include element;
+    margin-left: auto;
+    margin-right: 0px;
+    cursor: pointer;
+
+    &:hover {
+        color: black;
+    }
+
+    @include common.theme(
+        background-color,
+        color.scale(colors.$pink-weak, $alpha: -50%),
+        color.scale(colors.$pink-strong, $alpha: -50%),
+        ":hover"
+    );
+
+    &.disabled {
+        pointer-events: none;
+
+        @include common.theme(background-color, inherit, unset);
+        @include common.theme(
+            color,
+            color.scale(colors.$light, $blackness: 50%),
+            color.scale(colors.$dark, $lightness: 50%)
+        );
+    }
+}
+
+.input-element {
+    @include element;
+    border: unset;
+    width: 100%;
+
+    &.center {
+        text-align: center;
+    }
+
+    &:focus {
+        outline: none;
+        outline-width: 0;
+        box-shadow: none;
+    }
+
+    $light: color.scale(colors.$light, $blackness: 80%);
+    $dark: color.scale(colors.$light, $lightness: -50%);
+    @include common.theme(color, $light, $dark, "::-webkit-input-placeholder");
+    @include common.theme(color, $light, $dark, "::-moz-placeholder");
+    @include common.theme(color, $light, $dark, "::-ms-input-placeholder");
+    @include common.theme(color, $light, $dark, "::-moz-placeholder");
+
+    &::-moz-placeholder {
+        opacity: 1;
+    }
+}
+
+input {
+    &::-webkit-contacts-auto-fill-button {
+        transition: background-color durations.$hover-transition;
+        background-color: colors.$pink-strong;
+    }
+    &::-webkit-credentials-auto-fill-button {
+        transition: background-color durations.$hover-transition;
+        background-color: colors.$pink-strong;
+    }
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+    -webkit-text-fill-color: colors.$pink-strong;
+    transition: box-shadow durations.$hover-transition;
+    transition: -webkit-box-shadow durations.$hover-transition;
+    @include common.theme(
+        box-shadow,
+        0 0 0px 1000px colors.$autofill-light inset,
+        0 0 0px 1000px colors.$autofill-dark inset
+    );
+    @include common.theme(
+        -webkit-box-shadow,
+        0 0 0px 1000px colors.$autofill-light inset,
+        0 0 0px 1000px colors.$autofill-dark inset
+    );
+}
+
+.input-checkbox {
+    position: relative;
+    bottom: 0.15em;
+    cursor: pointer;
+}

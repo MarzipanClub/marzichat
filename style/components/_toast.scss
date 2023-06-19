@@ -1,0 +1,125 @@
+@use "../common";
+@use "../variables/colors";
+@use "../variables/durations";
+@use "../variables/sizes";
+@use "sass:color";
+
+$toast-top: 3 * sizes.$navbar-height;
+
+.toast {
+    display: flex;
+    max-width: 0.9 * sizes.$mobile-ui-viewport-width;
+    height: auto;
+    margin: auto;
+    text-align: center;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    right: 0;
+    top: $toast-top;
+    font-size: sizes.$ui-font-size;
+    border-radius: sizes.$ui-border-radius;
+    box-shadow: 0px 0px 3em 0 rgba(0, 0, 0, 0.4);
+    animation: fadein 0.5s, stay 3.5s 0.5s, fadeout 0.5s 4.5s;
+    transition: background-color durations.$theme-color-transition, box-shadow durations.$theme-color-transition;
+
+    @media (max-width: sizes.$mobile-ui-viewport-width) {
+        & {
+            max-width: 90vw;
+        }
+    }
+
+    $light: colors.$light;
+    $dark: color.scale(colors.$dark, $lightness: 10%);
+    @include common.theme(background-color, $light, $dark);
+
+    $light: 0px 0px 3em 0 rgba(0, 0, 0, 0.3);
+    $dark: 0px 0px 3em 0 rgba(0, 0, 0, 0.8);
+    @include common.theme(box-shadow, $light, $dark);
+}
+
+.toast-icon {
+    display: flex;
+    width: 50px;
+    height: auto;
+    position: relative;
+    float: left;
+    box-sizing: border-box;
+    color: colors.$light;
+    border-radius: sizes.$ui-border-radius;
+    transition: background-color durations.$theme-color-transition, box-shadow durations.$theme-color-transition;
+
+    $light: colors.$purple-weak;
+    $dark: color.scale(colors.$purple-strong, $blackness: 10%);
+    @include common.theme(background-color, $light, $dark);
+
+    $light: 0px 0px 0px 1px color.scale(colors.$light, $lightness: -20%);
+    $dark: 0px 0px 0px 1px color.scale(colors.$dark, $lightness: -40%);
+    @include common.theme(box-shadow, $light, $dark);
+
+    $light: color.scale(colors.$green, $lightness: -10%);
+    $dark: colors.$green-dark;
+    @include common.theme(background-color, $light, $dark, ".success");
+
+    $light: 0px 0px 0px 1px color.scale(colors.$green, $lightness: -20%);
+    $dark: 0px 0px 0px 1px color.scale(colors.$green-dark, $lightness: -10%);
+    @include common.theme(box-shadow, $light, $dark, ".success");
+
+    $light: color.scale(colors.$yellow, $lightness: -10%);
+    $dark: colors.$yellow-dark;
+    @include common.theme(background-color, $light, $dark, ".warning");
+
+    $light: 0px 0px 0px 1px color.scale(colors.$yellow, $lightness: -20%);
+    $dark: 0px 0px 0px 1px color.scale(colors.$yellow-dark, $lightness: -10%);
+    @include common.theme(box-shadow, $light, $dark, ".warning");
+
+    $light: color.scale(colors.$red, $lightness: -10%);
+    $dark: colors.$red-dark;
+    @include common.theme(background-color, $light, $dark, ".error");
+
+    $light: 0px 0px 0px 1px color.scale(colors.$red, $lightness: -20%);
+    $dark: 0px 0px 0px 1px color.scale(colors.$red-dark, $lightness: -10%);
+    @include common.theme(box-shadow, $light, $dark, ".error");
+}
+
+.toast-message {
+    display: flex;
+    width: auto;
+    margin: auto;
+    flex-direction: column;
+    padding: 1em;
+    transition: color durations.$theme-color-transition;
+
+    @include common.theme(color, colors.$dark, colors.$light);
+}
+
+@keyframes fadein {
+    from {
+        top: 0;
+        opacity: 0;
+    }
+    to {
+        top: $toast-top;
+        opacity: 1;
+    }
+}
+
+@keyframes stay {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeout {
+    from {
+        top: $toast-top;
+        opacity: 1;
+    }
+    to {
+        top: 0;
+        opacity: 0;
+    }
+}
