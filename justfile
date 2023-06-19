@@ -17,13 +17,11 @@ default:
 # check the code for compile errors
 check:
     @cargo clippy --package app --lib --bin app --all-features
-    @cargo clippy --package common
     @cargo clippy --package gateway
 
 # command for rust analyzer check
 rust-analyzer-check:
     @cargo clippy --package app --lib --bin app --all-features --message-format=json-diagnostic-rendered-ansi
-    @cargo clippy --package common --message-format=json-diagnostic-rendered-ansi
     @cargo clippy --package gateway --message-format=json-diagnostic-rendered-ansi
 
 #######################################
@@ -72,7 +70,7 @@ build-app-release:
 
 # watch app for changes and rebuild continuously
 watch-app:
-    @cargo watch --clear --delay {{recompile_delay_seconds}} --ignore src/gateway -- just build-app
+    @cargo watch --clear --delay {{recompile_delay_seconds}} --watch app -- just build-app
 
 #######################################
 # gateway related recipes

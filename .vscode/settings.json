@@ -7,6 +7,7 @@
         "brotli",
         "concatcp",
         "favicons",
+        "leptos",
         "Leptos",
         "marzichat",
         "oneshot",
@@ -19,10 +20,7 @@
         "thiserror",
         "watchexec"
     ],
-    // "rust-analyzer.cargo.features": [
-    //     "hydrate",
-    //     "ssr"
-    // ],
+    "cSpell.language": "en,es,de,fr",
     "rust-analyzer.linkedProjects": [
         "./Cargo.toml"
     ],

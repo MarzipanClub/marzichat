@@ -21,7 +21,12 @@
     variant_size_differences
 )]
 
-pub mod ui;
+use {crate::pages::Signup, const_format::formatcp, leptos::*, leptos_meta::*, leptos_router::*};
+
+pub mod pages;
+
+mod components;
+mod internationalization;
 
 /// The official name of the product.
 pub const PRODUCT_NAME: &str = "Marzichat";
@@ -31,3 +36,24 @@ pub const CSS_FILE_NAME: &str = env!("CSS_FILE_NAME");
 
 /// The path segment for static assets.
 pub const ASSETS_PATH: &str = "assets";
+
+/// The app UI entry point.
+#[component]
+pub fn App(cx: Scope) -> impl IntoView {
+    provide_meta_context(cx);
+    // TODO: provide language as context
+    // add open graph meta tags
+
+    view! { cx,
+        <Stylesheet href=formatcp!("/{ASSETS_PATH}/{CSS_FILE_NAME}")/>
+        <Title text={PRODUCT_NAME}/>
+
+        <Router>
+            <main>
+                <Routes>
+                    <Route path="" view=|cx| view! { cx, <Signup/> }/>
+                </Routes>
+            </main>
+        </Router>
+    }
+}

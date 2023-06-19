@@ -1,7 +1,7 @@
 Config(
     /// Set the logging directive to use.
     /// https://docs.rs/env_logger/latest/env_logger/index.html#enabling-logging
-    logging_directive: "gateway=trace,hyper=info,debug",
+    logging_directive: "gateway=trace,hyper=info,tower_http=debug,debug",
 
     /// Set the interval after which one element of the quota is replenished in
     /// seconds for each ip address.
@@ -11,7 +11,7 @@ Config(
     /// occur before the governor middleware starts blocking requests from
     /// an IP address and clients have to wait until the elements of the
     /// quota are replenished.
-    rate_limit_burst_size: 10,
+    rate_limit_burst_size: 20,
 
     /// The path to the static assets to serve.
     /// This is where the favicons directory and css file should be located.

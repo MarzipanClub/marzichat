@@ -19,10 +19,7 @@
 
 use {
     anyhow::Result,
-    app::{
-        ui::{GetPost, ListPostMetadata, Main},
-        ASSETS_PATH,
-    },
+    app::{App, ASSETS_PATH},
     axum::routing::{get, post},
     const_format::formatcp,
     hyper::server::{accept::Accept, conn::AddrIncoming},
@@ -54,35 +51,30 @@ async fn main() -> Result<()> {
     }
 
     let leptos_options = LeptosOptions {
-        output_name: String::from("app"),
-
+        output_name: "app".into(),
         site_root: ".".into(),
-
         site_pkg_dir: ASSETS_PATH.into(),
-
         env: if cfg!(debug_assertions) {
             Env::DEV
         } else {
             Env::PROD
         },
-
         site_addr: SocketAddr::new(Ipv4Addr::LOCALHOST.into(), 2506),
-
-        reload_port: 0,
+        reload_port: 0, // not used
     };
 
     // Generate the list of routes in your Leptos App
-    let routes = generate_route_list(|cx| view! { cx, <Main/> }).await;
+    let routes = generate_route_list(|cx| view! { cx, <App/> }).await;
 
-    GetPost::register().expect("failed to register GetPost");
-    ListPostMetadata::register().expect("failed to register ListPostMetadata");
+    // TODO: register server function here
+    // e.g. GetPost::register().expect("failed to register GetPost");
 
     let assets_path = &crate::config::get().static_assets_path;
     let app = axum::Router::new()
         .route("/hello", get(handler))
         .route("/foo", get(|| async { "foobar" }))
         .route("/api/*fn_name", post(leptos_axum::handle_server_fns))
-        .leptos_routes(leptos_options, routes, |cx| view! { cx, <Main/> })
+        .leptos_routes(leptos_options, routes, |cx| view! { cx, <App/> })
         .nest_service(formatcp!("/{ASSETS_PATH}"), ServeDir::new(assets_path))
         .nest_service(
             formatcp!("/favicon.ico"),
