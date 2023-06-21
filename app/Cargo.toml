@@ -20,14 +20,14 @@ name = "app"
 path = "src/lib.rs"
 
 [dependencies]
+common = {path = "../common"}
 console_error_panic_hook = {version = "0.1.7", optional = true}
 const_format = {workspace = true}
-derive_more = {workspace = true}
+gloo = {version = "0.8.1", optional = true}
 leptos = {workspace = true}
 leptos_meta = {workspace = true}
 leptos_router = {workspace = true}
 serde = {workspace = true}
-thiserror = {workspace = true}
 tokio = {workspace = true, optional = true}
 wasm-bindgen = {version = "0.2.87", optional = true}
 wasm-log = {version = "0.3.1", optional = true}
@@ -37,6 +37,7 @@ hydrate = [
   "dep:console_error_panic_hook",
   "dep:wasm-bindgen",
   "dep:wasm-log",
+  "gloo/storage",
   "leptos_meta/hydrate",
   "leptos_router/hydrate",
   "leptos/hydrate",

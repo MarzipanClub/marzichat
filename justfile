@@ -1,5 +1,6 @@
-export GATEWAY_CONFIG := "gateway/dev_config.ron"
+export GATEWAY_CONFIG := "gateway/sample_config.ron"
 export CSS_FILE_NAME := "style.css"
+export SQLX_OFFLINE := "true"
 
 alias app := watch-app
 alias gateway := watch-gateway
@@ -17,11 +18,13 @@ default:
 # check the code for compile errors
 check:
     @cargo clippy --package app --lib --bin app --all-features
+    @cargo clippy --package common
     @cargo clippy --package gateway
 
 # command for rust analyzer check
 rust-analyzer-check:
     @cargo clippy --package app --lib --bin app --all-features --message-format=json-diagnostic-rendered-ansi
+    @cargo clippy --package common --message-format=json-diagnostic-rendered-ansi
     @cargo clippy --package gateway --message-format=json-diagnostic-rendered-ansi
 
 #######################################
@@ -45,6 +48,7 @@ watch-css:
 # builds the app in debug mode
 build-app:
     @echo "Building app..."
+    @mkdir -p {{debug_output}}
     @cp -r assets/* {{debug_output}}
     @cargo build --package app --bin app --target wasm32-unknown-unknown --features=hydrate
     @cd app && wasm-bindgen \
@@ -58,6 +62,7 @@ build-app:
 # builds the app in release mode
 build-app-release:
     @echo "Building app in release mode..."
+    @mkdir -p {{release_output}}
     @cp -r assets/* {{release_output}}
     @cargo build --package app --bin app --target wasm32-unknown-unknown --features=hydrate --release
     @cd app && wasm-bindgen \
@@ -70,7 +75,7 @@ build-app-release:
 
 # watch app for changes and rebuild continuously
 watch-app:
-    @cargo watch --clear --delay {{recompile_delay_seconds}} --watch app -- just build-app
+    @cargo watch --clear --delay {{recompile_delay_seconds}} --watch app --ignore app/src/bin -- just build-app
 
 #######################################
 # gateway related recipes
@@ -89,4 +94,13 @@ build-gateway-release:
 
 # watch gateway for changes and rebuild continuously
 watch-gateway:
-    @cargo watch --clear --delay {{recompile_delay_seconds}} --watch gateway -- cargo run --package gateway
+    @cargo watch --clear --delay {{recompile_delay_seconds}} --watch gateway --watch app -- cargo run --package gateway
+
+#######################################
+# migration related recipes
+#######################################
+
+# runs the migrations
+run-migrations:
+    @echo "Running migrations..."
+    @cd gateway && sqlx migrate run --database-url $DATABASE_URL

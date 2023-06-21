@@ -2,23 +2,40 @@
     // don't use the local cargo index, instead use the up-to-date one on the internet
     "crates.useLocalCargoIndex": false,
     "cSpell.words": [
+        "ascii",
+        "axum",
+        "binaryen",
         "Bincode",
         "bindgen",
         "brotli",
         "concatcp",
+        "createdb",
+        "datetime",
         "favicons",
+        "gloo",
+        "invalidities",
+        "justfile",
         "leptos",
         "Leptos",
+        "mailchecker",
         "marzichat",
         "oneshot",
+        "openssl",
+        "postgres",
+        "postgresql",
         "precompressed",
         "Redb",
         "rustc",
+        "sqlx",
         "Stylesheet",
         "systemstat",
         "tarpc",
         "thiserror",
-        "watchexec"
+        "tokio",
+        "uuid",
+        "watchexec",
+        "zeroize",
+        "zxcvbn"
     ],
     "cSpell.language": "en,es,de,fr",
     "rust-analyzer.linkedProjects": [
@@ -33,5 +50,6 @@
         // The actual value is defined in the justfile.
         "CSS_FILE_NAME": "",
     },
-    "rust-analyzer.check.allTargets": false
+    "rust-analyzer.check.allTargets": false,
+    "rust-analyzer.showUnlinkedFileNotification": false
 }

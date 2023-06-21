@@ -5,7 +5,8 @@
 
 use {
     anyhow::{Context, Result},
-    serde::{de::DeserializeOwned, Deserialize},
+    hex::FromHex,
+    serde::{de::DeserializeOwned, Deserialize, Deserializer},
     std::{
         num::{NonZeroU32, NonZeroU64},
         path::PathBuf,
@@ -15,6 +16,10 @@ use {
 };
 
 static CONFIG: OnceLock<Config> = OnceLock::new();
+
+const COOKIE_SIGNING_KEY_LENGTH_BYTES: usize = 64;
+
+pub type CookieSigningKey = [u8; COOKIE_SIGNING_KEY_LENGTH_BYTES];
 
 /// The root configuration.
 #[derive(Debug, Deserialize)]
@@ -39,6 +44,13 @@ pub struct Config {
     /// The path to the static assets to serve.
     /// This is where the favicons directory and css file should be located.
     pub static_assets_path: PathBuf,
+
+    /// The secret key to use for signing cookies.
+    ///
+    /// Must be 64 bytes long and encoded as hex.
+    /// Use `openssl rand -hex 64` to generate a new key.
+    #[serde(deserialize_with = "cookie_signing_key_from_str")]
+    pub cookie_signing_key: CookieSigningKey,
 }
 
 /// Returns the global configuration for the server.
@@ -91,4 +103,12 @@ pub fn parse<T: DeserializeOwned>(cargo_package_name: &str) -> Result<T> {
     )
     .context("failed to parse config file")?;
     Ok(config)
+}
+
+fn cookie_signing_key_from_str<'de, D>(deserializer: D) -> Result<CookieSigningKey, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let hex: String = Deserialize::deserialize(deserializer)?;
+    <CookieSigningKey>::from_hex(hex).map_err(serde::de::Error::custom)
 }

@@ -7,31 +7,42 @@ Marzichat is a lightweight and performant webapp for realtime chat. It's build e
 
 - TODO: write feature list
 
-## Technologies Used
-
-- [Axum](https://docs.rs/axum/latest/axum/) for the web server.
-- [Leptos](https://docs.rs/leptos/latest/leptos/) for the frontend web framework
-- [Redb](https://docs.rs/redb/latest/redb/) for the embedded key-value store
-
 ## Installation
 
-1. Make sure you have Rust and PostgreSQL installed on your system.
+### Requirements
+1. Make sure you have [Rust](https://www.rust-lang.org) and [PostgreSQL](https://www.postgresql.org) installed on your system.
 2. Clone this repository.
-3. Install [just](https://github.com/casey/just).
-4. Install [cargo-watch](https://github.com/watchexec/cargo-watch).
-5. Install [wasm-bindgen](https://github.com/rustwasm/wasm-bindgen).
-6. Install [grass](https://docs.rs/grass/latest/grass/).
-7. Install [watchexec](https://github.com/watchexec/watchexec).
-8. Install [wasm-opt](https://github.com/WebAssembly/binaryen) from source. Make sure to ad `wasm-opt` to your PATH:
+3. Install [just](https://github.com/casey/just): `cargo install just`
+4. Install [cargo-watch](https://github.com/watchexec/cargo-watch): `cargo install cargo-watch`
+5. Install [wasm-bindgen](https://github.com/rustwasm/wasm-bindgen): `cargo install wasm-bindgen-cli`
+6. Install [grass](https://docs.rs/grass/latest/grass/): `cargo install grass`
+7. Install [watchexec](https://github.com/watchexec/watchexec): `cargo install watchexec-cli`
+8. Install [sqlx-cli](https://github.com/launchbadge/sqlx/tree/253d8c9f696a3a2c7aa837b04cc93605a1376694/sqlx-cli): `cargo install sqlx-cli --no-default-features --features postgres`
+9.  Install [wasm-opt](https://github.com/WebAssembly/binaryen#building) from source. Make sure to ad `wasm-opt` to your PATH:
 ```
     # .zshrc
     export PATH="$HOME/binaryen/bin:$PATH"
 ```
-1. TODO: list installation steps
+### Database setup
+Create a database within postgres.
+1. Type `psql` in you terminal to enter the postgres interpreter as the default user (which is your OS username). The default user should have permission to create more users.
+2. Run `\du` to describe users.
+3. Create a new user (called roles in postgres) with:
+
+    `create role marzichat with login;`
+
+4. Run `\du` to view the users again. You should see the new user.
+5. Run the migrations:
+
+    `DATABASE_URL="postgresql://postgres@127.0.0.1/marzichat" just run-migrations`
 
 ## Configuration
 
-The application can be configured using a [ron](https://docs.rs/ron/0.8.0/ron/) config file.
+### Gateway
+The gateway is configured using a [ron](https://docs.rs/ron/0.8.0/ron/) formatted file. (Ron is to Rust what JSON is to javascript.)
+Create a new ron file based on `sample_config.ron` and update the `justfile` to:
+
+    export GATEWAY_CONFIG := "<path-to-your-config-ron-file>"
 
 TODO: explain configuration file
 

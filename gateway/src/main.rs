@@ -20,16 +20,35 @@
 use {
     anyhow::Result,
     app::{App, ASSETS_PATH},
-    axum::routing::{get, post},
+    axum::{
+        body::Body as AxumBody,
+        extract::{Path, RawQuery, State},
+        http::{header::HeaderMap, Request},
+        response::{IntoResponse, Response},
+        routing::{get, post},
+        Router,
+    },
+    axum_login::AuthLayer,
+    axum_sessions::{
+        async_session::CookieStore,
+        extractors::{ReadableSession, WritableSession},
+        SessionLayer,
+    },
+    common::types::{account, account::Account},
     const_format::formatcp,
-    hyper::server::{accept::Accept, conn::AddrIncoming},
-    leptos::{leptos_config::Env, view, LeptosOptions, ServerFn},
-    leptos_axum::{generate_route_list, LeptosRoutes},
+    hyper::{
+        server::{accept::Accept, conn::AddrIncoming},
+        Server,
+    },
+    leptos::{leptos_config::Env, view, LeptosOptions},
+    leptos_axum::{generate_route_list, handle_server_fns_with_context, LeptosRoutes},
+    rand::{prelude::ThreadRng, Rng},
     std::{
         net::{Ipv4Addr, Ipv6Addr, SocketAddr},
         pin::Pin,
         task::{Context, Poll},
     },
+    tower::ServiceBuilder,
     tower_governor::{governor::GovernorConfigBuilder, GovernorLayer},
     tower_http::{
         compression::CompressionLayer,
@@ -50,42 +69,42 @@ async fn main() -> Result<()> {
         "Hello, World!".to_string()
     }
 
-    let leptos_options = LeptosOptions {
-        output_name: "app".into(),
-        site_root: ".".into(),
-        site_pkg_dir: ASSETS_PATH.into(),
-        env: if cfg!(debug_assertions) {
-            Env::DEV
-        } else {
-            Env::PROD
-        },
-        site_addr: SocketAddr::new(Ipv4Addr::LOCALHOST.into(), 2506),
-        reload_port: 0, // not used
-    };
+    let config = crate::config::get();
 
-    // Generate the list of routes in your Leptos App
-    let routes = generate_route_list(|cx| view! { cx, <App/> }).await;
+    let session_layer =
+        SessionLayer::new(CookieStore::new(), &config.cookie_signing_key).with_secure(false);
 
-    // TODO: register server function here
-    // e.g. GetPost::register().expect("failed to register GetPost");
+    // let user_store = AuthMemoryStore::new(&store);
+    // let auth_layer = AuthLayer::new(user_store, &secret);
 
-    let assets_path = &crate::config::get().static_assets_path;
-    let app = axum::Router::new()
+    let assets_path = &config.static_assets_path;
+    let router = Router::new()
         .route("/hello", get(handler))
         .route("/foo", get(|| async { "foobar" }))
         .route("/api/*fn_name", post(leptos_axum::handle_server_fns))
-        .leptos_routes(leptos_options, routes, |cx| view! { cx, <App/> })
+        .leptos_routes(
+            LeptosOptions {
+                output_name: "app".into(),
+                site_root: ".".into(),
+                site_pkg_dir: ASSETS_PATH.into(),
+                env: Env::PROD, // no
+                site_addr: SocketAddr::new(Ipv4Addr::LOCALHOST.into(), 0),
+                reload_port: 0, // not used
+            },
+            generate_route_list(|cx| view! { cx, <App/> }).await,
+            |cx| view! { cx, <App/> },
+        )
         .nest_service(formatcp!("/{ASSETS_PATH}"), ServeDir::new(assets_path))
         .nest_service(
             formatcp!("/favicon.ico"),
-            ServeDir::new(assets_path.join("favicons").join("favicon.ico")),
+            ServeFile::new(assets_path.join("favicons").join("favicon.ico")),
         )
         .nest_service(
             formatcp!("/{ASSETS_PATH}/favicons"),
             ServeDir::new(assets_path.join("favicons")),
         )
         .layer(
-            tower::ServiceBuilder::new()
+            ServiceBuilder::new()
                 .layer(
                     // logging layer
                     tower_http::trace::TraceLayer::new_for_http(),
@@ -120,22 +139,51 @@ async fn main() -> Result<()> {
                 } else {
                     CompressionLayer::new()
                 }),
-        );
+        )
+        .layer({
+            SessionLayer::new(CookieStore::new(), &config.cookie_signing_key)
+                .with_secure(
+                    // set secure cookie attributes on release builds.
+                    // secure cookies are only sent via https
+                    cfg!(not(debug_assertions)),
+                )
+                .with_http_only(
+                    // http_only makes a cookie inaccessible to Javascript and thus
+                    // unusable for XSS attacks
+                    true,
+                )
+                .with_cookie_name("session-id")
+                .with_session_ttl(Some(std::time::Duration::from_secs({
+                    const COOKIE_SESSION_DURATION_DAYS: u64 = 60;
+                    60 * 60 * 24 * COOKIE_SESSION_DURATION_DAYS
+                })))
+        });
 
-    let server = axum::Server::builder(Listeners([
+    let listeners = Listeners([
         AddrIncoming::bind(&SocketAddr::new(Ipv4Addr::LOCALHOST.into(), 2506))?,
         AddrIncoming::bind(&SocketAddr::new(Ipv6Addr::LOCALHOST.into(), 2506))?,
-    ]));
+    ]);
 
-    tracing::debug!("ready");
-    server
-        .serve(app.into_make_service_with_connect_info::<SocketAddr>())
+    tracing::info!(?listeners, "ready");
+
+    Server::builder(listeners)
+        .serve(router.into_make_service_with_connect_info::<SocketAddr>())
         .await?;
 
     Ok(())
 }
 
 struct Listeners<const N: usize>([AddrIncoming; N]);
+
+impl<const N: usize> std::fmt::Debug for Listeners<N> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut list = f.debug_list();
+        for addr_incoming in &self.0 {
+            list.entry(&addr_incoming.local_addr());
+        }
+        list.finish()
+    }
+}
 
 impl<const N: usize> Accept for Listeners<N> {
     type Conn = <AddrIncoming as Accept>::Conn;
@@ -154,3 +202,57 @@ impl<const N: usize> Accept for Listeners<N> {
         Poll::Pending
     }
 }
+
+use {axum::extract::FromRef, leptos::provide_context};
+
+/// This takes advantage of Axum's SubStates feature by deriving FromRef. This
+/// is the only way to have more than one item in Axum's State. Leptos requires
+/// you to have leptosOptions in your State struct for the leptos route handlers
+#[derive(FromRef, Debug, Clone)]
+pub struct AppState {
+    pub leptos_options: LeptosOptions,
+    // pub pool: SqlitePool,
+}
+
+// pub type AuthSession = axum_session_auth::AuthSession<User, i64,
+// SessionSqlitePool, SqlitePool>
+
+async fn server_fn_handler(
+    State(app_state): State<AppState>,
+    // auth_session: AuthSession,
+    path: Path<String>,
+    headers: HeaderMap,
+    raw_query: RawQuery,
+    request: Request<AxumBody>,
+) -> impl IntoResponse {
+    handle_server_fns_with_context(
+        path,
+        headers,
+        raw_query,
+        move |cx| {
+            // provide_context(cx, auth_session.clone());
+            // provide_context(cx, app_state.pool.clone());
+        },
+        request,
+    )
+    .await
+}
+
+// type AuthContext = axum_login::extractors::AuthContext<account::Id, Account,
+// SqliteStore<User>>;
+
+// async fn leptos_routes_handler(
+//     // auth_session: AuthSession,
+//     State(app_state): State<AppState>,
+//     req: Request<AxumBody>,
+// ) -> Response {
+//     let handler = leptos_axum::render_app_to_stream_with_context(
+//         app_state.leptos_options.clone(),
+//         move |cx| {
+//             // provide_context(cx, auth_session.clone());
+//             // provide_context(cx, app_state.pool.clone());
+//         },
+//         |cx| view! { cx, <TodoApp/> },
+//     );
+//     handler(req).await.into_response()
+// }

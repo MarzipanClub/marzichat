@@ -16,4 +16,12 @@ Config(
     /// The path to the static assets to serve.
     /// This is where the favicons directory and css file should be located.
     static_assets_path: "target/assets/debug",
+
+    /// The secret key to use for signing cookies.
+    ///
+    /// Must be 64 bytes long and encoded as hex.
+    /// Use `openssl rand -hex 64` to generate a new key.
+    cookie_signing_key: "ec6f5bbe16ab65cd1c81b1a02c85a878e86a679115eaf9e4604f1015cabbd78e3ae5c443595ef4e6084ff7d68ac276a03a71ef7bc836576772ee7530dca7a378",
+
+    postgres_url: "postgresql://marzichat@127.0.0.1/marzichat"
 )

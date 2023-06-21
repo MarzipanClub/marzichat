@@ -1,19 +1,18 @@
-use {leptos::*, leptos_meta::*};
+use {common::internationalization::Translations, leptos::*, leptos_meta::*};
 
 #[component]
 pub fn Signup(cx: Scope) -> impl IntoView {
-    // TODO: create a function to get langauge from outer scope
-    // https://docs.rs/leptos/0.3.1/leptos/fn.use_context.html
+    let t = Translations::for_language(Default::default());
     view! { cx,
-        <Title text="Signup"/>
+        <Title text={t.signup()}/>
         <div class="main navbar-space">
             <div class="dialog">
                 <div class="dialog-header">
-                    <div class="dialog-header-title is-not-selectable">"Create an account"</div>
+                    <div class="dialog-header-title is-not-selectable">{t.create_an_account()}</div>
                 </div>
                 <form class="dialog-body">
                     <div class="dialog-image is-not-selectable" >
-                        <img src="/assets/images/logo.svg" alt="Marzichat logo"/>
+                        <img src="/assets/images/logo.svg" alt=t.logo_of_the_letter_m()/>
                     </div>
                 </form>
             </div>
