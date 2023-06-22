@@ -1,4 +1,4 @@
-//! The main entry point for the gateway.
+//! The main entry point for the backend.
 
 // rustc lints
 // https://doc.rust-lang.org/rustc/lints/index.html
@@ -21,28 +21,17 @@ use {
     anyhow::Result,
     app::{App, ASSETS_PATH},
     axum::{
-        body::Body as AxumBody,
-        extract::{Path, RawQuery, State},
-        http::{header::HeaderMap, Request},
-        response::{IntoResponse, Response},
         routing::{get, post},
         Router,
     },
-    axum_login::AuthLayer,
-    axum_sessions::{
-        async_session::CookieStore,
-        extractors::{ReadableSession, WritableSession},
-        SessionLayer,
-    },
-    common::types::{account, account::Account},
+    axum_sessions::{async_session::CookieStore, SessionLayer},
     const_format::formatcp,
     hyper::{
         server::{accept::Accept, conn::AddrIncoming},
         Server,
     },
     leptos::{leptos_config::Env, view, LeptosOptions},
-    leptos_axum::{generate_route_list, handle_server_fns_with_context, LeptosRoutes},
-    rand::{prelude::ThreadRng, Rng},
+    leptos_axum::{generate_route_list, LeptosRoutes},
     std::{
         net::{Ipv4Addr, Ipv6Addr, SocketAddr},
         pin::Pin,
@@ -58,28 +47,19 @@ use {
 
 mod config;
 mod logging;
+mod postgres;
 
 #[tokio::main]
 async fn main() -> Result<()> {
     color_backtrace::install();
     config::init()?;
     logging::init()?;
-
-    async fn handler() -> String {
-        "Hello, World!".to_string()
-    }
+    postgres::init().await?;
 
     let config = crate::config::get();
 
-    let session_layer =
-        SessionLayer::new(CookieStore::new(), &config.cookie_signing_key).with_secure(false);
-
-    // let user_store = AuthMemoryStore::new(&store);
-    // let auth_layer = AuthLayer::new(user_store, &secret);
-
     let assets_path = &config.static_assets_path;
     let router = Router::new()
-        .route("/hello", get(handler))
         .route("/foo", get(|| async { "foobar" }))
         .route("/api/*fn_name", post(leptos_axum::handle_server_fns))
         .leptos_routes(
@@ -202,57 +182,3 @@ impl<const N: usize> Accept for Listeners<N> {
         Poll::Pending
     }
 }
-
-use {axum::extract::FromRef, leptos::provide_context};
-
-/// This takes advantage of Axum's SubStates feature by deriving FromRef. This
-/// is the only way to have more than one item in Axum's State. Leptos requires
-/// you to have leptosOptions in your State struct for the leptos route handlers
-#[derive(FromRef, Debug, Clone)]
-pub struct AppState {
-    pub leptos_options: LeptosOptions,
-    // pub pool: SqlitePool,
-}
-
-// pub type AuthSession = axum_session_auth::AuthSession<User, i64,
-// SessionSqlitePool, SqlitePool>
-
-async fn server_fn_handler(
-    State(app_state): State<AppState>,
-    // auth_session: AuthSession,
-    path: Path<String>,
-    headers: HeaderMap,
-    raw_query: RawQuery,
-    request: Request<AxumBody>,
-) -> impl IntoResponse {
-    handle_server_fns_with_context(
-        path,
-        headers,
-        raw_query,
-        move |cx| {
-            // provide_context(cx, auth_session.clone());
-            // provide_context(cx, app_state.pool.clone());
-        },
-        request,
-    )
-    .await
-}
-
-// type AuthContext = axum_login::extractors::AuthContext<account::Id, Account,
-// SqliteStore<User>>;
-
-// async fn leptos_routes_handler(
-//     // auth_session: AuthSession,
-//     State(app_state): State<AppState>,
-//     req: Request<AxumBody>,
-// ) -> Response {
-//     let handler = leptos_axum::render_app_to_stream_with_context(
-//         app_state.leptos_options.clone(),
-//         move |cx| {
-//             // provide_context(cx, auth_session.clone());
-//             // provide_context(cx, app_state.pool.clone());
-//         },
-//         |cx| view! { cx, <TodoApp/> },
-//     );
-//     handler(req).await.into_response()
-// }

@@ -1,6 +1,6 @@
 //! # Config module
 //!
-//! This module contains the configuration setup for the gateway.
+//! This module contains the configuration setup for the backend.
 //! The config file should be written as a [ron](https://docs.rs/ron/latest/ron/index.html) file.
 
 use {
@@ -51,6 +51,12 @@ pub struct Config {
     /// Use `openssl rand -hex 64` to generate a new key.
     #[serde(deserialize_with = "cookie_signing_key_from_str")]
     pub cookie_signing_key: CookieSigningKey,
+
+    /// The maximum number of active postgres connections to pool.
+    pub max_postgres_connection_pool_size: u32,
+
+    /// The postgres connection url.
+    pub postgres_connection_url: String,
 }
 
 /// Returns the global configuration for the server.

@@ -5,19 +5,10 @@ use {
 };
 
 /// A username.
+
+#[cfg_attr(feature = "sqlx", derive(sqlx::Type))]
 #[derive(
-    Debug,
-    Default,
-    PartialEq,
-    Eq,
-    PartialOrd,
-    Ord,
-    Clone,
-    Hash,
-    Serialize,
-    Deserialize,
-    From,
-    Display,
+    Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Serialize, Deserialize, From, Display,
 )]
 #[from(forward)]
 pub struct Username(pub String);

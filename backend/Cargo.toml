@@ -1,5 +1,5 @@
 [package]
-name = "gateway"
+name = "backend"
 
 edition.workspace = true
 license.workspace = true
@@ -15,11 +15,11 @@ version.workspace = true
 anyhow = {workspace = true}
 app = {path = "../app", features = ["ssr"]}
 axum = "0.6.18"
-axum-login = "0.5.0"
 axum-sessions = "0.5.0"
 color-backtrace = {workspace = true}
-common = {path = "../common"}
+common = {path = "../common", features = ["sqlx"]}
 const_format = {workspace = true}
+derive_more = {workspace = true}
 hex = "0.4.3"
 hyper = "0.14.26"
 leptos = {workspace = true}
@@ -28,8 +28,9 @@ rand = {version = "0.8.5", features = ["min_const_gen"]}
 ron = {workspace = true}
 sentry-tracing = "0.31.3"
 serde = {workspace = true}
-sqlx = {version = "0.6.3", features = ["runtime-tokio-rustls", "macros", "postgres", "uuid", "chrono", "offline"]}
+sqlx = {workspace = true, features = ["runtime-tokio-rustls", "macros", "postgres", "uuid", "chrono", "offline"]}
 systemstat = "0.2.3"
+thiserror = {workspace = true}
 tokio = {workspace = true, features = ["macros", "rt-multi-thread"]}
 tower = "0.4.13"
 tower-http = {version = "0.4.0", features = ["trace", "compression-br", "fs"]}
@@ -37,3 +38,5 @@ tower_governor = "0.0.4"
 tracing = "0.1.37"
 tracing-journald = "0.3.0"
 tracing-subscriber = {version = "0.3.17", features = ["env-filter"]}
+uuid = {workspace = true}
+zeroize = {workspace = true}

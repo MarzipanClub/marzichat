@@ -6,7 +6,12 @@ pub mod email;
 pub mod password;
 pub mod username;
 
-pub use {datetime::DateTime, email::Email, password::Password, username::Username};
+mod password_hash;
+
+pub use {
+    datetime::DateTime, email::Email, password::Password, password_hash::PasswordHash,
+    username::Username,
+};
 
 pub mod validation {
     //! # Validation module.

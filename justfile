@@ -1,9 +1,9 @@
-export GATEWAY_CONFIG := "gateway/sample_config.ron"
+export BACKEND_CONFIG := "backend/sample_config.ron"
 export CSS_FILE_NAME := "style.css"
 export SQLX_OFFLINE := "true"
 
 alias app := watch-app
-alias gateway := watch-gateway
+alias backend := watch-backend
 
 done_message := "✅ done"
 
@@ -18,14 +18,14 @@ default:
 # check the code for compile errors
 check:
     @cargo clippy --package app --lib --bin app --all-features
+    @cargo clippy --package backend
     @cargo clippy --package common
-    @cargo clippy --package gateway
 
 # command for rust analyzer check
 rust-analyzer-check:
     @cargo clippy --package app --lib --bin app --all-features --message-format=json-diagnostic-rendered-ansi
+    @cargo clippy --package backend --message-format=json-diagnostic-rendered-ansi
     @cargo clippy --package common --message-format=json-diagnostic-rendered-ansi
-    @cargo clippy --package gateway --message-format=json-diagnostic-rendered-ansi
 
 #######################################
 # css related recipes
@@ -78,23 +78,23 @@ watch-app:
     @cargo watch --clear --delay {{recompile_delay_seconds}} --watch app --ignore app/src/bin -- just build-app
 
 #######################################
-# gateway related recipes
+# backend related recipes
 #######################################
 
-# runs the gateway in debug mode
-run-gateway:
-    @echo "Building gateway..."
-    @cargo run --package gateway
+# runs the backend in debug mode
+run-backend:
+    @echo "Building backend..."
+    @cargo run --package backend
 
-# builds the gateway in release mode
-build-gateway-release:
-    @echo "Building gateway in release mode..."
-    @cargo build --package gateway --release
+# builds the backend in release mode
+build-backend-release:
+    @echo "Building backend in release mode..."
+    @cargo build --package backend --release
     @echo {{done_message}}
 
-# watch gateway for changes and rebuild continuously
-watch-gateway:
-    @cargo watch --clear --delay {{recompile_delay_seconds}} --watch gateway --watch app -- cargo run --package gateway
+# watch backend for changes and rebuild continuously
+watch-backend:
+    @cargo watch --clear --delay {{recompile_delay_seconds}} --watch backend --watch app -- cargo run --package backend
 
 #######################################
 # migration related recipes
@@ -103,4 +103,4 @@ watch-gateway:
 # runs the migrations
 run-migrations:
     @echo "Running migrations..."
-    @cd gateway && sqlx migrate run --database-url $DATABASE_URL
+    @cd backend && sqlx migrate run --database-url $DATABASE_URL

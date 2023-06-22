@@ -17,7 +17,8 @@ derive_more = {workspace = true}
 getrandom = {version = "0.2.10", features = ["js"]}
 mailchecker = "5.0.9"
 serde = {workspace = true, features = ["serde_derive"]}
-thiserror = "1.0.40"
+sqlx = {workspace = true, optional = true}
+thiserror = {workspace = true}
 uuid = {workspace = true}
-zeroize = {version = "1.6.0", features = ["zeroize_derive"]}
+zeroize = {workspace = true}
 zxcvbn = "2.2.2"

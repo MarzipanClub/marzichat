@@ -8,10 +8,10 @@ use {
 const MIN_ENTROPY_SCORE: u8 = 3;
 
 /// A password.
-#[derive(Default, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Serialize, Deserialize, From)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Serialize, Deserialize, From)]
 #[from(forward)]
 #[derive(Zeroize, ZeroizeOnDrop)]
-pub struct Password(pub String);
+pub struct Password(String);
 
 impl Password {
     pub const MAX_BYTES: usize = 64;

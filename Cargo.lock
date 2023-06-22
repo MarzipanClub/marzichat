@@ -325,32 +325,9 @@ dependencies = [
  "serde",
  "tokio",
  "tower",
- "tower-http 0.4.0",
+ "tower-http",
  "tower-layer",
  "tower-service",
-]
-
-[[package]]
-name = "axum-login"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2160b4bfd1db39feb3e689c287519d4b9234a5bcbdf89e975027b04d25c4bc32"
-dependencies = [
- "async-trait",
- "axum",
- "axum-sessions",
- "base64 0.13.1",
- "dyn-clone",
- "eyre",
- "futures",
- "ring",
- "secrecy",
- "serde",
- "serde_json",
- "tokio",
- "tower",
- "tower-http 0.3.5",
- "tracing",
 ]
 
 [[package]]
@@ -379,6 +356,40 @@ dependencies = [
  "tokio",
  "tower",
  "tracing",
+]
+
+[[package]]
+name = "backend"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "app",
+ "axum",
+ "axum-sessions",
+ "color-backtrace",
+ "common",
+ "const_format",
+ "derive_more",
+ "hex",
+ "hyper",
+ "leptos",
+ "leptos_axum",
+ "rand",
+ "ron 0.8.0",
+ "sentry-tracing",
+ "serde",
+ "sqlx",
+ "systemstat",
+ "thiserror",
+ "tokio",
+ "tower",
+ "tower-http",
+ "tower_governor",
+ "tracing",
+ "tracing-journald",
+ "tracing-subscriber",
+ "uuid",
+ "zeroize",
 ]
 
 [[package]]
@@ -647,6 +658,7 @@ dependencies = [
  "getrandom",
  "mailchecker",
  "serde",
+ "sqlx",
  "thiserror",
  "uuid",
  "zeroize",
@@ -996,12 +1008,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "669a445ee724c5c69b1b06fe0b63e70a1c84bc9bb7d9696cd4f4e3ec45050408"
 
 [[package]]
-name = "dyn-clone"
-version = "1.0.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "68b0cf012f1230e43cd00ebb729c6bb58707ecfa8ad08b52ef3a4ccd2697fc30"
-
-[[package]]
 name = "educe"
 version = "0.4.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1049,16 +1055,6 @@ name = "event-listener"
 version = "2.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0206175f82b8d6bf6652ff7d71a1e27fd2e4efde587fd368662814d6ec1d9ce0"
-
-[[package]]
-name = "eyre"
-version = "0.6.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4c2b6b5a29c02cdc822728b7d7b8ae1bab3e3b05d44522770ddd49722eeac7eb"
-dependencies = [
- "indenter",
- "once_cell",
-]
 
 [[package]]
 name = "fancy-regex"
@@ -1208,37 +1204,6 @@ dependencies = [
  "pin-project-lite",
  "pin-utils",
  "slab",
-]
-
-[[package]]
-name = "gateway"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "app",
- "axum",
- "axum-login",
- "axum-sessions",
- "color-backtrace",
- "common",
- "const_format",
- "hex",
- "hyper",
- "leptos",
- "leptos_axum",
- "rand",
- "ron 0.8.0",
- "sentry-tracing",
- "serde",
- "sqlx",
- "systemstat",
- "tokio",
- "tower",
- "tower-http 0.4.0",
- "tower_governor",
- "tracing",
- "tracing-journald",
- "tracing-subscriber",
 ]
 
 [[package]]
@@ -1733,12 +1698,6 @@ dependencies = [
  "unicode-bidi",
  "unicode-normalization",
 ]
-
-[[package]]
-name = "indenter"
-version = "0.3.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ce23b50ad8242c51a442f3ff322d56b02f08852c77e4c0b4d3fd684abc89c683"
 
 [[package]]
 name = "indexmap"
@@ -2794,15 +2753,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "secrecy"
-version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9bd1c54ea06cfd2f6b63219704de0b9b4f72dcc2b8fdef820be6cd799780e91e"
-dependencies = [
- "zeroize",
-]
-
-[[package]]
 name = "self_cell"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3447,25 +3397,6 @@ dependencies = [
  "tower-layer",
  "tower-service",
  "tracing",
-]
-
-[[package]]
-name = "tower-http"
-version = "0.3.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f873044bf02dd1e8239e9c1293ea39dad76dc594ec16185d0a1bf31d8dc8d858"
-dependencies = [
- "base64 0.13.1",
- "bitflags",
- "bytes",
- "futures-core",
- "futures-util",
- "http",
- "http-body",
- "http-range-header",
- "pin-project-lite",
- "tower-layer",
- "tower-service",
 ]
 
 [[package]]
