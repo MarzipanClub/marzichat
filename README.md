@@ -38,13 +38,10 @@ Create a database within postgres.
 
 ## Configuration
 
-### Backend
 The backend is configured using a [ron](https://docs.rs/ron/0.8.0/ron/) formatted file. (Ron is to Rust what JSON is to javascript.)
 Create a new ron file based on `sample_config.ron` and update the `justfile` to:
 
     export BACKEND_CONFIG := "<path-to-your-config-ron-file>"
-
-TODO: explain configuration file
 
 ## Deployment
 

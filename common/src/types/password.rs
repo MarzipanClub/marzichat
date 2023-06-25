@@ -1,7 +1,8 @@
 use {
-    crate::types::validation::{Invalidities, Validate, Validator},
+    crate::types::validation::{Validate, Validator, Violations},
     derive_more::{Display, From},
     serde::{Deserialize, Serialize},
+    std::fmt,
     zeroize::{Zeroize, ZeroizeOnDrop},
 };
 
@@ -18,32 +19,32 @@ impl Password {
     pub const MIN_BYTES: usize = 8;
 }
 
-impl std::fmt::Debug for Password {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl fmt::Debug for Password {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> std::fmt::Result {
         let redacted = "•".repeat(self.0.len());
         f.debug_tuple("Password").field(&redacted).finish()
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Hash, Serialize, Deserialize, Display)]
-pub enum Invalidity {
+#[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize, Display, Hash)]
+pub enum Violation {
     TooLong,
     TooShort,
     TooSimple,
 }
 
 impl Validate for Password {
-    type Invalidity = Invalidity;
+    type Violation = Violation;
 
-    fn validate(&self) -> Result<(), Invalidities<Self::Invalidity>> {
+    fn validate(&self) -> Result<(), Violations<Self::Violation>> {
         let entropy_too_low = match zxcvbn::zxcvbn(&self.0, &[]) {
             Ok(entropy) => entropy.score() < MIN_ENTROPY_SCORE,
             Err(_) => false, // if we get any errors here, the entropy is still too low
         };
         Validator::new()
-            .invalid_if(self.0.len() > Self::MAX_BYTES, Invalidity::TooLong)
-            .invalid_if(self.0.len() < Self::MIN_BYTES, Invalidity::TooShort)
-            .invalid_if(entropy_too_low, Invalidity::TooSimple)
+            .invalid_if(self.0.len() > Self::MAX_BYTES, Violation::TooLong)
+            .invalid_if(self.0.len() < Self::MIN_BYTES, Violation::TooShort)
+            .invalid_if(entropy_too_low, Violation::TooSimple)
             .into()
     }
 }

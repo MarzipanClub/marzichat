@@ -37,6 +37,7 @@ use {
         pin::Pin,
         task::{Context, Poll},
     },
+    tokio::signal,
     tower::ServiceBuilder,
     tower_governor::{governor::GovernorConfigBuilder, GovernorLayer},
     tower_http::{
@@ -45,31 +46,40 @@ use {
     },
 };
 
+mod api;
 mod config;
+mod handler;
 mod logging;
 mod postgres;
 
 #[tokio::main]
 async fn main() -> Result<()> {
     color_backtrace::install();
+
     config::init()?;
     logging::init()?;
     postgres::init().await?;
 
-    let config = crate::config::get();
+    let assets_path = &config::get().static_assets_path;
 
-    let assets_path = &config.static_assets_path;
+    const API: &str = "/api";
+
     let router = Router::new()
         .route("/foo", get(|| async { "foobar" }))
+        .route(formatcp!("{API}/account/:id"), post(handler::account::get))
         .route("/api/*fn_name", post(leptos_axum::handle_server_fns))
         .leptos_routes(
             LeptosOptions {
                 output_name: "app".into(),
                 site_root: ".".into(),
                 site_pkg_dir: ASSETS_PATH.into(),
-                env: Env::PROD, // no
+                // we're not using cargo-leptos so PROD here has no effect
+                // PROD removes the websocket for reloading code in leptos
+                env: Env::PROD,
+                // not used; filler value
                 site_addr: SocketAddr::new(Ipv4Addr::LOCALHOST.into(), 0),
-                reload_port: 0, // not used
+                // not used; filler value
+                reload_port: 0,
             },
             generate_route_list(|cx| view! { cx, <App/> }).await,
             |cx| view! { cx, <App/> },
@@ -103,10 +113,8 @@ async fn main() -> Result<()> {
                             // ip address and replenishes one element
                             // every rate_limit_burst_size seconds
                             GovernorConfigBuilder::default()
-                                .per_second(
-                                    crate::config::get().rate_limit_interval_per_second.into(),
-                                )
-                                .burst_size(crate::config::get().rate_limit_burst_size.into())
+                                .per_second(config::get().rate_limit_interval_per_second.into())
+                                .burst_size(config::get().rate_limit_burst_size.into())
                                 .finish()
                                 .ok_or(anyhow::anyhow!("invalid rate limiting configuration"))?,
                         )),
@@ -121,7 +129,7 @@ async fn main() -> Result<()> {
                 }),
         )
         .layer({
-            SessionLayer::new(CookieStore::new(), &config.cookie_signing_key)
+            SessionLayer::new(CookieStore::new(), &config::get().cookie_signing_key.0)
                 .with_secure(
                     // set secure cookie attributes on release builds.
                     // secure cookies are only sent via https
@@ -148,6 +156,27 @@ async fn main() -> Result<()> {
 
     Server::builder(listeners)
         .serve(router.into_make_service_with_connect_info::<SocketAddr>())
+        .with_graceful_shutdown(async {
+            let ctrl_c = async {
+                signal::ctrl_c()
+                    .await
+                    .expect("failed to install Ctrl+C handler");
+            };
+
+            let terminate = async {
+                signal::unix::signal(signal::unix::SignalKind::terminate())
+                    .expect("failed to install signal handler")
+                    .recv()
+                    .await;
+            };
+
+            tokio::select! {
+                _ = ctrl_c => {},
+                _ = terminate => {},
+            }
+
+            tracing::info!("shutting down");
+        })
         .await?;
 
     Ok(())

@@ -1,5 +1,5 @@
 use {
-    crate::types::validation::{Invalidities, Validate, Validator},
+    crate::types::validation::{Validate, Validator, Violations},
     derive_more::{Display, From},
     serde::{Deserialize, Serialize},
 };
@@ -16,19 +16,19 @@ impl Email {
     pub const MAX_BYTES: usize = 64;
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Hash, Serialize, Deserialize, Display)]
-pub enum Invalidity {
+#[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize, Display, Hash)]
+pub enum Violation {
     TooLong,
     Invalid,
 }
 
 impl Validate for Email {
-    type Invalidity = Invalidity;
+    type Violation = Violation;
 
-    fn validate(&self) -> Result<(), Invalidities<Self::Invalidity>> {
+    fn validate(&self) -> Result<(), Violations<Self::Violation>> {
         Validator::new()
-            .invalid_if(self.0.len() > Self::MAX_BYTES, Invalidity::TooLong)
-            .invalid_if(!mailchecker::is_valid(&self.0), Invalidity::Invalid)
+            .invalid_if(self.0.len() > Self::MAX_BYTES, Violation::TooLong)
+            .invalid_if(!mailchecker::is_valid(&self.0), Violation::Invalid)
             .into()
     }
 }

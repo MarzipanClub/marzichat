@@ -16,6 +16,7 @@ anyhow = {workspace = true}
 app = {path = "../app", features = ["ssr"]}
 axum = "0.6.18"
 axum-sessions = "0.5.0"
+chrono = {workspace = true}
 color-backtrace = {workspace = true}
 common = {path = "../common", features = ["sqlx"]}
 const_format = {workspace = true}
@@ -24,8 +25,9 @@ hex = "0.4.3"
 hyper = "0.14.26"
 leptos = {workspace = true}
 leptos_axum = {version = "0.3.0", default-features = false}
+paste = "1.0.12"
 rand = {version = "0.8.5", features = ["min_const_gen"]}
-ron = {workspace = true}
+ron = "0.8.0"
 sentry-tracing = "0.31.3"
 serde = {workspace = true}
 sqlx = {workspace = true, features = ["runtime-tokio-rustls", "macros", "postgres", "uuid", "chrono", "offline"]}

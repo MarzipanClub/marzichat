@@ -5,12 +5,11 @@
 use {
     derive_more::{Display, From},
     serde::{Deserialize, Serialize},
+    std::fmt::Display,
 };
 
 /// The various langauges that the application supports.
-#[derive(
-    Debug, Default, PartialEq, Eq, Copy, Clone, Serialize, Deserialize, From, Display, Hash,
-)]
+#[derive(Debug, Default, PartialEq, Eq, Copy, Clone, Serialize, Deserialize, From, Hash)]
 pub enum Language {
     /// American English
     English,
@@ -39,12 +38,8 @@ const ES_MX: &str = "es-MX";
 const DE_DE: &str = "de-DE";
 const FR_FR: &str = "fr-FR";
 
-const EN: &str = "en";
-const ES: &str = "es";
-const DE: &str = "de";
-const FR: &str = "fr";
-
 /// An error that occurs when parsing a language from a BCP 47 tag.
+#[derive(thiserror::Error, Debug, Display, PartialEq, Eq, Clone, Copy)]
 pub struct ParseError;
 
 impl Language {
@@ -69,18 +64,9 @@ impl Language {
         }
     }
 
-    /// As ISO 639-1 code.
-    pub const fn as_iso639_1_code(self) -> &'static str {
-        match self {
-            Language::English => EN,
-            Language::Spanish => ES,
-            Language::German => DE,
-            Language::French => FR,
-        }
-    }
-
     /// Convert the language to Open Graph locale.
     pub fn to_open_graph_locale(self) -> String {
+        // open graph specifies the format to be language_TERRITORY
         self.as_bcp47_tag().replace('-', "_")
     }
 
@@ -91,5 +77,25 @@ impl Language {
             .filter(|&l| *l != self)
             .map(|&l| Language::to_open_graph_locale(l))
             .collect()
+    }
+}
+
+impl TryFrom<&str> for Language {
+    type Error = ParseError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        Language::parse_from_bcp47_tag(value)
+    }
+}
+
+impl Display for Language {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let language = match self {
+            Language::English => EN_US,
+            Language::Spanish => ES_MX,
+            Language::German => DE_DE,
+            Language::French => FR_FR,
+        };
+        write!(f, "{}", language)
     }
 }

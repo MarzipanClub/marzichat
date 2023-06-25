@@ -4,27 +4,32 @@ use {
     anyhow::{Context, Result},
     std::time::Duration,
     systemstat::{saturating_sub_bytes, Platform, System},
-    tracing_subscriber::{fmt::layer, layer::SubscriberExt, util::SubscriberInitExt},
+    tracing_subscriber::{fmt::layer, layer::SubscriberExt, util::SubscriberInitExt, EnvFilter},
 };
 
 /// Initialize logging using the logging directive specified in the config file.
 #[deny(dead_code)]
 pub fn init() -> Result<()> {
+    let logging_directives = &crate::config::get().logging_directives;
     let logging = tracing_subscriber::registry()
         .with(
-            tracing_subscriber::EnvFilter::builder()
-                .parse(&crate::config::get().logging_directive)?,
+            EnvFilter::builder()
+                .parse(&crate::config::get().logging_directives)
+                .expect("invalid logging directives"),
         )
         .with(sentry_tracing::layer());
 
     if cfg!(debug_assertions) {
-        logging.with(layer().without_time()).init();
+        logging
+            .with(layer().without_time().with_line_number(true))
+            .init();
     } else {
         logging
-            .with(layer())
-            .with(tracing_journald::Layer::new()?)
+            .with(layer().with_line_number(true))
+            .with(tracing_journald::Layer::new().expect("failed to initialize journald layer"))
             .init();
     }
+    tracing::debug!(logging_directives);
 
     #[cfg(target_os = "linux")]
     warn_machine_stats();

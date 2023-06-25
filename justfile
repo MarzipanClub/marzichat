@@ -1,14 +1,13 @@
-export BACKEND_CONFIG := "backend/sample_config.ron"
+export BACKEND_CONFIG := "backend/dev_config.ron"
 export CSS_FILE_NAME := "style.css"
 export SQLX_OFFLINE := "true"
+export DEBUG_OUTPUT := "target/assets/debug"
+export RELEASE_OUTPUT := "target/assets/release"
 
 alias app := watch-app
 alias backend := watch-backend
 
 done_message := "✅ done"
-
-debug_output := "target/assets/debug"
-release_output := "target/assets/release"
 recompile_delay_seconds := "2"
 
 # list all recipes
@@ -33,8 +32,8 @@ rust-analyzer-check:
 
 # builds the css
 build-css:
-    @mkdir -p {{debug_output}} {{release_output}}
-    @grass style/main.scss --style compressed | tee {{debug_output}}/$CSS_FILE_NAME {{release_output}}/$CSS_FILE_NAME > /dev/null
+    @mkdir -p $DEBUG_OUTPUT $RELEASE_OUTPUT
+    @grass style/main.scss --style compressed | tee $DEBUG_OUTPUT/$CSS_FILE_NAME $RELEASE_OUTPUT/$CSS_FILE_NAME > /dev/null
 
 # watch for css changes and rebuild continuously
 watch-css:
@@ -48,30 +47,30 @@ watch-css:
 # builds the app in debug mode
 build-app:
     @echo "Building app..."
-    @mkdir -p {{debug_output}}
-    @cp -r assets/* {{debug_output}}
+    @mkdir -p $DEBUG_OUTPUT
+    @cp -r assets/* $DEBUG_OUTPUT
     @cargo build --package app --bin app --target wasm32-unknown-unknown --features=hydrate
     @cd app && wasm-bindgen \
         --target web \
         --weak-refs \
         --no-typescript \
-        --out-dir ../{{debug_output}} \
+        --out-dir ../$DEBUG_OUTPUT \
         ../target/wasm32-unknown-unknown/debug/app.wasm
     @echo {{done_message}}
 
 # builds the app in release mode
 build-app-release:
     @echo "Building app in release mode..."
-    @mkdir -p {{release_output}}
-    @cp -r assets/* {{release_output}}
+    @mkdir -p $RELEASE_OUTPUT
+    @cp -r assets/* $RELEASE_OUTPUT
     @cargo build --package app --bin app --target wasm32-unknown-unknown --features=hydrate --release
     @cd app && wasm-bindgen \
         --target web \
         --weak-refs \
         --no-typescript \
-        --out-dir ../{{release_output}} \
+        --out-dir ../$RELEASE_OUTPUT \
         ../target/wasm32-unknown-unknown/release/app.wasm
-    @wasm-opt -Oz {{release_output}}/app.wasm
+    @wasm-opt -Oz $RELEASE_OUTPUT/app.wasm
 
 # watch app for changes and rebuild continuously
 watch-app:

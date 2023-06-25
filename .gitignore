@@ -1,6 +1,6 @@
 **/.DS_Store
 **/lcov.info
 *config.ron
-!sample_config.ron
+!dev_config.ron
 target
 *.redb

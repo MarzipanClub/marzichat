@@ -1,5 +1,5 @@
 use {
-    crate::types::validation::{Invalidities, Validate, Validator},
+    crate::types::validation::{Validate, Validator, Violations},
     derive_more::{Display, From},
     serde::{Deserialize, Serialize},
 };
@@ -18,25 +18,25 @@ impl Username {
     pub const MIN_BYTES: usize = 5;
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Hash, Serialize, Deserialize, Display)]
-pub enum Invalidity {
+#[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize, Display, Hash)]
+pub enum Violation {
     TooLong,
     TooShort,
     Invalid,
 }
 
 impl Validate for Username {
-    type Invalidity = Invalidity;
+    type Violation = Violation;
 
-    fn validate(&self) -> Result<(), Invalidities<Self::Invalidity>> {
+    fn validate(&self) -> Result<(), Violations<Self::Violation>> {
         let all_chars_valid = self
             .0
             .chars()
             .all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-');
         Validator::new()
-            .invalid_if(self.0.len() > Self::MAX_BYTES, Invalidity::TooLong)
-            .invalid_if(self.0.len() < Self::MIN_BYTES, Invalidity::TooShort)
-            .invalid_if(!all_chars_valid, Invalidity::Invalid)
+            .invalid_if(self.0.len() > Self::MAX_BYTES, Violation::TooLong)
+            .invalid_if(self.0.len() < Self::MIN_BYTES, Violation::TooShort)
+            .invalid_if(!all_chars_valid, Violation::Invalid)
             .into()
     }
 }

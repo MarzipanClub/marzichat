@@ -17,6 +17,7 @@
         "justfile",
         "leptos",
         "Leptos",
+        "linux",
         "mailchecker",
         "marzichat",
         "oneshot",
@@ -46,9 +47,11 @@
         "rust-analyzer-check"
     ],
     "rust-analyzer.cargo.extraEnv": {
-        // doen't require a value, just needs to be present for rust analyzer to not complain
+        // these don't require a value for rust analyzer, just need to be present for rust analyzer to not complain
         // The actual value is defined in the justfile.
         "CSS_FILE_NAME": "",
+        "DEBUG_OUTPUT": "",
+        "RELEASE_OUTPUT": "",
     },
     "rust-analyzer.check.allTargets": false,
     "rust-analyzer.showUnlinkedFileNotification": false
