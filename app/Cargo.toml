@@ -20,21 +20,23 @@ name = "app"
 path = "src/lib.rs"
 
 [dependencies]
+bincode = {workspace = true}
 common = {path = "../common"}
 console_error_panic_hook = {version = "0.1.7", optional = true}
 const_format = {workspace = true}
-gloo = {version = "0.8.1", optional = true}
+futures = {workspace = true}
+gloo = {version = "0.8.1"}
 leptos = {workspace = true}
 leptos_meta = {version = "0.3.1", default-features = false}
 leptos_router = {version = "0.3.1", default-features = false}
+log = "0.4.19"
 serde = {workspace = true}
-wasm-bindgen = {version = "0.2.87", optional = true}
+wasm-bindgen = {version = "0.2.87"}
 wasm-log = {version = "0.3.1", optional = true}
 
 [features]
 hydrate = [
   "dep:console_error_panic_hook",
-  "dep:wasm-bindgen",
   "dep:wasm-log",
   "gloo/storage",
   "leptos_meta/hydrate",

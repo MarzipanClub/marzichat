@@ -35,6 +35,8 @@ use {
 
 pub mod pages;
 
+mod websocket;
+
 mod components;
 
 /// The app UI entry point.

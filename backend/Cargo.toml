@@ -22,7 +22,6 @@ color-backtrace = "0.5.1"
 common = {path = "../common", features = ["sqlx"]}
 const_format = {workspace = true}
 derive_more = {workspace = true}
-futures-util = "0.3.28"
 hex = "0.4.3"
 leptos = {workspace = true, features = ["ssr"]}
 ron = "0.8.0"

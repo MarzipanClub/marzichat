@@ -385,13 +385,16 @@ checksum = "d301b3b94cb4b2f23d7917810addbbaff90738e0ca2be692bd027e70d7e0330c"
 name = "app"
 version = "0.1.0"
 dependencies = [
+ "bincode",
  "common",
  "console_error_panic_hook",
  "const_format",
+ "futures",
  "gloo",
  "leptos",
  "leptos_meta",
  "leptos_router",
+ "log",
  "serde",
  "wasm-bindgen",
  "wasm-log",
@@ -512,7 +515,6 @@ dependencies = [
  "common",
  "const_format",
  "derive_more",
- "futures-util",
  "git2",
  "hex",
  "leptos",

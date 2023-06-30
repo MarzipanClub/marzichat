@@ -78,7 +78,7 @@ build-backend-release:
 
 # watch backend for changes and rebuild continuously
 watch-backend:  build-app-assets
-    @cargo watch --clear --delay {{recompile_delay_seconds}} --watch backend --watch app -- cargo run --package backend
+    @cargo watch --clear --delay {{recompile_delay_seconds}} --watch backend --watch common --watch app -- cargo run --package backend
 
 #######################################
 # migration related recipes

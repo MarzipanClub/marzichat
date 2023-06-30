@@ -9,10 +9,10 @@ use {
 fn services_config(config: &mut web::ServiceConfig) {
     let cfg = crate::config::get();
 
-    config.service(actix_files::Files::new(
-        ASSETS_PATH,
-        &cfg.static_assets_path,
-    ));
+    config.service(
+        actix_files::Files::new(formatcp!("/{ASSETS_PATH}"), &cfg.static_assets_path)
+            .prefer_utf8(true),
+    );
 
     config.service(
         web::resource(common::routes::HEALTH).route(web::get().to(HttpResponse::NoContent)),
