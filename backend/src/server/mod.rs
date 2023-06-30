@@ -13,7 +13,6 @@ use {
 };
 
 mod client_ip;
-mod redirect;
 mod tls;
 
 /// Start the backend http server.
@@ -33,17 +32,27 @@ pub async fn run() -> Result<()> {
 
     let server = HttpServer::new(move || {
         App::new()
-            .route("/api/{tail:.*}", leptos_actix::handle_server_fns())
             .leptos_routes(
                 leptos_options(),
                 routes.to_owned(),
                 |cx| view! { cx, <App/> },
             )
             .wrap(Governor::new(&governor_configuration))
-            .wrap(server::redirect::HttpToHttps)
-            .wrap(middleware::Logger::default())
+            .wrap(middleware::Logger::new("%s for %U %a in %Ts"))
             .wrap(sentry_actix::Sentry::new())
             .wrap(middleware::Compress::default())
+            .wrap(actix_web_lab::middleware::RedirectHttps::with_hsts(
+                if [
+                    config::Environment::Staging,
+                    config::Environment::Production,
+                ]
+                .contains(&cfg.environment)
+                {
+                    actix_web_lab::header::StrictTransportSecurity::recommended()
+                } else {
+                    actix_web_lab::header::StrictTransportSecurity::default()
+                },
+            ))
             .wrap(middleware::NormalizePath::new(
                 middleware::TrailingSlash::Trim,
             ))
@@ -58,8 +67,8 @@ pub async fn run() -> Result<()> {
             }
             server.bind(
                 [
-                    SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), DEV_PORT),
-                    SocketAddr::new(IpAddr::V6(Ipv6Addr::LOCALHOST), DEV_PORT),
+                    SocketAddr::new(Ipv4Addr::LOCALHOST.into(), DEV_PORT),
+                    SocketAddr::new(Ipv6Addr::LOCALHOST.into(), DEV_PORT),
                 ]
                 .as_ref(),
             )?
@@ -67,15 +76,15 @@ pub async fn run() -> Result<()> {
         Some(tls_config) => server
             .bind(
                 [
-                    SocketAddr::new(IpAddr::V4(Ipv4Addr::UNSPECIFIED), 80),
-                    SocketAddr::new(IpAddr::V6(Ipv6Addr::UNSPECIFIED), 80),
+                    SocketAddr::new(Ipv4Addr::UNSPECIFIED.into(), 80),
+                    SocketAddr::new(Ipv6Addr::UNSPECIFIED.into(), 80),
                 ]
                 .as_ref(),
             )?
             .bind_rustls(
                 [
-                    SocketAddr::new(IpAddr::V4(Ipv4Addr::UNSPECIFIED), 443),
-                    SocketAddr::new(IpAddr::V6(Ipv6Addr::UNSPECIFIED), 443),
+                    SocketAddr::new(Ipv4Addr::UNSPECIFIED.into(), 443),
+                    SocketAddr::new(Ipv6Addr::UNSPECIFIED.into(), 443),
                 ]
                 .as_ref(),
                 tls::build_server_config(tls_config)?,
@@ -84,6 +93,7 @@ pub async fn run() -> Result<()> {
     tracing::info!(socket_addresses = ?server.addrs(), "binding");
     tracing::info!("✅ ready");
     server.run().await?;
+
     Ok(())
 }
 

@@ -1,4 +1,4 @@
-export BACKEND_CONFIG := "backend/dev_config.ron"
+export BACKEND_CONFIG := "backend/local_config.ron"
 export SQLX_OFFLINE := "true"
 export DEBUG_OUTPUT := "target/assets/debug"
 export RELEASE_OUTPUT := "target/assets/release"

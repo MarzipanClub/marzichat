@@ -16,6 +16,7 @@
         "favicons",
         "gloo",
         "hmac",
+        "hsts",
         "invalidities",
         "justfile",
         "leptos",

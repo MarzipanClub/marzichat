@@ -25,10 +25,9 @@ console_error_panic_hook = {version = "0.1.7", optional = true}
 const_format = {workspace = true}
 gloo = {version = "0.8.1", optional = true}
 leptos = {workspace = true}
-leptos_meta = {workspace = true}
-leptos_router = {workspace = true}
+leptos_meta = {version = "0.3.1", default-features = false}
+leptos_router = {version = "0.3.1", default-features = false}
 serde = {workspace = true}
-tokio = {workspace = true, optional = true}
 wasm-bindgen = {version = "0.2.87", optional = true}
 wasm-log = {version = "0.3.1", optional = true}
 
@@ -46,5 +45,4 @@ ssr = [
   "leptos_meta/ssr",
   "leptos_router/ssr",
   "leptos/ssr",
-  "tokio/time",
 ]

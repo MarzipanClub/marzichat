@@ -92,9 +92,13 @@ pub mod validation {
         pub fn iter(&self) -> Iter<'_, E> {
             self.0.iter()
         }
+    }
 
-        /// An owning iterator over the invalidities.
-        pub fn into_iter(self) -> IntoIter<E> {
+    impl<E: PartialEq + Eq + fmt::Debug + fmt::Display> IntoIterator for Violations<E> {
+        type IntoIter = IntoIter<Self::Item>;
+        type Item = E;
+
+        fn into_iter(self) -> Self::IntoIter {
             self.0.into_iter()
         }
     }
