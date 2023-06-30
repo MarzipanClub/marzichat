@@ -22,7 +22,10 @@
 )]
 
 use {
-    crate::pages::{Home, Signup},
+    crate::{
+        pages::{Home, Signup},
+        stream::provide_connection,
+    },
     common::{
         routes::{PageRoutes, ASSETS_PATH, CSS_FILE_NAME},
         PRODUCT_NAME,
@@ -35,14 +38,14 @@ use {
 
 pub mod pages;
 
-mod websocket;
-
 mod components;
+mod stream;
 
 /// The app UI entry point.
 #[component]
 pub fn App(cx: Scope) -> impl IntoView {
     provide_meta_context(cx);
+    provide_connection(cx);
 
     // TODO: add open graph meta tags
 

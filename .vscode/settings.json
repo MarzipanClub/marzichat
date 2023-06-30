@@ -5,6 +5,7 @@
         "actix",
         "addrs",
         "ascii",
+        "backoff",
         "binaryen",
         "bincode",
         "bindgen",

@@ -8,8 +8,8 @@ use {
 
 pub mod username;
 
-/// The runner heartbeat interval
-pub const HEARTBEAT_INTERVAL: Duration = Duration::from_secs(5);
+/// The heartbeat interval for app to server messages.
+pub const HEARTBEAT_INTERVAL: Duration = Duration::from_secs(3);
 
 #[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize)]
 pub enum AppMessage {
