@@ -507,11 +507,13 @@ dependencies = [
  "actix-web-lab",
  "anyhow",
  "app",
+ "chrono",
  "color-backtrace",
  "common",
  "const_format",
  "derive_more",
  "futures-util",
+ "git2",
  "hex",
  "leptos",
  "leptos_actix",
@@ -775,11 +777,10 @@ dependencies = [
 name = "common"
 version = "0.1.0"
 dependencies = [
- "anyhow",
  "chrono",
+ "const_format",
  "derive_more",
  "getrandom",
- "git2",
  "http",
  "mailchecker",
  "serde",

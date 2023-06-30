@@ -17,7 +17,7 @@
     variant_size_differences
 )]
 
-pub mod build;
+pub mod api;
 pub mod internationalization;
 pub mod routes;
 pub mod types;

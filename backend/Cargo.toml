@@ -17,6 +17,7 @@ actix-web = {version = "4.3.1", features = ["rustls"]}
 actix-web-lab = "0.19.1"
 anyhow = {workspace = true}
 app = {path = "../app", features = ["ssr"]}
+chrono = {workspace = true}
 color-backtrace = "0.5.1"
 common = {path = "../common", features = ["sqlx"]}
 const_format = {workspace = true}
@@ -44,3 +45,8 @@ rustls = "0.20.8"
 
 # pinned to 0.3.0 until leptos releases a new version with the updated actix-web dependency
 leptos_actix = "0.3.1"
+
+[build-dependencies]
+anyhow = {workspace = true}
+chrono = {workspace = true}
+git2 = "0.17.2"

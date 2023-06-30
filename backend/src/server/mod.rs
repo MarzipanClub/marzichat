@@ -41,18 +41,6 @@ pub async fn run() -> Result<()> {
             .wrap(middleware::Logger::new("%s for %U %a in %Ts"))
             .wrap(sentry_actix::Sentry::new())
             .wrap(middleware::Compress::default())
-            .wrap(actix_web_lab::middleware::RedirectHttps::with_hsts(
-                if [
-                    config::Environment::Staging,
-                    config::Environment::Production,
-                ]
-                .contains(&cfg.environment)
-                {
-                    actix_web_lab::header::StrictTransportSecurity::recommended()
-                } else {
-                    actix_web_lab::header::StrictTransportSecurity::default()
-                },
-            ))
             .wrap(middleware::NormalizePath::new(
                 middleware::TrailingSlash::Trim,
             ))

@@ -13,6 +13,7 @@ version.workspace = true
 
 [dependencies]
 chrono = {workspace = true, features = ["serde"]}
+const_format = {workspace = true}
 derive_more = {workspace = true}
 getrandom = {version = "0.2.10", features = ["js"]}
 http = {workspace = true}
@@ -23,8 +24,3 @@ thiserror = {workspace = true}
 uuid = {workspace = true}
 zeroize = {workspace = true}
 zxcvbn = "2.2.2"
-
-[build-dependencies]
-anyhow = {workspace = true}
-chrono = {workspace = true}
-git2 = "0.17.2"

@@ -33,7 +33,7 @@ pub fn init() {
     }
     tracing::info!(logging_directives = cfg.logging_directives);
 
-    let release = format!("{}@{}", PRODUCT_NAME.to_lowercase(), common::build::VERSION);
+    let release = format!("{}@{}", PRODUCT_NAME.to_lowercase(), crate::build::VERSION);
 
     let guard = sentry::init(sentry::ClientOptions {
         dsn: crate::config::get().sentry_data_source_name.to_owned(),

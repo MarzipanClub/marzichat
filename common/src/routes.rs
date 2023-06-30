@@ -1,6 +1,6 @@
 //! Defines routes for apis.
 
-use std::fmt;
+use {const_format::formatcp as f, std::fmt};
 
 /// The server's tcp port for clients to connect to during development.
 pub const DEV_PORT: u16 = 2506;
@@ -10,6 +10,16 @@ pub const CSS_FILE_NAME: &str = "primer.css";
 
 /// The path segment for static assets.
 pub const ASSETS_PATH: &str = "assets";
+
+/// The path segment for all programmatic routes
+/// that are not supposed to be accessed by the end users.
+const API: &str = "/api";
+
+/// The route for the backend health checks.
+pub const HEALTH: &str = f!("{API}/health");
+
+/// The route to the compile-time info.
+pub const INFO: &str = f!("{API}/info");
 
 /// The various routes of the app.
 pub enum PageRoutes {

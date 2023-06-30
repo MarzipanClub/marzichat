@@ -19,6 +19,7 @@
 
 use anyhow::Result;
 
+mod build;
 mod config;
 mod handlers;
 mod logging;
