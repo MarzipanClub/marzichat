@@ -1,8 +1,7 @@
 [package]
-name = "backend"
-
 edition.workspace = true
 license.workspace = true
+name = "backend"
 publish.workspace = true
 readme.workspace = true
 repository.workspace = true
@@ -12,33 +11,35 @@ version.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+actix-files = "0.6.2"
+actix-governor = "0.4.0"
+actix-web = {version = "4.3.1", features = ["rustls"]}
 anyhow = {workspace = true}
 app = {path = "../app", features = ["ssr"]}
-axum = "0.6.18"
-axum-sessions = "0.5.0"
-chrono = {workspace = true}
-color-backtrace = {workspace = true}
+color-backtrace = "0.5.1"
 common = {path = "../common", features = ["sqlx"]}
 const_format = {workspace = true}
 derive_more = {workspace = true}
+futures-util = "0.3.28"
 hex = "0.4.3"
-hyper = "0.14.26"
-leptos = {workspace = true}
-leptos_axum = {version = "0.3.0", default-features = false}
-paste = "1.0.12"
-rand = {version = "0.8.5", features = ["min_const_gen"]}
+leptos = {workspace = true, features = ["ssr"]}
 ron = "0.8.0"
-sentry-tracing = "0.31.3"
-serde = {workspace = true}
+rustls-pemfile = "1.0.2"
+sentry = "0.31.5"
+sentry-actix = "0.31.5"
+sentry-tracing = "0.31.5"
+serde = {workspace = true, features = ["derive"]}
 sqlx = {workspace = true, features = ["runtime-tokio-rustls", "macros", "postgres", "uuid", "chrono", "offline"]}
 systemstat = "0.2.3"
 thiserror = {workspace = true}
 tokio = {workspace = true, features = ["macros", "rt-multi-thread"]}
-tower = "0.4.13"
-tower-http = {version = "0.4.0", features = ["trace", "compression-br", "fs"]}
-tower_governor = "0.0.4"
 tracing = "0.1.37"
 tracing-journald = "0.3.0"
 tracing-subscriber = {version = "0.3.17", features = ["env-filter"]}
-uuid = {workspace = true}
 zeroize = {workspace = true}
+
+# pinned to 0.20.8 because actix expects this version of rustls
+rustls = "0.20.8"
+
+# pinned to 0.3.0 until leptos releases a new version with the updated actix-web dependency
+leptos_actix = "0.3.1"

@@ -11,12 +11,11 @@ static POOL: OnceLock<Pool> = OnceLock::new();
 /// Creates a postgres connection pool
 #[deny(dead_code)]
 pub async fn init() -> Result<()> {
-    let config = crate::config::get();
-    tracing::info!("connecting to postgres");
+    let cfg = crate::config::get();
 
     let pool = sqlx::postgres::PgPoolOptions::new()
-        .max_connections(config.max_postgres_connection_pool_size)
-        .connect(&config.postgres_connection_url.0)
+        .max_connections(cfg.max_postgres_connection_pool_size)
+        .connect(&cfg.postgres_connection_url.get_once().0)
         .await
         .context("unable to create postgres connection pool")?;
 
@@ -25,7 +24,7 @@ pub async fn init() -> Result<()> {
         .expect("postgres connection pool already initialized");
 
     tracing::info!(
-        "Started {} connection{} to Postgres.",
+        "started {} connection{} to Postgres.",
         current_connection_count,
         if current_connection_count == 1 {
             ""

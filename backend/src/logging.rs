@@ -1,7 +1,8 @@
-//! Utilities for logging.
+//! Logging module.
 
 use {
-    anyhow::{Context, Result},
+    anyhow::Context,
+    common::PRODUCT_NAME,
     std::time::Duration,
     systemstat::{saturating_sub_bytes, Platform, System},
     tracing_subscriber::{fmt::layer, layer::SubscriberExt, util::SubscriberInitExt, EnvFilter},
@@ -9,12 +10,13 @@ use {
 
 /// Initialize logging using the logging directive specified in the config file.
 #[deny(dead_code)]
-pub fn init() -> Result<()> {
-    let logging_directives = &crate::config::get().logging_directives;
+pub fn init() {
+    let cfg = crate::config::get();
+
     let logging = tracing_subscriber::registry()
         .with(
             EnvFilter::builder()
-                .parse(&crate::config::get().logging_directives)
+                .parse(&cfg.logging_directives)
                 .expect("invalid logging directives"),
         )
         .with(sentry_tracing::layer());
@@ -29,30 +31,39 @@ pub fn init() -> Result<()> {
             .with(tracing_journald::Layer::new().expect("failed to initialize journald layer"))
             .init();
     }
-    tracing::debug!(logging_directives);
+    tracing::info!(logging_directives = cfg.logging_directives);
 
-    #[cfg(target_os = "linux")]
+    let release = format!("{}@{}", PRODUCT_NAME.to_lowercase(), common::build::VERSION);
+
+    let guard = sentry::init(sentry::ClientOptions {
+        dsn: crate::config::get().sentry_data_source_name.to_owned(),
+        release: cfg!(not(debug_assertions)).then(|| release.clone().into()),
+        environment: Some(cfg.environment.to_string().into()),
+        ..Default::default()
+    });
+
+    tracing::info!(is_enabled = guard.is_enabled(), release, "sentry");
+
+    // keep the guard for the lifetime of the program
+    std::mem::forget(guard);
+
     warn_machine_stats();
-    Ok(())
 }
 
-/// Logs cpu temperature, memory usage, and cpu load average on linux.
-#[cfg(target_os = "linux")]
+/// Logs cpu temperature, memory usage, and cpu load average.
 pub fn warn_machine_stats() {
-    const INTERVAL_PERIOD: Duration = Duration::from_millis(500);
-    const CPU_TEMP_WARN_THRESHOLD_CELSIUS: f32 = 50.0;
-    const MEMORY_USAGE_WARN_THRESHOLD_PERCENTAGE: f64 = 0.4;
-    const CPU_LOAD_WARN_LIMIT: f32 = 0.8;
+    let cfg = crate::config::get();
 
+    let period = Duration::from_secs(cfg.machine_stats_logging_interval_seconds.into());
     tokio::task::spawn(async move {
-        let mut interval = tokio::time::interval(INTERVAL_PERIOD);
+        let mut interval = tokio::time::interval(period);
         loop {
             interval.tick().await;
             let cpu_temp = System::new().cpu_temp().context("error getting cpu temp")?;
-            if cpu_temp > CPU_TEMP_WARN_THRESHOLD_CELSIUS {
+            if cpu_temp > cfg.cpu_temp_warn_threshold_celsius {
                 tracing::warn!(
                     "cpu temp is above warning threshold of {}°C: {}°C",
-                    CPU_TEMP_WARN_THRESHOLD_CELSIUS,
+                    cfg.cpu_temp_warn_threshold_celsius,
                     cpu_temp
                 );
             }
@@ -62,7 +73,7 @@ pub fn warn_machine_stats() {
         Ok::<_, anyhow::Error>(())
     });
     tokio::task::spawn(async move {
-        let mut interval = tokio::time::interval(INTERVAL_PERIOD);
+        let mut interval = tokio::time::interval(period);
         loop {
             interval.tick().await;
             let memory = System::new()
@@ -71,10 +82,10 @@ pub fn warn_machine_stats() {
             let memory_usage = saturating_sub_bytes(memory.total, memory.free);
             let memory_usage_percentage =
                 (memory_usage.as_u64() as f64) / (memory.total.as_u64() as f64);
-            if memory_usage_percentage > MEMORY_USAGE_WARN_THRESHOLD_PERCENTAGE {
+            if memory_usage_percentage > cfg.memory_usage_warn_threshold_percentage {
                 tracing::warn!(
                     "memory usage is above warning threshold of {}%: {:.2}%",
-                    MEMORY_USAGE_WARN_THRESHOLD_PERCENTAGE * 100.0,
+                    cfg.memory_usage_warn_threshold_percentage * 100.0,
                     memory_usage_percentage * 100.0
                 );
             }
@@ -84,7 +95,7 @@ pub fn warn_machine_stats() {
         Ok::<_, anyhow::Error>(())
     });
     tokio::task::spawn(async move {
-        let mut interval = tokio::time::interval(INTERVAL_PERIOD);
+        let mut interval = tokio::time::interval(period);
         loop {
             interval.tick().await;
             let cpu_load_aggregate = System::new()
@@ -93,10 +104,10 @@ pub fn warn_machine_stats() {
 
             tokio::time::sleep(Duration::from_secs(1)).await;
             let cpu_load_aggregate = cpu_load_aggregate.done()?;
-            if cpu_load_aggregate.system > CPU_LOAD_WARN_LIMIT {
+            if cpu_load_aggregate.system > cfg.cpu_load_warn_limit {
                 tracing::warn!(
                     "cpu load is above warning threshold of {}%: {}%",
-                    CPU_LOAD_WARN_LIMIT * 100.0,
+                    cfg.cpu_load_warn_limit * 100.0,
                     cpu_load_aggregate.system * 100.0
                 );
             }

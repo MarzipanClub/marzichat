@@ -15,6 +15,7 @@ version.workspace = true
 chrono = {workspace = true, features = ["serde"]}
 derive_more = {workspace = true}
 getrandom = {version = "0.2.10", features = ["js"]}
+http = {workspace = true}
 mailchecker = "5.0.9"
 serde = {workspace = true, features = ["serde_derive"]}
 sqlx = {workspace = true, optional = true}
@@ -22,3 +23,8 @@ thiserror = {workspace = true}
 uuid = {workspace = true}
 zeroize = {workspace = true}
 zxcvbn = "2.2.2"
+
+[build-dependencies]
+anyhow = {workspace = true}
+chrono = {workspace = true}
+git2 = "0.17.2"

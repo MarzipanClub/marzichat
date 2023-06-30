@@ -17,5 +17,10 @@
     variant_size_differences
 )]
 
+pub mod build;
 pub mod internationalization;
+pub mod routes;
 pub mod types;
+
+/// The name of the site/product.
+pub const PRODUCT_NAME: &str = "Marzichat";
