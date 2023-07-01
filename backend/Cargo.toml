@@ -24,6 +24,7 @@ const_format = {workspace = true}
 derive_more = {workspace = true}
 hex = "0.4.3"
 leptos = {workspace = true, features = ["ssr"]}
+leptos_actix = "0.4.1"
 ron = "0.8.0"
 rustls-pemfile = "1.0.2"
 sentry = "0.31.5"
@@ -41,9 +42,6 @@ zeroize = {workspace = true}
 
 # pinned to 0.20.8 because actix expects this version of rustls
 rustls = "0.20.8"
-
-# pinned to 0.3.0 until leptos releases a new version with the updated actix-web dependency
-leptos_actix = "0.3.1"
 
 [build-dependencies]
 anyhow = {workspace = true}
