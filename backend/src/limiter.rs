@@ -1,51 +1,52 @@
+//! Rate limiter based on actix governor.
+
 use {
+    crate::address,
     actix_governor::{
         governor::{
             clock::{Clock, DefaultClock, QuantaInstant},
+            middleware::StateInformationMiddleware,
             NotUntil,
         },
-        KeyExtractor, SimpleKeyExtractionError,
+        Governor, GovernorConfigBuilder, KeyExtractor, SimpleKeyExtractionError,
     },
     actix_web::{
         dev::ServiceRequest,
         http::{header::ContentType, StatusCode},
-        HttpRequest, HttpResponse, HttpResponseBuilder,
+        HttpResponse, HttpResponseBuilder,
     },
-    std::net::IpAddr,
+    std::{
+        net::IpAddr,
+        num::{NonZeroU32, NonZeroU64},
+    },
 };
 
-/// The error type for the client ip address parser.
-#[derive(thiserror::Error, Debug)]
-pub enum Error {
-    /// The client ip address was not provided in the request.
-    #[error("Missing client ip address.")]
-    MissingClientIpAddress,
-
-    /// The client ip address could not be parsed.
-    #[error("Error parsing the client ip address.")]
-    InvalidClientIpAddress,
+/// Returns a new rate limiter governor.
+pub fn new_governor(
+    replenish_rate_milliseconds: NonZeroU64,
+    burst_size: NonZeroU32,
+) -> Governor<IpAddressExtractor, StateInformationMiddleware> {
+    Governor::new(
+        &GovernorConfigBuilder::default()
+            .per_millisecond(replenish_rate_milliseconds.into())
+            .burst_size(burst_size.into())
+            .key_extractor(IpAddressExtractor(()))
+            .use_headers()
+            .finish()
+            .expect("invalid rate limiter configuration"),
+    )
 }
 
-/// Parse the client ip address from the request.
-pub fn parse(request: &HttpRequest) -> Result<IpAddr, Error> {
-    request
-        .connection_info()
-        .peer_addr()
-        .ok_or(Error::MissingClientIpAddress)?
-        .parse()
-        .map_err(|_| Error::InvalidClientIpAddress)
-}
-
-/// The ip address extractor.
+/// The ip address extractor used for rate limiting.
 #[derive(Clone)]
-pub struct Extractor;
+pub struct IpAddressExtractor(());
 
-impl KeyExtractor for Extractor {
+impl KeyExtractor for IpAddressExtractor {
     type Key = IpAddr;
     type KeyExtractionError = SimpleKeyExtractionError<&'static str>;
 
     fn extract(&self, request: &ServiceRequest) -> Result<Self::Key, Self::KeyExtractionError> {
-        parse(request.request()).map_err(|_| {
+        address::parse(request.request()).map_err(|_| {
             Self::KeyExtractionError::new("Bad Request: failed to parse ip address")
                 .set_content_type(ContentType::plaintext())
                 .set_status_code(StatusCode::BAD_REQUEST)

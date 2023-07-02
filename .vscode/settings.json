@@ -13,6 +13,7 @@
         "celsius",
         "concatcp",
         "createdb",
+        "dashmap",
         "datetime",
         "favicons",
         "gloo",
@@ -24,6 +25,7 @@
         "Leptos",
         "linux",
         "mailchecker",
+        "mapref",
         "marzichat",
         "oneshot",
         "openssl",
@@ -33,6 +35,7 @@
         "postgresql",
         "precompressed",
         "psql",
+        "recv",
         "Redb",
         "rustc",
         "rustls",
@@ -58,7 +61,6 @@
     "rust-analyzer.cargo.extraEnv": {
         // these don't require a value for rust analyzer, just need to be present for rust analyzer to not complain
         // The actual value is defined in the justfile.
-        "CSS_FILE_NAME": "",
         "DEBUG_OUTPUT": "",
         "RELEASE_OUTPUT": "",
     },

@@ -9,7 +9,7 @@ use {
 pub mod username;
 
 /// The heartbeat interval for app to server messages.
-pub const HEARTBEAT_INTERVAL: Duration = Duration::from_secs(3);
+pub const HEARTBEAT_INTERVAL: Duration = Duration::from_millis(600);
 
 #[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize)]
 pub enum AppMessage {

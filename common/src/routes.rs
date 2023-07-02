@@ -25,7 +25,7 @@ pub const HEALTH: &str = f!("/{API}/health");
 pub const INFO: &str = f!("/{API}/info");
 
 /// The route to the websocket api.
-const WEBSOCKET: &str = f!("/{API}/ws");
+pub const WEBSOCKET: &str = f!("/{API}/ws");
 
 #[cfg(debug_assertions)]
 pub const WEBSOCKET_URL: &str = f!("ws://localhost:{DEV_PORT}{WEBSOCKET}");

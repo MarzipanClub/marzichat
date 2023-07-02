@@ -1,3 +1,5 @@
+//! Postgres database connection and error handling.
+
 use {
     anyhow::{Context, Result},
     sqlx::error::DatabaseError,

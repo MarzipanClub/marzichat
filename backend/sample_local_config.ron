@@ -37,6 +37,10 @@ Config(
     /// milliseconds.
     rate_limiter_replenish_rate_milliseconds: 200,
 
+    /// The maximum websocket connections to handle before returning a 503
+    /// Service Unavailable
+    max_websocket_connections: 10000,
+
     /// The path to the static assets to serve.
     /// This is where the favicons directory should be located.
     static_assets_path: "target/assets/debug",

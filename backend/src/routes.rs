@@ -1,12 +1,13 @@
 //! Handlers for the various routes.
 
 use {
+    crate::websocket,
     actix_web::{http::header::ContentType, web, HttpResponse},
-    common::routes::ASSETS_PATH,
+    common::routes::{ASSETS_PATH, HEALTH, INFO, WEBSOCKET},
     const_format::formatcp,
 };
 
-fn services_config(config: &mut web::ServiceConfig) {
+fn routes(config: &mut web::ServiceConfig) {
     let cfg = crate::config::get();
 
     config.service(
@@ -14,17 +15,15 @@ fn services_config(config: &mut web::ServiceConfig) {
             .prefer_utf8(true),
     );
 
-    config.service(
-        web::resource(common::routes::HEALTH).route(web::get().to(HttpResponse::NoContent)),
-    );
+    config.service(web::resource(HEALTH).route(web::get().to(HttpResponse::NoContent)));
 
-    config.service(
-        web::resource(common::routes::INFO).route(web::get().to(|| async {
-            HttpResponse::Ok()
-                .content_type(ContentType::plaintext())
-                .body(crate::build::summary())
-        })),
-    );
+    config.service(web::resource(INFO).route(web::get().to(|| async {
+        HttpResponse::Ok()
+            .content_type(ContentType::plaintext())
+            .body(crate::build::summary())
+    })));
+
+    config.route(WEBSOCKET, actix_web::web::get().to(websocket::handler));
 
     // the favicon.ico file is served from the root
     // should be registered last otherwise other services won't be registered
@@ -35,11 +34,11 @@ fn services_config(config: &mut web::ServiceConfig) {
 
 /// Adds all the backend's services to the config.
 /// Note that actix may call this function multiple times.
-pub fn routes(config: &mut web::ServiceConfig) {
+pub fn config(config: &mut web::ServiceConfig) {
     // all services will use strict transport security
     // the empty string is the root scope
     #[allow(clippy::let_and_return)]
-    let scope = actix_web::web::scope("").configure(services_config);
+    let scope = actix_web::web::scope("").configure(routes);
 
     // enable strict transport security in release builds
     #[cfg(not(debug_assertions))]

@@ -19,12 +19,18 @@
 
 use anyhow::Result;
 
+mod actor;
+mod address;
 mod build;
 mod config;
-mod handlers;
+mod handler;
+mod limiter;
 mod logging;
 mod postgres;
+mod routes;
 mod server;
+mod tls;
+mod websocket;
 
 #[tokio::main]
 async fn main() -> Result<()> {

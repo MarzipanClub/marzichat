@@ -1,4 +1,4 @@
-//! Compile-time build information
+//! Compile-time build information.
 
 use common::{internationalization::Language, types::DateTime, PRODUCT_NAME};
 

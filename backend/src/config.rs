@@ -92,6 +92,10 @@ pub struct Config {
     /// milliseconds.
     pub rate_limiter_replenish_rate_milliseconds: NonZeroU64,
 
+    /// The maximum websocket connections to handle before returning a 503
+    /// Service Unavailable
+    pub max_websocket_connections: usize,
+
     /// The path to the static assets to serve.
     /// This is where the favicons directory should be located.
     pub static_assets_path: PathBuf,
