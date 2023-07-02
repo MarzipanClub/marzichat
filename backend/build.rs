@@ -2,11 +2,17 @@
 
 use {
     anyhow::Result,
+    common::api::{PING_INTERVAL, PONG_TIMEOUT},
     std::{env, fs::File, io::Write, path::Path},
 };
 
 /// Gather compile-time build info.
 fn main() -> Result<()> {
+    assert!(
+        PONG_TIMEOUT > PING_INTERVAL,
+        "PONG_TIMEOUT {PONG_TIMEOUT:?} must be greater than PING_INTERVAL {PING_INTERVAL:?}"
+    );
+
     let rustc_version = {
         let mut version = String::from_utf8(
             std::process::Command::new("rustc")

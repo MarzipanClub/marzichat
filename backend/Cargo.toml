@@ -51,4 +51,5 @@ rustls = "0.20.8"
 [build-dependencies]
 anyhow = {workspace = true}
 chrono = {workspace = true}
+common = {path = "../common"}
 git2 = "0.17.2"

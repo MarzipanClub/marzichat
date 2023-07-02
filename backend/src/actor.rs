@@ -3,7 +3,7 @@ use {
     actix_ws::{CloseCode, CloseReason, Session},
     anyhow::Result,
     common::{
-        api::{AppMessage, BackendMessage, HEARTBEAT_INTERVAL},
+        api::{AppMessage, BackendMessage, PING_INTERVAL, PING_PONG_PAYLOAD, PONG_TIMEOUT},
         types::account,
     },
     dashmap::{mapref::one::Ref, DashMap},
@@ -17,10 +17,7 @@ use {
     },
 };
 
-const ACTOR_TERMINATION_GRACE_PERIOD: Duration = Duration::from_secs(3);
-
-#[derive(Debug)]
-struct Heartbeat;
+const ACTOR_TERMINATION_GRACE_PERIOD: Duration = Duration::from_millis(1500);
 
 /// The id for the client.
 pub type ClientId = u32;
@@ -38,6 +35,9 @@ impl fmt::Display for Terminated {
 /// The various events that an actor can process.
 #[derive(Debug)]
 enum Event {
+    /// Register a pong response from the client.
+    Pong,
+
     /// Process an incoming webapp message.
     App(AppMessage),
 
@@ -66,8 +66,7 @@ pub struct Context {
     pub authenticated_account: Option<account::Id>,
     session: Session,
     receiver: Receiver<Event>,
-    heartbeat_sender: Sender<Heartbeat>,
-
+    pong_sender: Sender<()>,
     #[allow(dead_code)]
     permit: OwnedSemaphorePermit,
 }
@@ -81,20 +80,30 @@ impl Context {
         authenticated_account: Option<account::Id>,
         permit: OwnedSemaphorePermit,
     ) -> Result<()> {
-        let (heartbeat_sender, mut heartbeat_receiver) = tokio::sync::mpsc::channel(1);
+        let (pong_sender, mut pong_receiver) = tokio::sync::mpsc::channel(1);
 
-        let mut actor = Self {
+        let mut context = Self {
             client_id,
-            session,
+            session: session.clone(),
             receiver,
-            heartbeat_sender,
+            pong_sender,
             authenticated_account,
             permit,
         };
 
+        // ping loop
+        tokio::spawn({
+            let mut session = session.clone();
+            async move {
+                while session.ping(PING_PONG_PAYLOAD).await.is_ok() {
+                    tokio::time::sleep(PING_INTERVAL).await;
+                }
+            }
+        });
+
         let (close_reason, result) = match tokio::try_join!(
-            run_loop(&mut actor),
-            heartbeat_timeout_loop(&mut heartbeat_receiver)
+            pong_timeout_loop(&mut pong_receiver),
+            run_loop(&mut context),
         ) {
             Ok(_) => (
                 CloseReason {
@@ -117,7 +126,7 @@ impl Context {
 
         // need to close the session to prevent the tcp file descriptor from
         // leaking in CLOSE_WAIT
-        actor.session.close(Some(close_reason)).await?;
+        context.session.close(Some(close_reason)).await?;
         tracing::debug!(%client_id, "terminated");
         remove(&client_id);
         result
@@ -125,49 +134,34 @@ impl Context {
 
     /// Sends a message to the app.
     pub async fn send(&mut self, message: &BackendMessage) -> Result<()> {
-        tracing::trace!(client_id = %self.client_id, ?message, "<-");
+        tracing::trace!(client_id = %self.client_id, ?message, "←");
         self.session.binary(bincode::serialize(message)?).await?;
-        Ok(())
-    }
-
-    /// Refreshes the heartbeat timeout.
-    /// Returns an error if the heartbeat loop is full or closed.
-    pub fn heartbeat(&mut self) -> Result<()> {
-        self.heartbeat_sender.try_send(Heartbeat)?;
         Ok(())
     }
 }
 
 /// The main event loop for the actor.
-async fn run_loop(actor: &mut Context) -> Result<()> {
-    while let Some(event) = actor.receiver.recv().await {
+async fn run_loop(context: &mut Context) -> Result<()> {
+    while let Some(event) = context.receiver.recv().await {
         match event {
-            Event::App(message) => {
-                // skip logging heartbeat messages
-                if message != AppMessage::Heartbeat {
-                    tracing::trace!(client_id = %actor.client_id, ?message, "->");
-                }
-                handler::process(message, actor).await?
-            }
-            Event::Backend(message) => actor.send(&message).await?,
-            Event::Terminate => {
-                break;
-            }
+            Event::Pong => context.pong_sender.send(()).await?,
+            Event::App(message) => handler::process(message, context).await?,
+            Event::Backend(message) => context.send(&message).await?,
+            Event::Terminate => break,
         }
     }
     Ok(())
 }
 
-/// The heartbeat loop for the actor.
 /// This loop is used to know when the actor should be terminated once the
-/// client stops sending heartbeats.
-async fn heartbeat_timeout_loop(liveliness_receiver: &mut Receiver<Heartbeat>) -> Result<()> {
+/// client stops responding to pings.
+async fn pong_timeout_loop(pong_receiver: &mut Receiver<()>) -> Result<()> {
     loop {
-        // will break out of the loop and return an error if the liveliness receiver
-        // times out
-        tokio::time::timeout(HEARTBEAT_INTERVAL, liveliness_receiver.recv())
+        // will break out of the loop and return an error if the liveliness
+        // receiver times out
+        tokio::time::timeout(PONG_TIMEOUT, pong_receiver.recv())
             .await
-            .map_err(|_| anyhow::anyhow!("heartbeat timeout"))?;
+            .map_err(|_| anyhow::anyhow!("pong timeout"))?;
     }
 }
 
@@ -265,9 +259,19 @@ impl ActorHandle {
 }
 
 impl ActorSender {
+    /// Register a pong from the client.
+    pub async fn pong(&self) -> Result<(), Terminated> {
+        self.send_or_remove(Event::Pong).await
+    }
+
     /// Send an app message to the actor blocking until the actor has capacity.
     pub async fn send(&self, message: AppMessage) -> Result<(), Terminated> {
-        match self.sender.send(message.into()).await {
+        self.send_or_remove(message.into()).await
+    }
+
+    /// Send an app message to the actor waiting until it has capacity.
+    async fn send_or_remove(&self, event: Event) -> Result<(), Terminated> {
+        match self.sender.send(event).await {
             Err(_) => {
                 remove(&self.client_id);
                 Err(Terminated(()))

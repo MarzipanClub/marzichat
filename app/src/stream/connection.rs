@@ -1,16 +1,13 @@
 //! The websocket module.
 
 use {
-    common::api::{AppMessage, BackendMessage, HEARTBEAT_INTERVAL},
+    common::api::{AppMessage, BackendMessage},
     futures::{
         channel::mpsc::{UnboundedReceiver, UnboundedSender},
         lock::Mutex,
         SinkExt, StreamExt,
     },
-    gloo::{
-        net::{websocket, websocket::futures::WebSocket},
-        timers::callback::Interval,
-    },
+    gloo::net::{websocket, websocket::futures::WebSocket},
     leptos::Trigger,
     std::rc::Rc,
     wasm_bindgen::UnwrapThrowExt,
@@ -39,7 +36,6 @@ enum State {
     MaybeReady {
         sender: UnboundedSender<AppMessage>,
         reconnect_now: Trigger,
-        heartbeat: Interval,
     },
 }
 
@@ -81,22 +77,7 @@ impl Connection {
         // send all channel messages to the backend
         {
             let mut sender = sender.clone();
-            log::debug!("sending initial ping");
             leptos::spawn_local(async move {
-                // send an initial ping to the backend
-                if write
-                    .send(gloo::net::websocket::Message::Bytes(
-                        bincode::serialize(&AppMessage::Ping).unwrap_throw(),
-                    ))
-                    .await
-                    .is_err()
-                {
-                    log::error!("failed to connect to server");
-                    reconnect.notify();
-                } else {
-                    log::debug!("ping");
-                }
-
                 // send all the items in queue to sender.
                 if let Some(queue_receiver) = queued_messages {
                     for message in queue_receiver.lock().await.iter() {
@@ -109,9 +90,6 @@ impl Connection {
 
                 // loop sending items from channel to backend
                 while let Some(message) = receiver.next().await {
-                    if AppMessage::Heartbeat != message {
-                        log::info!("→ {message:#?}");
-                    }
                     match bincode::serialize(&message) {
                         Ok(payload) => {
                             if let Err(error) = write.send(websocket::Message::Bytes(payload)).await
@@ -130,11 +108,7 @@ impl Connection {
         // read messages from the server send them to the store
         leptos::spawn_local(async move {
             while let Some(Ok(websocket::Message::Bytes(payload))) = read.next().await {
-                match bincode::deserialize(&payload) {
-                    Ok(message @ BackendMessage::Pong) => {
-                        log::info!("← {message:#?}");
-                        is_ready.notify();
-                    }
+                match bincode::deserialize::<BackendMessage>(&payload) {
                     Ok(message) => {
                         log::info!("← {message:#?}");
                         // crate::stream::store::handle_server_message(message);
@@ -148,23 +122,10 @@ impl Connection {
             reconnect.notify();
         });
 
-        let heartbeat = {
-            let sender = sender.clone();
-            log::debug!("sending heartbeat every {HEARTBEAT_INTERVAL:?}");
-            Interval::new(HEARTBEAT_INTERVAL.as_millis() as _, move || {
-                let mut sender = sender.clone();
-                leptos::spawn_local(async move {
-                    if sender.send(AppMessage::Heartbeat).await.is_err() {
-                        log::error!("failed to send heartbeat");
-                    }
-                });
-            })
-        };
-
         Self(State::MaybeReady {
             sender,
             reconnect_now,
-            heartbeat,
+            // heartbeat,
         })
     }
 

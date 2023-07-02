@@ -8,20 +8,24 @@ use {
 
 pub mod username;
 
-/// The heartbeat interval for app to server messages.
-pub const HEARTBEAT_INTERVAL: Duration = Duration::from_millis(600);
+/// The interval for sending ping websocket messages
+pub const PING_INTERVAL: Duration = Duration::from_secs(2);
+
+/// The timeout for a pong websocket message.
+/// It should be greater than the ping interval.
+pub const PONG_TIMEOUT: Duration = Duration::from_secs(4);
+
+/// The payload for a ping and pong websocket messages.
+pub const PING_PONG_PAYLOAD: &[u8] = b"";
 
 #[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize)]
 pub enum AppMessage {
-    Ping,
-    Heartbeat,
     GenerateUsername,
     CheckUsernameAvailability(Username),
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize)]
 pub enum BackendMessage {
-    Pong,
     UsernameAvailability((Username, bool)),
     GeneratedUsername(Username),
 }

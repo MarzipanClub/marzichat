@@ -12,13 +12,12 @@ use {
 /// fullfil its api contract.
 pub async fn process(message: AppMessage, context: &mut Context) -> Result<()> {
     match message {
-        AppMessage::Ping => {
-            context.send(&BackendMessage::Pong).await?;
-        }
-        AppMessage::Heartbeat => {
-            context.heartbeat()?;
-        }
-
+        // AppMessage::Ping => {
+        //     context.send(&BackendMessage::Pong).await?;
+        // }
+        // AppMessage::Heartbeat => {
+        //     context.heartbeat()?;
+        // }
         AppMessage::GenerateUsername => {
             context
                 .send(&BackendMessage::GeneratedUsername("foobar".into()))
