@@ -6,7 +6,6 @@ export RELEASE_OUTPUT := "target/assets/release"
 alias app-assets := watch-app-assets
 alias backend := watch-backend
 
-done_message := "✅ done"
 recompile_delay_seconds := "2"
 
 # list all recipes
@@ -31,7 +30,7 @@ rust-analyzer-check:
 
 # builds the app in debug mode
 build-app-assets:
-    @echo "Building app..."
+    @echo "building app assets..."
     @mkdir -p $DEBUG_OUTPUT
     @cp -r assets/* $DEBUG_OUTPUT
     @cargo build --package app --bin app --target wasm32-unknown-unknown --features=hydrate
@@ -41,11 +40,11 @@ build-app-assets:
         --no-typescript \
         --out-dir ../$DEBUG_OUTPUT \
         ../target/wasm32-unknown-unknown/debug/app.wasm
-    @echo "✅ finished building app assets"
+    @echo "✅ done building app assets"
 
 # builds the assets in release mode
 build-app-assets-release:
-    @echo "Building app in release mode..."
+    @echo "building app in release mode..."
     @mkdir -p $RELEASE_OUTPUT
     @cp -r assets/* $RELEASE_OUTPUT
     @cargo build --package app --bin app --target wasm32-unknown-unknown --features=hydrate --release
@@ -67,12 +66,12 @@ watch-app-assets:
 
 # runs the backend in debug mode
 run-backend: build-app-assets
-    @echo "Building backend..."
+    @echo "building backend..."
     @cargo run --package backend
 
 # builds the backend in release mode
 build-backend-release:
-    @echo "Building backend in release mode..."
+    @echo "building backend in release mode..."
     @cargo build --package backend --release
     @echo "✅ finished compiling backend"
 

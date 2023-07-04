@@ -1,21 +1,17 @@
+#![cfg(feature = "hydrate")]
+
 //! Websocket and associated utilities.
 
 use {
     common::api::{AppMessage, BackendMessage},
-    futures::StreamExt,
-    leptos::Scope,
+    futures::{channel::mpsc::UnboundedReceiver, SinkExt, StreamExt},
+    gloo::net::websocket::{futures::WebSocket, Message},
+    leptos::{provide_context, Scope},
+    wasm_bindgen::UnwrapThrowExt,
 };
 
 /// Provides a websocket to the scope.
-#[cfg(feature = "hydrate")]
 pub fn provide(cx: Scope) {
-    use {
-        futures::{channel::mpsc::UnboundedReceiver, SinkExt},
-        gloo::net::websocket::{futures::WebSocket, Message},
-        leptos::provide_context,
-        wasm_bindgen::UnwrapThrowExt,
-    };
-
     let (mut write, mut read) = WebSocket::open(common::routes::WEBSOCKET_URL)
         .unwrap_throw()
         .split();

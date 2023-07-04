@@ -17,7 +17,6 @@ path = "src/lib.rs"
 
 [dependencies]
 bincode = {workspace = true}
-cfg-if = "1.0.0"
 common = {path = "../common"}
 console_error_panic_hook = {version = "0.1.7", optional = true}
 const_format = {workspace = true}
