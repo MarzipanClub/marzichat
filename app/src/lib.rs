@@ -36,6 +36,7 @@ use {
 pub mod pages;
 
 mod components;
+mod websocket;
 
 /// The app UI entry point.
 #[component]
@@ -43,6 +44,9 @@ pub fn App(cx: Scope) -> impl IntoView {
     provide_meta_context(cx);
 
     // TODO: add open graph meta tags
+
+    #[cfg(feature = "hydrate")]
+    websocket::provide(cx);
 
     view! { cx,
         <Stylesheet href=formatcp!("/{ASSETS_PATH}/{CSS_FILE_NAME}")/>

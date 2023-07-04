@@ -141,7 +141,7 @@ pub async fn handler(request: HttpRequest, payload: Payload) -> Result<HttpRespo
         Err(TryAcquireError::NoPermits) => {
             tracing::warn!(
                 %ip_address,
-                "rate limiting"
+                "rate limiting websocket connections"
             );
             Err(Error::RateLimited)
         }

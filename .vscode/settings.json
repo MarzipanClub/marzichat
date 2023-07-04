@@ -1,6 +1,13 @@
 {
+    "[rust]": {
+        "editor.defaultFormatter": "rust-lang.rust-analyzer"
+    },
+    "[toml]": {
+        "editor.defaultFormatter": "be5invis.toml"
+    },
     // don't use the local cargo index, instead use the up-to-date one on the internet
     "crates.useLocalCargoIndex": false,
+    "cSpell.language": "en,es,de,fr",
     "cSpell.words": [
         "actix",
         "addrs",
@@ -26,6 +33,7 @@
         "Leptos",
         "linux",
         "mailchecker",
+        "marzichat",
         "mapref",
         "marzichat",
         "oneshot",
@@ -53,25 +61,29 @@
         "zeroize",
         "zxcvbn"
     ],
-    "cSpell.language": "en,es,de,fr",
-    "rust-analyzer.linkedProjects": [
-        "./Cargo.toml"
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "files.autoSave": "onFocusChange",
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
+    "rust-analyzer.cargo.extraEnv": {
+        "DATABASE_URL": "postgresql://marzichat@127.0.0.1/marzichat",
+        // these don't require a value for rust analyzer, just need to be present for rust analyzer to not complain
+        // The actual value is defined in the justfile.
+        "DEBUG_OUTPUT": "",
+        "RELEASE_OUTPUT": ""
+    },
+    "rust-analyzer.cargo.features": [
+        "hydrate",
+        "ssr"
     ],
+    "rust-analyzer.check.allTargets": false,
     "rust-analyzer.check.overrideCommand": [
         "just",
         "rust-analyzer-check"
     ],
-    "rust-analyzer.cargo.extraEnv": {
-        // these don't require a value for rust analyzer, just need to be present for rust analyzer to not complain
-        // The actual value is defined in the justfile.
-        "DEBUG_OUTPUT": "",
-        "RELEASE_OUTPUT": "",
-        "DATABASE_URL": "postgresql://marzichat@127.0.0.1/marzichat"
-    },
-    "rust-analyzer.check.allTargets": false,
-    "rust-analyzer.showUnlinkedFileNotification": false,
-    "rust-analyzer.cargo.features": [
-        "hydrate",
-        "ssr"
-    ]
+    "rust-analyzer.linkedProjects": [
+        "./Cargo.toml"
+    ],
+    "rust-analyzer.showUnlinkedFileNotification": false
 }

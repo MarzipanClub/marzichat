@@ -4,30 +4,21 @@
 
 use {
     crate::postgres,
-    anyhow::Result,
-    common::types::{
-        username,
-        validation::{Validate, Violations},
-        Username,
-    },
+    anyhow::{anyhow, Result},
+    common::types::{validation::Validate, Username},
     names::{Generator, Name},
 };
 
-/// A username error.
-#[derive(thiserror::Error, Debug)]
-pub enum Error {
-    #[error("failed to generate username")]
-    GenerateFailure,
-
-    #[error("username is invalid: {0}")]
-    Invalid(#[from] Violations<username::Violation>),
-}
 /// Generates a suggested username.
-pub fn suggested() -> Result<Username, Error> {
+pub fn suggested() -> Result<Username> {
     let mut generator = Generator::with_naming(Name::Numbered);
 
     loop {
-        let username = Username(generator.next().ok_or(Error::GenerateFailure)?);
+        let username = Username(
+            generator
+                .next()
+                .ok_or(anyhow!("failed to generate a username"))?,
+        );
         if username.validate().is_ok() {
             break Ok(username);
         }

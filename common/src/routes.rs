@@ -42,7 +42,7 @@ pub enum PageRoutes {
 impl fmt::Display for PageRoutes {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Home => write!(f, "/"),
+            Self::Home => write!(f, ""),
             Self::Signup => write!(f, "signup"),
         }
     }
