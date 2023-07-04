@@ -62,7 +62,7 @@ impl Connection {
         is_ready: Trigger,
         queued_messages: Option<Rc<Mutex<Vec<AppMessage>>>>,
     ) -> Self {
-        log::info!("initializing websocket connection");
+        leptos::error!("initializing websocket connection");
 
         // Note that `open()` will succeed unless the url is malformed and even if
         // it cannot connect to the server.
@@ -82,7 +82,7 @@ impl Connection {
                 if let Some(queue_receiver) = queued_messages {
                     for message in queue_receiver.lock().await.iter() {
                         if sender.send(message.clone()).await.is_err() {
-                            log::error!("failed to send queued message");
+                            leptos::error!("failed to send queued message");
                             reconnect.track();
                         }
                     }
@@ -94,11 +94,11 @@ impl Connection {
                         Ok(payload) => {
                             if let Err(error) = write.send(websocket::Message::Bytes(payload)).await
                             {
-                                log::error!("failed to send message to server: {error}");
+                                leptos::error!("failed to send message to server: {error}");
                             }
                         }
                         Err(error) => {
-                            log::error!("failed to serialize message: {error}");
+                            leptos::error!("failed to serialize message: {error}");
                         }
                     }
                 }
@@ -110,12 +110,12 @@ impl Connection {
             while let Some(Ok(websocket::Message::Bytes(payload))) = read.next().await {
                 match bincode::deserialize::<BackendMessage>(&payload) {
                     Ok(message) => {
-                        log::info!("← {message:#?}");
+                        leptos::log!("← {message:#?}");
                         // crate::stream::store::handle_server_message(message);
                         todo!("handle server message");
                     }
                     Err(error) => {
-                        log::error!("failed to deserialize server message: {error}");
+                        leptos::error!("failed to deserialize server message: {error}");
                     }
                 }
             }
@@ -143,6 +143,7 @@ impl Connection {
     /// Note: The message is not guaranteed to be sent even if no error is
     /// returned.
     pub async fn send(&self, message: AppMessage) -> Result<(), Error> {
+        leptos::warn!("inside send");
         match self.0 {
             State::MaybeReady {
                 ref sender,

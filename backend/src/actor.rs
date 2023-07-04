@@ -1,10 +1,13 @@
+//! Actor module.
+//! Each websocket connection gets an actor.
+
 use {
     crate::{config, handler},
     actix_ws::{CloseCode, CloseReason, Session},
     anyhow::Result,
     common::{
         api::{AppMessage, BackendMessage, PING_INTERVAL, PING_PONG_PAYLOAD, PONG_TIMEOUT},
-        types::account,
+        types::AccountId,
     },
     dashmap::{mapref::one::Ref, DashMap},
     std::{fmt, sync::OnceLock, time::Duration},
@@ -63,7 +66,7 @@ impl From<BackendMessage> for Event {
 /// The context for an actor.
 pub struct Context {
     pub client_id: ClientId,
-    pub authenticated_account: Option<account::Id>,
+    pub authenticated_account: Option<AccountId>,
     session: Session,
     receiver: Receiver<Event>,
     pong_sender: Sender<()>,
@@ -77,7 +80,7 @@ impl Context {
         client_id: ClientId,
         session: Session,
         receiver: Receiver<Event>,
-        authenticated_account: Option<account::Id>,
+        authenticated_account: Option<AccountId>,
         permit: OwnedSemaphorePermit,
     ) -> Result<()> {
         let (pong_sender, mut pong_receiver) = tokio::sync::mpsc::channel(1);
@@ -170,7 +173,7 @@ pub struct ActorHandle {
     client_id: ClientId,
     handle: JoinHandle<Result<()>>,
     sender: Sender<Event>,
-    pub authenticated_account: Option<account::Id>,
+    pub authenticated_account: Option<AccountId>,
 }
 
 /// A sender to pass app messages to the actor.
@@ -211,7 +214,7 @@ pub fn count() -> usize {
 pub fn spawn(
     client_id: ClientId,
     session: Session,
-    authenticated_account: Option<account::Id>,
+    authenticated_account: Option<AccountId>,
     permit: OwnedSemaphorePermit,
 ) -> ActorSender {
     // initialize a event channel to stream events to the actor

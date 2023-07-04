@@ -5,7 +5,7 @@
 
 # List the nightly version that corresponds to the first day of the current month.
 # For simplicity, we use jsut the nightly of the first, and ignore all other nightly versions.
-channel = "nightly-2023-06-01"
+channel = "nightly-2023-07-01"
 
 # Here we specifiy the additional targets for compiliation, the host target is by default included.
 targets = ["wasm32-unknown-unknown"]

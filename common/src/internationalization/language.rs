@@ -9,6 +9,8 @@ use {
 };
 
 /// The various langauges that the application supports.
+#[cfg_attr(feature = "sqlx", derive(sqlx::Type))]
+#[cfg_attr(feature = "sqlx", sqlx(type_name = "language"))]
 #[derive(Debug, Default, PartialEq, Eq, Copy, Clone, Serialize, Deserialize, From, Hash)]
 pub enum Language {
     /// American English

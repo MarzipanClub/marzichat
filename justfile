@@ -1,5 +1,5 @@
 export BACKEND_CONFIG := "backend/local_config.ron"
-export SQLX_OFFLINE := "true"
+export RUSTFLAGS := "-Z macro-backtrace"
 export DEBUG_OUTPUT := "target/assets/debug"
 export RELEASE_OUTPUT := "target/assets/release"
 
@@ -15,13 +15,13 @@ default:
 
 # check the code for compile errors
 check:
-    @cargo clippy --package app --lib --bin app --all-features
+    @cargo clippy --package app --lib --bin app --features=hyrate
     @cargo clippy --package backend
     @cargo clippy --package common
 
 # command for rust analyzer check
 rust-analyzer-check:
-    @cargo clippy --package app --lib --bin app --all-features --message-format=json-diagnostic-rendered-ansi
+    @cargo clippy --package app --lib --bin app --features=hydrate --message-format=json-diagnostic-rendered-ansi
     @cargo clippy --package backend --message-format=json-diagnostic-rendered-ansi
     @cargo clippy --package common --message-format=json-diagnostic-rendered-ansi
 
@@ -41,7 +41,7 @@ build-app-assets:
         --no-typescript \
         --out-dir ../$DEBUG_OUTPUT \
         ../target/wasm32-unknown-unknown/debug/app.wasm
-    @echo {{done_message}}
+    @echo "✅ finished building app assets"
 
 # builds the assets in release mode
 build-app-assets-release:
@@ -74,7 +74,7 @@ run-backend: build-app-assets
 build-backend-release:
     @echo "Building backend in release mode..."
     @cargo build --package backend --release
-    @echo {{done_message}}
+    @echo "✅ finished compiling backend"
 
 # watch backend for changes and rebuild continuously
 watch-backend:  build-app-assets
@@ -84,7 +84,17 @@ watch-backend:  build-app-assets
 # migration related recipes
 #######################################
 
+# creates a new up and down migration
+new-migration name:
+    @echo "Creating migration..."
+    @cd backend && sqlx migrate add -r {{name}}
+
 # runs the migrations
 run-migrations:
     @echo "Running migrations..."
     @cd backend && sqlx migrate run --database-url $DATABASE_URL
+
+# revert the last migration
+revert-migration:
+    @echo "Reverting migration..."
+    @cd backend && cargo sqlx migrate revert --database-url $DATABASE_URL

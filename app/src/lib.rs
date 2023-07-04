@@ -27,13 +27,14 @@ use {
         stream::provide_connection,
     },
     common::{
-        routes::{PageRoutes, ASSETS_PATH, CSS_FILE_NAME},
+        routes::{PageRoutes, ASSETS_PATH, CSS_FILE_NAME, WEBSOCKET_URL},
         PRODUCT_NAME,
     },
     const_format::formatcp,
     leptos::*,
     leptos_meta::*,
     leptos_router::*,
+    wasm_bindgen::UnwrapThrowExt,
 };
 
 pub mod pages;
@@ -45,6 +46,12 @@ mod stream;
 #[component]
 pub fn App(cx: Scope) -> impl IntoView {
     provide_meta_context(cx);
+
+    #[cfg(feature = "hydrate")]
+    let websocket = web_sys::WebSocket::new(WEBSOCKET_URL).unwrap_throw();
+    #[cfg(feature = "hydrate")]
+    provide_context(cx, websocket);
+
     provide_connection(cx);
 
     // TODO: add open graph meta tags

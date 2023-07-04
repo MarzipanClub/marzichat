@@ -24,7 +24,7 @@ leptos = {version = "0.4.1", default-features = false, features = [
   "serde",
 ]}
 serde = "1.0.164"
-sqlx = "0.6.3"
+sqlx = "0.7.0"
 tarpc = "0.33.0"
 thiserror = "1.0.40"
 uuid = {version = "1.3.1", features = ["serde"]}

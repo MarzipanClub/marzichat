@@ -19,6 +19,7 @@
 
 use anyhow::Result;
 
+mod account;
 mod actor;
 mod address;
 mod build;
@@ -30,6 +31,7 @@ mod postgres;
 mod routes;
 mod server;
 mod tls;
+mod username;
 mod websocket;
 
 #[tokio::main]

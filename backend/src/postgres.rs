@@ -2,13 +2,16 @@
 
 use {
     anyhow::{Context, Result},
-    sqlx::error::DatabaseError,
-    std::sync::OnceLock,
+    common::{
+        internationalization::Language,
+        types::{AccountId, Email, Username},
+    },
+    const_format::formatcp,
+    sqlx::{error::DatabaseError, migrate::Migrator, Pool, Postgres},
+    std::{path::Path, sync::OnceLock},
 };
 
-type Pool = sqlx::Pool<sqlx::Postgres>;
-
-static POOL: OnceLock<Pool> = OnceLock::new();
+static POOL: OnceLock<Pool<Postgres>> = OnceLock::new();
 
 /// Creates a postgres connection pool
 #[deny(dead_code)]
@@ -21,24 +24,27 @@ pub async fn init() -> Result<()> {
         .await
         .context("unable to create postgres connection pool")?;
 
-    let current_connection_count = pool.size();
+    let current_pool_size = pool.size();
+
     POOL.set(pool)
         .expect("postgres connection pool already initialized");
 
-    tracing::info!(
-        "started {} connection{} to Postgres.",
-        current_connection_count,
-        if current_connection_count == 1 {
-            ""
-        } else {
-            "s"
-        }
-    );
+    tracing::info!(current_pool_size, "connected to postgres",);
+
+    tracing::info!("running database migrations");
+    Migrator::new(Path::new(formatcp!(
+        "{}/migrations",
+        env!("CARGO_PKG_NAME")
+    )))
+    .await?
+    .run(db())
+    .await?;
+
     Ok(())
 }
 
 /// Returns a reference to the postgres connection pool.
-pub fn pool() -> &'static Pool {
+fn db() -> &'static Pool<Postgres> {
     POOL.get()
         .expect("postgres connection pool is not initialized")
 }
@@ -79,4 +85,52 @@ impl From<sqlx::Error> for Error {
             _ => Error::Sqlx(error),
         }
     }
+}
+
+/// Check whether the username is not associated with an account.
+pub async fn is_username_available(username: &Username) -> Result<bool, Error> {
+    Ok(sqlx::query!(
+        "SELECT EXISTS (SELECT 1 FROM accounts WHERE username = $1)",
+        username.0
+    )
+    .fetch_one(db())
+    .await?
+    .exists
+    .map_or(true, |value| !value))
+}
+/// Check whether the email address is not associated with an account.
+pub async fn is_email_available(email: &Email) -> Result<bool, Error> {
+    Ok(sqlx::query!(
+        "SELECT EXISTS (SELECT 1 FROM accounts WHERE email = $1)",
+        email.0
+    )
+    .fetch_one(db())
+    .await?
+    .exists
+    .map_or(true, |value| !value))
+}
+
+/// Create an account.
+pub async fn create_account(
+    account_id: AccountId,
+    username: &Username,
+    email: &Email,
+    phc_string: &str,
+    language: Language,
+) -> Result<(), Error> {
+    let now = chrono::Utc::now();
+    sqlx::query!(
+        "INSERT INTO accounts VALUES ($1, $2, $3, $4, $5, $6, $7)",
+        account_id.0,
+        now,
+        now,
+        username.0,
+        email.0,
+        phc_string,
+        language as Language,
+    )
+    .execute(db())
+    .await?;
+
+    Ok(())
 }

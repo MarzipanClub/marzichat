@@ -17,6 +17,7 @@
         "datetime",
         "favicons",
         "gloo",
+        "Hasher",
         "hmac",
         "hsts",
         "invalidities",
@@ -37,6 +38,7 @@
         "psql",
         "recv",
         "Redb",
+        "rngs",
         "rustc",
         "rustls",
         "sqlx",
@@ -45,6 +47,7 @@
         "tarpc",
         "thiserror",
         "tokio",
+        "totp",
         "uuid",
         "watchexec",
         "zeroize",
@@ -63,7 +66,12 @@
         // The actual value is defined in the justfile.
         "DEBUG_OUTPUT": "",
         "RELEASE_OUTPUT": "",
+        "DATABASE_URL": "postgresql://marzichat@127.0.0.1/marzichat"
     },
     "rust-analyzer.check.allTargets": false,
-    "rust-analyzer.showUnlinkedFileNotification": false
+    "rust-analyzer.showUnlinkedFileNotification": false,
+    "rust-analyzer.cargo.features": [
+        "hydrate",
+        "ssr"
+    ]
 }

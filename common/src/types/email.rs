@@ -16,7 +16,7 @@ impl Email {
     pub const MAX_BYTES: usize = 64;
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize, Display, Hash)]
+#[derive(thiserror::Error, Debug, PartialEq, Eq, Clone, Serialize, Deserialize, Display, Hash)]
 pub enum Violation {
     TooLong,
     Invalid,

@@ -14,11 +14,15 @@ use {
 pub struct Username(pub String);
 
 impl Username {
+    /// The maximum number of bytes a username can be.
+    // Don't change without updating the accounts table contraints.
     pub const MAX_BYTES: usize = 24;
+    /// The minimum number of bytes a username can be.
+    //  Don't change without updating the accounts table contraints.
     pub const MIN_BYTES: usize = 5;
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize, Display, Hash)]
+#[derive(thiserror::Error, Debug, PartialEq, Eq, Clone, Serialize, Deserialize, Display, Hash)]
 pub enum Violation {
     TooLong,
     TooShort,

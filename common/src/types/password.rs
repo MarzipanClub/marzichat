@@ -12,7 +12,7 @@ const MIN_ENTROPY_SCORE: u8 = 3;
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Serialize, Deserialize, From)]
 #[from(forward)]
 #[derive(Zeroize, ZeroizeOnDrop)]
-pub struct Password(String);
+pub struct Password(pub String);
 
 impl Password {
     pub const MAX_BYTES: usize = 64;
@@ -26,7 +26,7 @@ impl fmt::Debug for Password {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize, Display, Hash)]
+#[derive(thiserror::Error, Debug, PartialEq, Eq, Clone, Serialize, Deserialize, Display, Hash)]
 pub enum Violation {
     TooLong,
     TooShort,

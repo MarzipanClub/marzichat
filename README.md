@@ -15,10 +15,9 @@ Marzichat is a lightweight and performant webapp for realtime chat. It's build e
 3. Install [just](https://github.com/casey/just): `cargo install just`
 4. Install [cargo-watch](https://github.com/watchexec/cargo-watch): `cargo install cargo-watch`
 5. Install [wasm-bindgen](https://github.com/rustwasm/wasm-bindgen): `cargo install wasm-bindgen-cli`
-<!-- 6. Install [grass](https://docs.rs/grass/latest/grass/): `cargo install grass` -->
-7. Install [watchexec](https://github.com/watchexec/watchexec): `cargo install watchexec-cli`
-8. Install [sqlx-cli](https://github.com/launchbadge/sqlx/tree/253d8c9f696a3a2c7aa837b04cc93605a1376694/sqlx-cli): `cargo install sqlx-cli --no-default-features --features postgres`
-9.  Install [wasm-opt](https://github.com/WebAssembly/binaryen#building) from source. Make sure to add `wasm-opt` to your PATH:
+6. Install [watchexec](https://github.com/watchexec/watchexec): `cargo install watchexec-cli`
+7. Install [sqlx-cli](https://github.com/launchbadge/sqlx/tree/main/sqlx-cli): `cargo install sqlx-cli --no-default-features --features native-tls,postgres`
+8.  Install [wasm-opt](https://github.com/WebAssembly/binaryen#building) from source. Make sure to add `wasm-opt` to your PATH:
 ```
     # .zshrc
     export PATH="$HOME/binaryen/bin:$PATH"

@@ -1,5 +1,5 @@
 use {
-    crate::actor::Context,
+    crate::{actor::Context, username},
     anyhow::Result,
     common::api::{AppMessage, BackendMessage},
 };
@@ -12,20 +12,13 @@ use {
 /// fullfil its api contract.
 pub async fn process(message: AppMessage, context: &mut Context) -> Result<()> {
     match message {
-        // AppMessage::Ping => {
-        //     context.send(&BackendMessage::Pong).await?;
-        // }
-        // AppMessage::Heartbeat => {
-        //     context.heartbeat()?;
-        // }
         AppMessage::GenerateUsername => {
             context
-                .send(&BackendMessage::GeneratedUsername("foobar".into()))
+                .send(&BackendMessage::GeneratedUsername(username::suggested()?))
                 .await?;
         }
         AppMessage::CheckUsernameAvailability(username) => {
-            // let is_available = username::is_available(&username).await?;
-            let is_available = true;
+            let is_available = username::is_available(&username).await?;
             context
                 .send(&BackendMessage::UsernameAvailability((
                     username,

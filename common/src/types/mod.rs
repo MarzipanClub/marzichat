@@ -1,17 +1,24 @@
 //! Defines types used throughout the project.
 
-pub mod account;
+use {
+    derive_more::{Display, From},
+    serde::{Deserialize, Serialize},
+    uuid::Uuid,
+};
+
 pub mod datetime;
 pub mod email;
 pub mod password;
 pub mod username;
 
-mod password_hash;
+pub use {datetime::DateTime, email::Email, password::Password, username::Username};
 
-pub use {
-    datetime::DateTime, email::Email, password::Password, password_hash::PasswordHash,
-    username::Username,
-};
+#[cfg_attr(feature = "sqlx", derive(sqlx::Type), sqlx(transparent))]
+#[derive(
+    Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Serialize, Deserialize, From, Display, Hash,
+)]
+#[from(forward)]
+pub struct AccountId(pub Uuid);
 
 pub mod validation {
     //! # Validation module.

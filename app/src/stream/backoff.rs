@@ -26,7 +26,7 @@ impl Backoff {
     /// Exponentially increases the backoff.
     pub fn increase(&mut self) {
         self.0 = self.0.mul_f64(MULTIPLIER);
-        log::debug!("increased backoff to {:?}", self.0);
+        leptos::log!("increased backoff to {:?}", self.0);
     }
 }
 

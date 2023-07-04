@@ -7,7 +7,7 @@ Config(
     /// [this][1] format.
     ///
     /// [1]: https://docs.rs/env_logger/latest/env_logger/index.html#enabling-logging
-    logging_directives: "backend=trace,actix_server=warn,hyper=warn,reqwest=warn,debug",
+    logging_directives: "backend=trace,actix_server=warn,hyper=warn,reqwest=warn,sqlx=info,debug",
 
     /// The sentry DSN
     sentry_data_source_name: None,

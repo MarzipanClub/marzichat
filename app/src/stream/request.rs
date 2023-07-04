@@ -6,7 +6,7 @@ use {
     wasm_bindgen::UnwrapThrowExt,
 };
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum RequestState<T> {
     Pending,
     Data(T),
@@ -42,7 +42,7 @@ where
     let connection = use_connection(cx);
 
     leptos::spawn_local(async move {
-        match connection().borrow_mut().send(message.into()).await {
+        match connection.send(message.into()).await {
             Ok(()) => (),
             Err(Error::Queued) => set_state(RequestState::Offline),
             Err(Error::SendFailed) => set_state(RequestState::Error),
@@ -93,7 +93,7 @@ where
 
 /// Send a message and stream the responses back.
 /// Send the message with `.send(message)`
-#[cfg(not(feature = "ssr"))]
+#[cfg(feature = "hydrate")]
 pub fn request_deferred<T>(cx: Scope) -> RequestHandle<T>
 where
     T: Request + PartialEq + Eq + 'static,
@@ -104,9 +104,9 @@ where
 
     // send the message
     let send = Rc::new(move |message: T| {
-        log::debug!("calling request_deferred from frontend");
+        leptos::log!("calling request_deferred from frontend 2");
         leptos::spawn_local(async move {
-            match use_connection(cx).get().borrow().send(message.into()).await {
+            match use_connection(cx).send(message.into()).await {
                 Ok(()) => (),
                 Err(Error::Queued) => set_state(RequestState::Offline),
                 Err(Error::SendFailed) => set_state(RequestState::Error),
@@ -143,7 +143,7 @@ where
     // });
 
     let send = Rc::new(|_| {
-        log::debug!("calling request_deferred from backend");
+        leptos::log!("calling request_deferred from backend");
     });
 
     RequestHandle { state, send }

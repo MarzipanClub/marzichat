@@ -7,13 +7,13 @@ use {
     },
     actix_ws::MessageStream,
     anyhow::Result,
-    common::{api::PING_PONG_PAYLOAD, types::account},
+    common::api::PING_PONG_PAYLOAD,
     futures::StreamExt,
     std::sync::{atomic::AtomicU32, Arc, OnceLock},
     tokio::sync::{Semaphore, TryAcquireError},
-    uuid::Uuid,
 };
 
+#[allow(variant_size_differences)]
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
     /// The ip address could not be parsed.
@@ -120,15 +120,12 @@ pub async fn handler(request: HttpRequest, payload: Payload) -> Result<HttpRespo
                 "connection accepted"
             );
 
-            // TODO: remove this nil uuid and use a real account id
-            let account_id = account::Id(Uuid::nil());
-
             let (response, session, stream) = actix_ws::handle(&request, payload)?;
 
             stream_webapp_messages(
                 client_id,
                 stream,
-                actor::spawn(client_id, session, Some(account_id), permit),
+                actor::spawn(client_id, session, None, permit),
             );
 
             tracing::info!(count = actor::count(), "connected clients");

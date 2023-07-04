@@ -24,7 +24,7 @@ pub fn provide_connection(cx: Scope) {
     let is_ready = create_trigger(cx);
 
     let backoff = Rc::new(RefCell::new(Backoff::new()));
-    let connection = Rc::new(RefCell::new(Connection::uninitialized()));
+    let connection = Rc::new(Connection::uninitialized());
 
     // reset the backoff when the is_ready signal is notified
     {
@@ -41,19 +41,19 @@ pub fn provide_connection(cx: Scope) {
             reconnect();
 
             //  Reconnect after backoff time has elapsed
-            let timeout = {
-                let connection = connection.clone();
-                Timeout::new(backoff.borrow().as_millis() as _, move || {
-                    let queued_messages = connection.borrow().get_queued();
-                    // create a new connection with the last queued messages
-                    *connection.borrow_mut() =
-                        Connection::new(reconnect, reconnect_now, is_ready, queued_messages);
-                })
-            };
+            // let timeout = {
+            //     let connection = connection.clone();
+            //     Timeout::new(backoff.borrow().as_millis() as _, move || {
+            //         let queued_messages = connection.borrow().get_queued();
+            //         // create a new connection with the last queued messages
+            //         *connection.borrow_mut() =
+            //             Connection::new(reconnect, reconnect_now, is_ready,
+            // queued_messages);     })
+            // };
             backoff.borrow_mut().increase();
 
             // we don't plan on cancelling the timeout so we can `forget`.
-            timeout.forget();
+            // timeout.forget();
         });
     }
 
@@ -64,6 +64,6 @@ pub fn provide_connection(cx: Scope) {
 /// ### Panicking Behavior
 /// Panics if the connection was not provided by the `provide_connection` higher
 /// in the component tree.
-pub fn use_connection(cx: Scope) -> ReadSignal<Rc<RefCell<Connection>>> {
+pub fn use_connection(cx: Scope) -> Rc<Connection> {
     use_context(cx).unwrap_throw()
 }
