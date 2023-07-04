@@ -45,7 +45,6 @@ pub fn App(cx: Scope) -> impl IntoView {
 
     // TODO: add open graph meta tags
 
-    #[cfg(feature = "hydrate")]
     websocket::provide(cx);
 
     view! { cx,

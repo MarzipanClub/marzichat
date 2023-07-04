@@ -12,9 +12,9 @@ use {
 /// fullfil its api contract.
 pub async fn process(message: AppMessage, context: &mut Context) -> Result<()> {
     match message {
-        AppMessage::GenerateUsername => {
+        AppMessage::SuggestUsername => {
             context
-                .send(&BackendMessage::GeneratedUsername(username::suggested()?))
+                .send(&BackendMessage::SuggestedUsername(username::suggested()?))
                 .await?;
         }
         AppMessage::CheckUsernameAvailability(username) => {

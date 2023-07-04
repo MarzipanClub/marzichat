@@ -20,14 +20,14 @@ pub const PING_PONG_PAYLOAD: &[u8] = b"";
 
 #[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize)]
 pub enum AppMessage {
-    GenerateUsername,
+    SuggestUsername,
     CheckUsernameAvailability(Username),
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize)]
 pub enum BackendMessage {
     UsernameAvailability((Username, bool)),
-    GeneratedUsername(Username),
+    SuggestedUsername(Username),
 }
 
 /// A trait to signify that a message expects at least one response.

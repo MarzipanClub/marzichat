@@ -1,5 +1,4 @@
 #![cfg(feature = "hydrate")]
-
 //! Websocket and associated utilities.
 
 use {
@@ -10,7 +9,6 @@ use {
     wasm_bindgen::UnwrapThrowExt,
 };
 
-/// Provides a websocket to the scope.
 pub fn provide(cx: Scope) {
     let (mut write, mut read) = WebSocket::open(common::routes::WEBSOCKET_URL)
         .unwrap_throw()
