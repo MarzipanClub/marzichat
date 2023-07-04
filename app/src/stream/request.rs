@@ -44,7 +44,6 @@ where
     leptos::spawn_local(async move {
         match connection.send(message.into()).await {
             Ok(()) => (),
-            Err(Error::Queued) => set_state(RequestState::Offline),
             Err(Error::SendFailed) => set_state(RequestState::Error),
         }
     });
@@ -108,7 +107,6 @@ where
         leptos::spawn_local(async move {
             match use_connection(cx).send(message.into()).await {
                 Ok(()) => (),
-                Err(Error::Queued) => set_state(RequestState::Offline),
                 Err(Error::SendFailed) => set_state(RequestState::Error),
             }
         });

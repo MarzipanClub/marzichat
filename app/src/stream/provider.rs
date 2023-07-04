@@ -44,11 +44,8 @@ pub fn provide_connection(cx: Scope) {
             // let timeout = {
             //     let connection = connection.clone();
             //     Timeout::new(backoff.borrow().as_millis() as _, move || {
-            //         let queued_messages = connection.borrow().get_queued();
-            //         // create a new connection with the last queued messages
-            //         *connection.borrow_mut() =
-            //             Connection::new(reconnect, reconnect_now, is_ready,
-            // queued_messages);     })
+            //         *connection.borrow_mut() = Connection::new(reconnect, reconnect_now,
+            // is_ready);     })
             // };
             backoff.borrow_mut().increase();
 

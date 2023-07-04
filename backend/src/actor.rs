@@ -38,6 +38,9 @@ impl fmt::Display for Terminated {
 /// The various events that an actor can process.
 #[derive(Debug)]
 enum Event {
+    /// Respond to a ping from the app.
+    Ping(Vec<u8>),
+
     /// Register a pong response from the client.
     Pong,
 
@@ -147,6 +150,7 @@ impl Context {
 async fn run_loop(context: &mut Context) -> Result<()> {
     while let Some(event) = context.receiver.recv().await {
         match event {
+            Event::Ping(payload) => context.session.ping(&payload).await?,
             Event::Pong => context.pong_sender.send(()).await?,
             Event::App(message) => handler::process(message, context).await?,
             Event::Backend(message) => context.send(&message).await?,
@@ -262,7 +266,13 @@ impl ActorHandle {
 }
 
 impl ActorSender {
-    /// Register a pong from the client.
+    /// Pass a ping from the app to the actor to pong back.
+    pub async fn ping(&self, payload: Vec<u8>) -> Result<(), Terminated> {
+        self.send_or_remove(Event::Ping(payload)).await
+    }
+
+    /// Register a pong from the client to prevent the actor from being
+    /// terminated.
     pub async fn pong(&self) -> Result<(), Terminated> {
         self.send_or_remove(Event::Pong).await
     }

@@ -16,19 +16,14 @@ use {
 /// The various errors that can occur when sending a message through the
 /// websocket.
 pub enum Error {
-    // An error representing that the websocket is not connected or connected but
-    // not ready to be used. A message was queued until the websocket is ready.
-    Queued,
-
     // Failed to place the message in the channel.
     SendFailed,
 }
 
 /// The state of the connection.
 enum State {
-    /// The initial state which just queues messages until a connection can be
-    /// made.
-    Uninitialized { queue: Rc<Mutex<Vec<AppMessage>>> },
+    /// The initial state
+    Uninitialized,
 
     /// A perhaps ready state with a transmitter for sending messages to the
     /// server. May not be fully functional until the server's pong is
@@ -45,9 +40,7 @@ pub struct Connection(State);
 impl Connection {
     /// Creates an uninitialized connection.
     pub fn uninitialized() -> Self {
-        Self(State::Uninitialized {
-            queue: Rc::new(Mutex::new(Vec::new())),
-        })
+        Self(State::Uninitialized)
     }
 
     /// Creates a new websocket connection to the server.
@@ -56,12 +49,7 @@ impl Connection {
     /// Toggles the `reconnect` when the connection is closed or
     /// lost.
     /// Toggles the `reconnect_now` when the `.send()` method is called
-    pub fn new(
-        reconnect: Trigger,
-        reconnect_now: Trigger,
-        is_ready: Trigger,
-        queued_messages: Option<Rc<Mutex<Vec<AppMessage>>>>,
-    ) -> Self {
+    pub fn new(reconnect: Trigger, reconnect_now: Trigger, is_ready: Trigger) -> Self {
         leptos::error!("initializing websocket connection");
 
         // Note that `open()` will succeed unless the url is malformed and even if
@@ -78,16 +66,6 @@ impl Connection {
         {
             let mut sender = sender.clone();
             leptos::spawn_local(async move {
-                // send all the items in queue to sender.
-                if let Some(queue_receiver) = queued_messages {
-                    for message in queue_receiver.lock().await.iter() {
-                        if sender.send(message.clone()).await.is_err() {
-                            leptos::error!("failed to send queued message");
-                            reconnect.track();
-                        }
-                    }
-                }
-
                 // loop sending items from channel to backend
                 while let Some(message) = receiver.next().await {
                     match bincode::serialize(&message) {
@@ -129,14 +107,6 @@ impl Connection {
         })
     }
 
-    /// Returns the mutex of the queue of messages.
-    pub fn get_queued(&self) -> Option<Rc<Mutex<Vec<AppMessage>>>> {
-        match self.0 {
-            State::Uninitialized { ref queue } => Some(queue.clone()),
-            State::MaybeReady { .. } => None,
-        }
-    }
-
     /// Sends a message to the server. Returns an error if the websocket is not
     /// ready.
     ///
@@ -156,10 +126,7 @@ impl Connection {
                     Err(Error::SendFailed)
                 }
             },
-            State::Uninitialized { ref queue } => {
-                queue.lock().await.push(message);
-                Err(Error::Queued)
-            }
+            State::Uninitialized => Err(Error::SendFailed),
         }
     }
 }

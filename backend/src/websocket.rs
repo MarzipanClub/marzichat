@@ -70,6 +70,12 @@ fn stream_webapp_messages(client_id: u32, mut stream: MessageStream, actor_sende
     tokio::task::spawn_local(async move {
         while let Some(result) = stream.next().await {
             match result {
+                Ok(actix_ws::Message::Ping(bytes)) if bytes == PING_PONG_PAYLOAD => {
+                    if let Err(error) = actor_sender.ping(bytes.into()).await {
+                        tracing::error!(?error, "failed to send app message to actor");
+                        break;
+                    }
+                }
                 Ok(actix_ws::Message::Pong(bytes)) if bytes == PING_PONG_PAYLOAD => {
                     if let Err(error) = actor_sender.pong().await {
                         tracing::error!(?error, "failed to send app message to actor");
