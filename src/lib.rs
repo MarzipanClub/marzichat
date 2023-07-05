@@ -23,8 +23,10 @@ use {
     routes::{nav::*, stories::*, story::*, users::*},
 };
 
-mod api;
-mod routes;
+pub mod api;
+pub mod internationalization;
+pub mod routes;
+pub mod types;
 
 include!(concat!(env!("OUT_DIR"), "/info.rs"));
 

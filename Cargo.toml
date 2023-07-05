@@ -20,8 +20,11 @@ actix-files = {version = "0.6", optional = true}
 actix-web = {version = "4.3", optional = true, features = ["macros"]}
 anyhow = "1.0"
 cfg-if = "1.0"
+chrono = {version = "0.4", features = ["serde"]}
 console_error_panic_hook = "0.1"
 console_log = "1.0"
+const_format = "0.2"
+derive_more = "0.99"
 gethostname = {version = "0.4", optional = true}
 gloo-net = {version = "0.3", features = ["http"]}
 leptos = {version = "0.4", features = ["nightly"]}
@@ -29,16 +32,22 @@ leptos_actix = {version = "0.4", optional = true}
 leptos_meta = {version = "0.4", features = ["nightly"]}
 leptos_router = {version = "0.4", features = ["nightly"]}
 log = "0.4"
+mailchecker = "5.0"
 reqwest = {version = "0.11", features = ["json"]}
 sentry = {version = "0.31", optional = true}
 sentry-actix = {version = "0.31", optional = true}
 sentry-tracing = {version = "0.31", optional = true}
 serde = {version = "1.0", features = ["derive"]}
+sqlx = {version = "0.7", optional = true}
+thiserror = "1.0"
 tracing = "0.1"
 tracing-journald = "0.3"
 tracing-subscriber = {version = "0.3", features = ["env-filter"]}
+uuid = {version = "1.3", features = ["serde"]}
 wasm-bindgen = "0.2"
 web-sys = {version = "0.3", features = ["AbortController", "AbortSignal"]}
+zeroize = {version = "1.6", features = ["zeroize_derive"]}
+zxcvbn = "2.2"
 
 [features]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
@@ -53,6 +62,11 @@ ssr = [
   "leptos/ssr",
   "leptos_meta/ssr",
   "leptos_router/ssr",
+  "sqlx/runtime-tokio-rustls",
+  "sqlx/macros",
+  "sqlx/postgres",
+  "sqlx/uuid",
+  "sqlx/chrono",
 ]
 
 [package.metadata.cargo-all-features]
@@ -64,6 +78,11 @@ denylist = [
   "sentry",
   "sentry-actix",
   "sentry-tracing",
+  "sqlx/runtime-tokio-rustls",
+  "sqlx/macros",
+  "sqlx/postgres",
+  "sqlx/uuid",
+  "sqlx/chrono",
 ]
 skip_feature_sets = [["ssr", "hydrate"]]
 

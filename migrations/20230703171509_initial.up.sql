@@ -4,8 +4,8 @@ EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
 
-CREATE TABLE IF NOT EXISTS accounts (
-    account_id UUID PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS users (
+    user_id UUID PRIMARY KEY,
     created TIMESTAMP WITH TIME ZONE NOT NULL,
     updated TIMESTAMP WITH TIME ZONE NOT NULL,
     username TEXT NOT NULL UNIQUE,

@@ -15,12 +15,16 @@
     variant_size_differences
 )]
 
-mod backend;
+mod logger;
+mod postgres;
+mod server;
 
 #[cfg(feature = "ssr")]
 #[actix_web::main]
 async fn main() -> anyhow::Result<()> {
-    backend::run().await
+    logger::init();
+    postgres::init().await;
+    server::run().await
 }
 
 // no main function if we're not using ssr feature
