@@ -1,4 +1,7 @@
-use {common::api::AppMessage, leptos::Scope};
+use {
+    common::api::Request,
+    leptos::{create_effect, Scope},
+};
 
 mod provider;
 mod request;
@@ -12,7 +15,10 @@ pub fn provide(cx: Scope) {
 
 /// Make an api request.
 #[allow(unused_variables)]
-pub fn request(cx: Scope, message: AppMessage) {
+pub fn request<R>(cx: Scope, request: R)
+where
+    R: Request + 'static,
+{
     #[cfg(feature = "hydrate")]
-    request::request(cx, message);
+    request::request(cx, request);
 }

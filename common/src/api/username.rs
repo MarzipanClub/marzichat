@@ -18,14 +18,14 @@ impl Request for CheckAvailability {
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize)]
-pub struct GenerateUsername;
+pub struct SuggestUsername;
 
-impl From<GenerateUsername> for AppMessage {
-    fn from(value: GenerateUsername) -> Self {
+impl From<SuggestUsername> for AppMessage {
+    fn from(value: SuggestUsername) -> Self {
         value.into()
     }
 }
 
-impl Request for GenerateUsername {
+impl Request for SuggestUsername {
     type Response = Username;
 }

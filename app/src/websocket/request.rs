@@ -2,20 +2,28 @@
 //! Send request api calls through a websocket connection.
 
 use {
-    common::api::AppMessage,
+    common::api::{AppMessage, Request},
     futures::{channel::mpsc::UnboundedSender, SinkExt},
-    leptos::{use_context, Scope},
+    leptos::{expect_context, spawn_local, Scope},
     wasm_bindgen::UnwrapThrowExt,
 };
 
-pub fn request(cx: Scope, message: AppMessage) {
-    let mut sender =
-        use_context::<UnboundedSender<AppMessage>>(cx).expect_throw("no message sender found");
+pub enum State<T> {
+    Pending,
+    Data(T),
+    Failed,
+}
 
-    leptos::spawn_local(async move {
-        sender
-            .send(message)
-            .await
-            .expect_throw("failed to send message");
-    });
+pub fn request<R>(cx: Scope, request: R)
+where
+    R: Request + 'static,
+{
+    let sender = expect_context::<UnboundedSender<AppMessage>>(cx);
+    leptos::log!("sending request");
+
+    let app_message: AppMessage = request.into();
+    leptos::log!("sending request: 2 {:#?}", app_message);
+    sender
+        .unbounded_send(app_message)
+        .expect_throw("failed to send message");
 }

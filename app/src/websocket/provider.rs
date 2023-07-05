@@ -5,7 +5,7 @@ use {
     common::api::{AppMessage, BackendMessage},
     futures::{channel::mpsc::UnboundedReceiver, SinkExt, StreamExt},
     gloo::net::websocket::{futures::WebSocket, Message},
-    leptos::{provide_context, Scope},
+    leptos::{provide_context, spawn_local, Scope},
     wasm_bindgen::UnwrapThrowExt,
 };
 
@@ -19,7 +19,7 @@ pub fn provide(cx: Scope) {
         futures::channel::mpsc::unbounded();
 
     // loop sending items from channel to backend
-    leptos::spawn_local(async move {
+    spawn_local(async move {
         while let Some(message) = receiver.next().await {
             match bincode::serialize(&message) {
                 Ok(payload) => {
@@ -35,12 +35,11 @@ pub fn provide(cx: Scope) {
     });
 
     // loop read messages from the backend
-    leptos::spawn_local(async move {
+    spawn_local(async move {
         while let Some(Ok(Message::Bytes(payload))) = read.next().await {
             match bincode::deserialize::<BackendMessage>(&payload) {
                 Ok(message) => {
-                    // TODO: handle server message
-                    todo!("handle server message: {message:#?}");
+                    handle_message(message);
                 }
                 Err(error) => {
                     leptos::error!("failed to deserialize server message: {error}");
@@ -50,4 +49,9 @@ pub fn provide(cx: Scope) {
     });
 
     provide_context(cx, sender);
+}
+
+/// Handle the backend message.
+fn handle_message(message: BackendMessage) {
+    leptos::log!("backend message: {message:#?}");
 }
