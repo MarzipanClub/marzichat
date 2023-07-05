@@ -15,11 +15,11 @@ static POOL: OnceLock<Pool<Postgres>> = OnceLock::new();
 #[deny(dead_code)]
 pub async fn init() {
     let url = std::env::var("DATABASE_URL").expect("DATABASE_URL not set");
-    let max_connections = std::env::var("MAX_POSTGRES_CONNECTION_POOL_SIZE")
+    let max_connections = std::env::var("MAX_POSTGRES_CONNECTIONS")
         .ok()
         .map(|size| {
             size.parse()
-                .expect("MAX_POSTGRES_CONNECTION_POOL_SIZE is not a number")
+                .expect("MAX_POSTGRES_CONNECTIONS is not a number")
         })
         .unwrap_or(100);
 
