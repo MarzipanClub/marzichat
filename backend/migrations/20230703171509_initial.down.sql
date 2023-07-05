@@ -1,3 +1,0 @@
-DROP TABLE accounts;
-
-DROP TYPE LANGUAGE;
