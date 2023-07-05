@@ -1,6 +1,5 @@
-#![cfg(feature = "ssr")]
-
 //! Postgres database connection and error handling.
+#![cfg(feature = "ssr")]
 
 use {
     anyhow::Result,
@@ -89,7 +88,7 @@ impl From<sqlx::Error> for Error {
     }
 }
 
-/// Check whether the username is not associated with an account.
+/// Check whether the username is not associated with a user.
 pub async fn is_username_available(username: &Username) -> Result<bool, Error> {
     Ok(sqlx::query!(
         "SELECT EXISTS (SELECT 1 FROM users WHERE username = $1)",
@@ -100,7 +99,7 @@ pub async fn is_username_available(username: &Username) -> Result<bool, Error> {
     .exists
     .map_or(true, |value| !value))
 }
-/// Check whether the email address is not associated with an account.
+/// Check whether the email address is not associated with a user.
 pub async fn is_email_available(email: &Email) -> Result<bool, Error> {
     Ok(sqlx::query!(
         "SELECT EXISTS (SELECT 1 FROM users WHERE email = $1)",

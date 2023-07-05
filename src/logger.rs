@@ -1,10 +1,7 @@
-#![cfg(feature = "ssr")]
 //! Logging module.
+#![cfg(feature = "ssr")]
 
-use {
-    anyhow::Result,
-    tracing_subscriber::{fmt::layer, layer::SubscriberExt, util::SubscriberInitExt},
-};
+use tracing_subscriber::{fmt::layer, layer::SubscriberExt, util::SubscriberInitExt};
 
 /// Sets up logging.
 #[deny(dead_code)]

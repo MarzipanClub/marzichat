@@ -17,6 +17,7 @@ lto = true
 
 [dependencies]
 actix-files = {version = "0.6", optional = true}
+actix-governor = {version = "0.4", optional = true}
 actix-web = {version = "4.3", optional = true, features = ["macros"]}
 anyhow = "1.0"
 cfg-if = "1.0"
@@ -53,6 +54,7 @@ zxcvbn = "2.2"
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
 ssr = [
   "actix-files",
+  "actix-governor",
   "actix-web",
   "gethostname",
   "leptos_actix",
@@ -72,6 +74,7 @@ ssr = [
 [package.metadata.cargo-all-features]
 denylist = [
   "actix-files",
+  "actix-governor",
   "actix-web",
   "gethostname",
   "leptos_actix",

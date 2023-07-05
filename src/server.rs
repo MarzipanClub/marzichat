@@ -1,5 +1,5 @@
-#![cfg(feature = "ssr")]
 //! Http web server.
+#![cfg(feature = "ssr")]
 
 use {actix_files::Files, actix_web::*, leptos::*, leptos_actix::LeptosRoutes, marzichat::App};
 
@@ -29,6 +29,20 @@ pub async fn run() -> anyhow::Result<()> {
 
     let site_addr = leptos_options.site_addr;
 
+    // The interval after which one element of the quota is replenished in
+    // milliseconds.
+    let replenish_rate_milliseconds = std::env::var("REPLENISH_RATE_MILLISECONDS")
+        .expect("REPLENISH_RATE_MILLISECONDS not set")
+        .parse()
+        .expect("REPLENISH_RATE_MILLISECONDS is not a number");
+
+    let burst_size = std::env::var("BURST_SIZE")
+        .expect("BURST_SIZE not set")
+        .parse()
+        .expect("BURST_SIZE is not a number");
+
+    tracing::info!(replenish_rate_milliseconds, burst_size);
+
     // Generate the list of routes in your Leptos App
     let routes = leptos_actix::generate_route_list(|cx| view! { cx, <App/> });
     let server = HttpServer::new(move || {
@@ -43,6 +57,16 @@ pub async fn run() -> anyhow::Result<()> {
                 |cx| view! { cx, <App/> },
             )
             .service(Files::new("/", site_root))
+            .wrap(crate::limiter::new_governor(
+                replenish_rate_milliseconds,
+                burst_size,
+            ))
+            .wrap(middleware::Logger::new("%s for %U %a in %Ts"))
+            .wrap(sentry_actix::Sentry::new())
+            .wrap(middleware::Compress::default())
+            .wrap(middleware::NormalizePath::new(
+                middleware::TrailingSlash::Trim,
+            ))
     })
     .bind(&site_addr)?;
 

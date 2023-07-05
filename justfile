@@ -1,5 +1,8 @@
 export LOG := "backend=trace,actix_server=warn,hyper=warn,reqwest=warn,sqlx=info,debug"
 export DATABASE_URL := "postgresql://marzichat@127.0.0.1/marzichat"
+export REPLENISH_RATE_MILLISECONDS := "200"
+export BURST_SIZE := "10"
+
 # list all recipes
 default:
     just --list
