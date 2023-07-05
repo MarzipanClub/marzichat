@@ -39,26 +39,20 @@ pub async fn run() -> anyhow::Result<()> {
     }
 
     {
-        let release = sentry::release_name!();
-
-        #[cfg(unix)]
-        let hostname = Some(
-            gethostname::gethostname()
-                .to_string_lossy()
-                .to_string()
-                .into(),
-        );
-
-        #[cfg(not(unix))]
-        let hostname = None;
+        let release = sentry::release_name!().expect("error getting release name");
 
         let guard = sentry::init(sentry::ClientOptions {
             dsn: std::env::var("SENTRY_DSN")
                 .ok()
                 .map(|dsn| dsn.parse().ok())
                 .flatten(),
-            release: release.to_owned(),
-            environment: hostname,
+            release: Some(release.to_owned()),
+            environment: Some(
+                gethostname::gethostname()
+                    .to_string_lossy()
+                    .to_string()
+                    .into(),
+            ),
             ..Default::default()
         });
 

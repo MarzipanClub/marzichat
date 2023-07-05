@@ -22,7 +22,7 @@ anyhow = "1.0"
 cfg-if = "1.0"
 console_error_panic_hook = "0.1"
 console_log = "1.0"
-gethostname = "0.4"
+gethostname = {version = "0.4", optional = true}
 gloo-net = {version = "0.3", features = ["http"]}
 leptos = {version = "0.4", features = ["nightly"]}
 leptos_actix = {version = "0.4", optional = true}
@@ -45,6 +45,7 @@ hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
 ssr = [
   "actix-files",
   "actix-web",
+  "gethostname",
   "leptos_actix",
   "sentry",
   "sentry-actix",
@@ -58,6 +59,7 @@ ssr = [
 denylist = [
   "actix-files",
   "actix-web",
+  "gethostname",
   "leptos_actix",
   "sentry",
   "sentry-actix",
