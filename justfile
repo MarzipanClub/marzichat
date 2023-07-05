@@ -1,5 +1,5 @@
 export LOG := "backend=trace,actix_server=warn,hyper=warn,reqwest=warn,sqlx=info,debug"
-
+export DATABASE_URL := "postgresql://marzichat@127.0.0.1/marzichat"
 # list all recipes
 default:
     just --list
@@ -16,3 +16,15 @@ rust-analyzer-check:
 # run watching for changes
 watch:
     cargo leptos watch
+
+# creates a new up and down migration
+new-migration name:
+    sqlx migrate add -r {{name}}
+
+# runs the migrations
+run-migrations:
+    sqlx migrate run
+
+# revert the last migration
+revert-migration:
+    cargo sqlx migrate revert
