@@ -16,7 +16,7 @@ async fn favicon() -> impl Responder {
 }
 
 /// Run the backend server.
-pub async fn serve() -> std::io::Result<()> {
+pub async fn serve() -> anyhow::Result<()> {
     // Setting this to None means we'll be using cargo-leptos and its env vars.
     let conf = get_configuration(None).await.unwrap();
 
@@ -42,5 +42,7 @@ pub async fn serve() -> std::io::Result<()> {
     })
     .bind(&addr)?
     .run()
-    .await
+    .await?;
+
+    Ok(())
 }

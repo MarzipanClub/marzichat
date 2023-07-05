@@ -19,7 +19,7 @@ mod backend;
 
 #[cfg(feature = "ssr")]
 #[actix_web::main]
-async fn main() -> std::io::Result<()> {
+async fn main() -> anyhow::Result<()> {
     backend::serve().await
 }
 
