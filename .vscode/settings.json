@@ -68,16 +68,11 @@
     "files.trimTrailingWhitespace": true,
     "rust-analyzer.cargo.extraEnv": {
         "DATABASE_URL": "postgresql://marzichat@127.0.0.1/marzichat",
-        // these don't require a value for rust analyzer, just need to be present for rust analyzer to not complain
-        // The actual value is defined in the justfile.
-        "DEBUG_OUTPUT": "",
-        "RELEASE_OUTPUT": ""
     },
     "rust-analyzer.cargo.features": [
         "hydrate",
         "ssr"
     ],
-    "rust-analyzer.check.allTargets": false,
     "rust-analyzer.check.overrideCommand": [
         "just",
         "rust-analyzer-check"

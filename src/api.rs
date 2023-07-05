@@ -21,7 +21,7 @@ where
         .abort_signal(abort_signal.as_ref())
         .send()
         .await
-        .map_err(|e| log::error!("{e}"))
+        .map_err(|e| log::error!("error making request: {e}"))
         .ok()?
         .text()
         .await
