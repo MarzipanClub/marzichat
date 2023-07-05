@@ -24,6 +24,7 @@
         "datetime",
         "favicons",
         "formatcp",
+        "gethostname",
         "gloo",
         "Hasher",
         "hmac",

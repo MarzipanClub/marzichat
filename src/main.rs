@@ -20,7 +20,7 @@ mod backend;
 #[cfg(feature = "ssr")]
 #[actix_web::main]
 async fn main() -> anyhow::Result<()> {
-    backend::serve().await
+    backend::run().await
 }
 
 // no main function if we're not using ssr feature
