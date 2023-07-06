@@ -16,6 +16,7 @@
 )]
 
 use {
+    crate::{internationalization::Language, types::*},
     cfg_if::cfg_if,
     leptos::*,
     leptos_meta::*,
@@ -73,4 +74,17 @@ cfg_if! {
             });
         }
     }
+}
+
+/// Returns a summary of the build info in plain text format.
+pub fn summary() -> String {
+    let build_time = datetime::ago(
+        &DateTime::from(
+            chrono::DateTime::parse_from_rfc3339(BUILD_TIME).expect("error parsing build time"),
+        ),
+        Language::English,
+    );
+    format!(
+            "{PRODUCT_NAME} v{VERSION} ({GIT_SHORT_SHA})\nBuilt {build_time}.\n\n{BUILD_TIME}\n{GIT_SHA}\n{COMPILER}"
+        )
 }

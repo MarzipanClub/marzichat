@@ -20,15 +20,22 @@ use {
 };
 
 /// Returns a new rate limiter governor.
-pub fn new_governor(
-    replenish_rate_milliseconds: u64,
-    burst_size: u32,
-) -> Governor<IpAddressExtractor, StateInformationMiddleware> {
+pub fn governor() -> Governor<IpAddressExtractor, StateInformationMiddleware> {
     Governor::new(
         &GovernorConfigBuilder::default()
-            .per_millisecond(replenish_rate_milliseconds.into())
-            .burst_size(burst_size.into())
-            .key_extractor(IpAddressExtractor(()))
+            .per_millisecond(
+                std::env::var("REPLENISH_RATE_MILLISECONDS")
+                    .expect("REPLENISH_RATE_MILLISECONDS not set")
+                    .parse()
+                    .expect("REPLENISH_RATE_MILLISECONDS is not a number"),
+            )
+            .burst_size(
+                std::env::var("BURST_SIZE")
+                    .expect("BURST_SIZE not set")
+                    .parse()
+                    .expect("BURST_SIZE is not a number"),
+            )
+            .key_extractor(IpAddressExtractor)
             .use_headers()
             .finish()
             .expect("invalid governor configuration"),
@@ -37,7 +44,7 @@ pub fn new_governor(
 
 /// The ip address extractor used for rate limiting.
 #[derive(Clone)]
-pub struct IpAddressExtractor(());
+pub struct IpAddressExtractor;
 
 impl KeyExtractor for IpAddressExtractor {
     type Key = IpAddr;
