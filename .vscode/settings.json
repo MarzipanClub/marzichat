@@ -31,6 +31,7 @@
         "hsts",
         "invalidities",
         "justfile",
+        "keydb",
         "leptos",
         "Leptos",
         "linux",
