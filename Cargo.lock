@@ -2102,7 +2102,6 @@ dependencies = [
  "actix-governor",
  "actix-web",
  "anyhow",
- "cfg-if",
  "chrono",
  "console_error_panic_hook",
  "console_log",

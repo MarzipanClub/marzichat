@@ -17,11 +17,11 @@
 
 use {
     crate::{internationalization::Language, types::*},
-    cfg_if::cfg_if,
+    const_format::formatcp,
     leptos::*,
     leptos_meta::*,
     leptos_router::*,
-    routes::{nav::*, signup::*, stories::*, story::*, users::*},
+    routes::{nav::*, not_found::*, signin::*, signup::*, stories::*, story::*, users::*},
 };
 
 pub mod api;
@@ -34,13 +34,20 @@ include!(concat!(env!("OUT_DIR"), "/info.rs"));
 /// The name of the site/product.
 pub const PRODUCT_NAME: &str = "Marzichat";
 
+/// The site-root relative folder where all compiled output is written to by
+/// leptos.
+pub const OUT_DIR: &str = "/pkg";
+
+/// The path to the compiled css file when using leptos.
+const CSS: &str = formatcp!("{OUT_DIR}/marzichat.css");
+
 #[component]
 pub fn App(cx: Scope) -> impl IntoView {
     provide_meta_context(cx);
     let (is_routing, set_is_routing) = create_signal(cx, false);
 
     view! { cx,
-        <Stylesheet id="leptos" href="/pkg/marzichat.css"/>
+        <Stylesheet id="leptos" href=CSS/>
         <Link rel="shortcut icon" type_="image/ico" href="/favicon.ico"/>
         <Meta name="description" content="Leptos implementation of a HackerNews demo"/>
         // adding `set_is_routing` causes the router to wait for async data to load on new pages
@@ -50,31 +57,26 @@ pub fn App(cx: Scope) -> impl IntoView {
             <Nav />
             <main>
                 <Routes>
+                    <Route path="" view=Stories/>
                     <Route path="users/:id" view=User/>
                     <Route path="stories/:id" view=Story/>
-                    <Route path=":stories?" view=Stories/>
                     <Route path="signup" view=Signup/>
+                    <Route path="signin" view=Signin/>
+                    <Route path="*" view=NotFound/>
                 </Routes>
             </main>
         </Router>
     }
 }
 
-// Needs to be in lib.rs AFAIK because wasm-bindgen needs us to be compiling a
-// lib. I may be wrong.
-cfg_if! {
-    if #[cfg(feature = "hydrate")] {
-        use wasm_bindgen::prelude::wasm_bindgen;
-
-        #[wasm_bindgen]
-        pub fn hydrate() {
-            _ = console_log::init_with_level(log::Level::Debug);
-            console_error_panic_hook::set_once();
-            mount_to_body(move |cx| {
-                view! { cx, <App/> }
-            });
-        }
-    }
+#[cfg(feature = "hydrate")]
+#[wasm_bindgen::prelude::wasm_bindgen]
+pub fn hydrate() {
+    _ = console_log::init_with_level(log::Level::Debug);
+    console_error_panic_hook::set_once();
+    mount_to_body(move |cx| {
+        view! { cx, <App/> }
+    });
 }
 
 /// Returns a summary of the build info in plain text format.

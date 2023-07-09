@@ -62,6 +62,7 @@
         "rustc",
         "rustls",
         "sidenav",
+        "signin",
         "sqlx",
         "stylesheet",
         "sublimelinter",

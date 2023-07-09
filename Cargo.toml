@@ -20,7 +20,6 @@ actix-files = {version = "0.6", optional = true}
 actix-governor = {version = "0.4", optional = true}
 actix-web = {version = "4.3", optional = true, features = ["macros", "rustls"]}
 anyhow = "1.0"
-cfg-if = "1.0"
 chrono = {version = "0.4", features = ["serde"]}
 console_error_panic_hook = "0.1"
 console_log = "1.0"
@@ -103,19 +102,26 @@ git2 = "0.17"
 [package.metadata.leptos]
 # The site root folder is where cargo-leptos generate all output. WARNING: all content of this folder will be erased on a rebuild. Use it in your server setup.
 site-root = "target/site"
+
 # [Optional] The source CSS file. If it ends with .sass or .scss then it will be compiled by dart-sass into CSS. The CSS is optimized by Lightning CSS before being written to <site-root>/<site-pkg>/app.css
-style-file = "./style.scss"
+style-file = "./style.css"
+
 # [Optional] Files in the asset-dir will be copied to the site-root directory
 assets-dir = "public"
+
 # The IP and port (ex: 127.0.0.1:3000) where the server serves the content. Use it in your server setup.
 site-addr = "127.0.0.1:3000"
+
 # The port to use for automatic reload monitoring
 reload-port = 3001
-#  The browserlist query used for optimizing the CSS.
+
+# The browserlist query used for optimizing the CSS.
 browserquery = "defaults"
+
+# The features to use when compiling the bin target
 # Optional. Can be over-ridden with the command line parameter --bin-features
 bin-features = ["ssr"]
+
 # The features to use when compiling the lib target
-#
 # Optional. Can be over-ridden with the command line parameter --lib-features
 lib-features = ["hydrate"]

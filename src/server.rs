@@ -7,12 +7,13 @@ use {
     anyhow::Result,
     leptos::*,
     leptos_actix::LeptosRoutes,
-    marzichat::App,
+    marzichat::{App, OUT_DIR},
     std::{
         env,
         fs::File,
         io::BufReader,
         net::{Ipv4Addr, Ipv6Addr, SocketAddr},
+        path::Path,
     },
 };
 
@@ -29,8 +30,9 @@ async fn info() -> impl Responder {
 }
 
 #[get("/favicon.ico")]
-async fn favicon() -> impl Responder {
-    actix_files::NamedFile::open_async("./target/site/favicon.ico").await
+async fn favicon(leptos_options: web::Data<LeptosOptions>) -> impl Responder {
+    let leptos_options = leptos_options.into_inner();
+    actix_files::NamedFile::open(Path::new(&leptos_options.site_root).join("favicon.ico"))
 }
 
 /// Run the backend server.
@@ -62,7 +64,10 @@ pub async fn run() -> Result<()> {
                 routes.to_owned(),
                 |cx| view! { cx, <App/> },
             )
-            .service(Files::new("/", &leptos_options.site_root))
+            .service(Files::new(
+                OUT_DIR,
+                format!("{}/{OUT_DIR}", &leptos_options.site_root),
+            ))
             .wrap(crate::limiter::governor())
             .wrap(middleware::Logger::new("%s for %U %a in %Ts"))
             .wrap(sentry_actix::Sentry::new())
@@ -71,6 +76,7 @@ pub async fn run() -> Result<()> {
             .wrap(middleware::NormalizePath::new(
                 middleware::TrailingSlash::Trim,
             ))
+            .app_data(web::Data::new(leptos_options.to_owned()))
     });
 
     let server =
