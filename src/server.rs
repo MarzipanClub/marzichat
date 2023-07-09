@@ -4,7 +4,7 @@
 use {
     actix_files::Files,
     actix_web::*,
-    anyhow::{ensure, Result},
+    anyhow::Result,
     leptos::*,
     leptos_actix::LeptosRoutes,
     marzichat::App,
@@ -67,6 +67,7 @@ pub async fn run() -> Result<()> {
             .wrap(middleware::Logger::new("%s for %U %a in %Ts"))
             .wrap(sentry_actix::Sentry::new())
             .wrap(middleware::Compress::default())
+            .wrap(crate::redirect::HttpToHttps)
             .wrap(middleware::NormalizePath::new(
                 middleware::TrailingSlash::Trim,
             ))
@@ -85,7 +86,7 @@ pub async fn run() -> Result<()> {
                 let mut keys = rustls_pemfile::pkcs8_private_keys(&mut BufReader::new(key))
                     .expect("couldn't parse cert key");
 
-                ensure!(!keys.is_empty(), "no cert key found");
+                anyhow::ensure!(!keys.is_empty(), "no cert key found");
                 // get the private key
                 rustls::PrivateKey(keys.swap_remove(0))
             };

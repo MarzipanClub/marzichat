@@ -19,6 +19,7 @@ mod address;
 mod limiter;
 mod logger;
 mod postgres;
+mod redirect;
 mod server;
 
 #[cfg(feature = "ssr")]

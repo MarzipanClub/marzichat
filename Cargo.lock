@@ -2108,6 +2108,7 @@ dependencies = [
  "console_log",
  "const_format",
  "derive_more",
+ "futures-util",
  "gethostname",
  "git2",
  "gloo-net 0.3.0",
