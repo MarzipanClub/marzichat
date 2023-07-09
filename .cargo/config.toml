@@ -2,3 +2,8 @@
 # enable compiler to track migrations directory
 # https://docs.rs/sqlx/latest/sqlx/macro.migrate.html#nightly-rust-cfg-flag
 rustflags = ["--cfg=sqlx_macros_unstable"]
+
+[target.x86_64-unknown-linux-gnu]
+# use mold linker when building on linux for faster builds
+linker = "clang"
+rustflags = ["-C", "link-arg=-fuse-ld=/usr/bin/mold"]
