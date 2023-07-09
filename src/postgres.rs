@@ -4,8 +4,8 @@
 use {
     anyhow::Result,
     marzichat::{internationalization::Language, types::*},
-    sqlx::{error::DatabaseError, migrate::Migrator, Pool, Postgres},
-    std::{path::Path, sync::OnceLock},
+    sqlx::{error::DatabaseError, Pool, Postgres},
+    std::sync::OnceLock,
 };
 
 static POOL: OnceLock<Pool<Postgres>> = OnceLock::new();
@@ -32,9 +32,7 @@ pub async fn init() {
     tracing::info!(current_pool_size, max_connections, "connected",);
 
     tracing::info!("running database migrations");
-    Migrator::new(Path::new("migrations"))
-        .await
-        .expect("failed to create migrator")
+    sqlx::migrate!()
         .run(&pool)
         .await
         .expect("failed to run migrations");
