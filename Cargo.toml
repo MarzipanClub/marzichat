@@ -18,7 +18,7 @@ lto = true
 [dependencies]
 actix-files = {version = "0.6", optional = true}
 actix-governor = {version = "0.4", optional = true}
-actix-web = {version = "4.3", optional = true, features = ["macros"]}
+actix-web = {version = "4.3", optional = true, features = ["macros", "rustls"]}
 anyhow = "1.0"
 cfg-if = "1.0"
 chrono = {version = "0.4", features = ["serde"]}
@@ -35,6 +35,7 @@ leptos_router = {version = "0.4", features = ["nightly"]}
 log = "0.4"
 mailchecker = "5.0"
 reqwest = {version = "0.11", features = ["json"]}
+rustls-pemfile = "1.0"
 sentry = {version = "0.31", optional = true}
 sentry-actix = {version = "0.31", optional = true}
 sentry-tracing = {version = "0.31", optional = true}
@@ -49,6 +50,9 @@ wasm-bindgen = "0.2"
 web-sys = {version = "0.3", features = ["AbortController", "AbortSignal"]}
 zeroize = {version = "1.6", features = ["zeroize_derive"]}
 zxcvbn = "2.2"
+
+# pinned to 0.20 because actix expects this version of rustls
+rustls = "0.20"
 
 [features]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]

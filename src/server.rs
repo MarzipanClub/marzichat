@@ -1,7 +1,20 @@
 //! Http web server.
 #![cfg(feature = "ssr")]
 
-use {actix_files::Files, actix_web::*, leptos::*, leptos_actix::LeptosRoutes, marzichat::App};
+use {
+    actix_files::Files,
+    actix_web::*,
+    anyhow::{ensure, Result},
+    leptos::*,
+    leptos_actix::LeptosRoutes,
+    marzichat::App,
+    std::{
+        env,
+        fs::File,
+        io::BufReader,
+        net::{Ipv4Addr, Ipv6Addr, SocketAddr},
+    },
+};
 
 #[get("/health")]
 async fn health() -> impl Responder {
@@ -21,7 +34,7 @@ async fn favicon() -> impl Responder {
 }
 
 /// Run the backend server.
-pub async fn run() -> anyhow::Result<()> {
+pub async fn run() -> Result<()> {
     let leptos_options = {
         let mut opt = leptos_config::get_config_from_env()
             .expect("failed to get leptos config")
@@ -57,8 +70,48 @@ pub async fn run() -> anyhow::Result<()> {
             .wrap(middleware::NormalizePath::new(
                 middleware::TrailingSlash::Trim,
             ))
-    })
-    .bind(&site_addr)?;
+    });
+
+    let server =
+        if let (Some(cert), Some(key)) = (env::var_os("TLS_CERT"), env::var_os("TLS_CERT_KEY")) {
+            let cert = File::open(cert).expect("error opening TLS_CERT");
+            let key = File::open(key).expect("error opening TLS_CERT_KEY");
+            let cert_chain = rustls_pemfile::certs(&mut BufReader::new(cert))
+                .expect("couldn't parse cert")
+                .into_iter()
+                .map(rustls::Certificate)
+                .collect();
+            let key = {
+                let mut keys = rustls_pemfile::pkcs8_private_keys(&mut BufReader::new(key))
+                    .expect("couldn't parse cert key");
+
+                ensure!(!keys.is_empty(), "no cert key found");
+                // get the private key
+                rustls::PrivateKey(keys.swap_remove(0))
+            };
+            let config = rustls::ServerConfig::builder()
+                .with_safe_defaults()
+                .with_no_client_auth()
+                .with_single_cert(cert_chain, key)
+                .expect("couldn't set up certificate chain");
+
+            let http = [
+                SocketAddr::new(Ipv4Addr::UNSPECIFIED.into(), 80),
+                SocketAddr::new(Ipv6Addr::UNSPECIFIED.into(), 80),
+            ];
+            let https = [
+                SocketAddr::new(Ipv4Addr::UNSPECIFIED.into(), 443),
+                SocketAddr::new(Ipv6Addr::UNSPECIFIED.into(), 443),
+            ];
+            server
+                .bind(http.as_ref())
+                .expect("couldn't bind to port 80")
+                .bind_rustls(https.as_ref(), config)
+                .expect("couldn't bind to port 443")
+        } else {
+            tracing::warn!("TLS_CERT not set, tls disabled");
+            server.bind(&site_addr).expect("couldn't bind port")
+        };
 
     tracing::info!(socket_addresses = ?server.addrs(), "binding");
     tracing::info!("✅ ready");

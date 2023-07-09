@@ -5,7 +5,7 @@ use {
     anyhow::Result,
     marzichat::{internationalization::Language, types::*},
     sqlx::{error::DatabaseError, Pool, Postgres},
-    std::sync::OnceLock,
+    std::{env, sync::OnceLock},
 };
 
 static POOL: OnceLock<Pool<Postgres>> = OnceLock::new();
@@ -13,8 +13,8 @@ static POOL: OnceLock<Pool<Postgres>> = OnceLock::new();
 /// Creates a postgres connection pool and runs all migrations.
 #[deny(dead_code)]
 pub async fn init() {
-    let url = std::env::var("DATABASE_URL").expect("DATABASE_URL not set");
-    let max_connections = std::env::var("MAX_POSTGRES_CONNECTIONS")
+    let url = env::var("DATABASE_URL").expect("DATABASE_URL not set");
+    let max_connections = env::var("MAX_POSTGRES_CONNECTIONS")
         .ok()
         .map(|size| {
             size.parse()
