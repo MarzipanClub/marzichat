@@ -1,5 +1,7 @@
-use leptos::{component, view, IntoView, Scope};
-use leptos_router::*;
+use {
+    leptos::{component, view, IntoView, Scope},
+    leptos_router::*,
+};
 
 #[component]
 pub fn Nav(cx: Scope) -> impl IntoView {
@@ -20,6 +22,9 @@ pub fn Nav(cx: Scope) -> impl IntoView {
                 </A>
                 <A href="/job">
                     <strong>"Jobs"</strong>
+                </A>
+                <A href="/signup">
+                    <strong>"Signup"</strong>
                 </A>
                 <a class="github" href="http://github.com/gbj/leptos" target="_blank" rel="noreferrer">
                     "Built with Leptos"

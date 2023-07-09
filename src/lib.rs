@@ -21,7 +21,7 @@ use {
     leptos::*,
     leptos_meta::*,
     leptos_router::*,
-    routes::{nav::*, stories::*, story::*, users::*},
+    routes::{nav::*, signup::*, stories::*, story::*, users::*},
 };
 
 pub mod api;
@@ -53,6 +53,7 @@ pub fn App(cx: Scope) -> impl IntoView {
                     <Route path="users/:id" view=User/>
                     <Route path="stories/:id" view=Story/>
                     <Route path=":stories?" view=Stories/>
+                    <Route path="signup" view=Signup/>
                 </Routes>
             </main>
         </Router>
