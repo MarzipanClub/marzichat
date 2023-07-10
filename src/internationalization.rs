@@ -183,6 +183,24 @@ impl Translations {
 
     translations!(years, "years", "años", "Jahre", "ans");
 
+    translations!(
+        not_found,
+        "Not Found",
+        "No encontrado",
+        "Nicht gefunden",
+        "Non trouvé"
+    );
+
+    translations!(
+        page_not_found_desc,
+        "The page you're looking for was not found.",
+        "La página que buscas no se encontró.",
+        "Die von dir gesuchte Seite wurde nicht gefunden.",
+        "La page que tu recherches est introuvable."
+    );
+
+    translations!(home, "Home", "Inicio", "Startseite", "Accueil");
+
     /// Create a new `Translations` instance for the given `Language`.
     pub fn for_language(language: Language) -> Self {
         Self(language)

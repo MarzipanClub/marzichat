@@ -1,4 +1,4 @@
-export LOG := "marzichat=trace,actix_server=warn,hyper=warn,reqwest=warn,sqlx=info,debug"
+export LOG := "marzichat=trace,actix_files=trace,hyper=warn,reqwest=warn,sqlx=info,debug"
 export DATABASE_URL := "postgresql://marzichat@127.0.0.1/marzichat"
 export REPLENISH_RATE_MILLISECONDS := "200"
 export BURST_SIZE := "10"

@@ -47,14 +47,12 @@ pub fn App(cx: Scope) -> impl IntoView {
     let (is_routing, set_is_routing) = create_signal(cx, false);
 
     view! { cx,
-        <Stylesheet id="leptos" href=CSS/>
-        <Link rel="shortcut icon" type_="image/ico" href="/favicon.ico"/>
-        <Meta name="description" content="Leptos implementation of a HackerNews demo"/>
+        <Stylesheet href=CSS/>
+        <Meta name="description" content="The best forum on the internet."/>
         // adding `set_is_routing` causes the router to wait for async data to load on new pages
         <Router set_is_routing>
             // shows a progress bar while async data are loading
             <RoutingProgress is_routing max_time=std::time::Duration::from_millis(250)/>
-            <Nav />
             <main>
                 <Routes>
                     <Route path="" view=Stories/>

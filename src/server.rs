@@ -50,6 +50,7 @@ pub async fn run() -> Result<()> {
     };
 
     let site_addr = leptos_options.site_addr;
+    tracing::debug!("site_root: {}", leptos_options.site_root);
 
     // Generate the list of routes in your Leptos App
     let routes = leptos_actix::generate_route_list(|cx| view! { cx, <App/> });
@@ -58,16 +59,16 @@ pub async fn run() -> Result<()> {
             .service(health)
             .service(info)
             .service(favicon)
+            .service(Files::new(
+                OUT_DIR,
+                format!("{}/{OUT_DIR}", &leptos_options.site_root),
+            ))
             .route("/api/{tail:.*}", leptos_actix::handle_server_fns())
             .leptos_routes(
                 leptos_options.to_owned(),
                 routes.to_owned(),
                 |cx| view! { cx, <App/> },
             )
-            .service(Files::new(
-                OUT_DIR,
-                format!("{}/{OUT_DIR}", &leptos_options.site_root),
-            ))
             .wrap(crate::limiter::governor())
             .wrap(middleware::Logger::new("%s for %U %a in %Ts"))
             .wrap(sentry_actix::Sentry::new())
