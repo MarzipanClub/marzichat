@@ -16,12 +16,16 @@
 )]
 
 use {
-    crate::{internationalization::Language, routes::Routes, types::*},
+    crate::{
+        internationalization::{Language, Translations},
+        routes::Routes,
+        types::*,
+    },
     const_format::formatcp,
     leptos::*,
     leptos_meta::*,
     leptos_router::*,
-    routes::{nav::*, not_found::*, signin::*, signup::*, stories::*, story::*, users::*},
+    routes::{not_found::*, signin::*, signup::*, stories::*, story::*, users::*},
 };
 
 pub mod api;
@@ -41,18 +45,26 @@ pub const OUT_DIR: &str = "/pkg";
 #[component]
 pub fn App(cx: Scope) -> impl IntoView {
     provide_meta_context(cx);
-    let (is_routing, set_is_routing) = create_signal(cx, false);
+    let t = Translations::default();
 
     view! { cx,
         <Stylesheet href=formatcp!("{OUT_DIR}/{}.css", env!("CARGO_PKG_NAME"))/>
         <Meta name="description" content="The best forum on the internet."/>
 
         // adding `set_is_routing` causes the router to wait for async data to load on new pages
-        <Router set_is_routing>
+        <Router fallback=|cx| view! { cx, <NotFound/> }>
         <div style="max-width: 1280px; min-height: 100" class="mx-auto mb-0 py-1 px-2">
-            <Nav/>
-            // shows a progress bar while async data are loading
-            <RoutingProgress is_routing max_time=std::time::Duration::from_millis(250)/>
+             <nav class="UnderlineNav" aria-label="nav bar">
+                <div class="UnderlineNav-body">
+                    <a class="UnderlineNav-item app-link" href="#home" aria-current="page">{"Home"}</a>
+                    <a class="UnderlineNav-item app-link" href="#about">{"About"}</a>
+                    <a class="UnderlineNav-item app-link" href="#newsletter">{"Newsletter"}</a>
+                </div>
+                <div class="UnderlineNav-actions">
+                    <A href=Routes::Signin class="btn btn-sm mx-2">{t.sign_in()}</A>
+                    <A href=Routes::Signup class="btn btn-sm btn-primary">{t.sign_up()}</A>
+                </div>
+            </nav>
             <main>
             <Routes>
                 <Route path=Routes::Home view=Stories/>
@@ -60,7 +72,6 @@ pub fn App(cx: Scope) -> impl IntoView {
                 <Route path="stories/:id" view=Story/>
                 <Route path=Routes::Signin view=Signin/>
                 <Route path=Routes::Signup view=Signup/>
-                <Route path="*" view=NotFound/>
             </Routes>
             </main>
         </div>

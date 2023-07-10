@@ -31,12 +31,6 @@ pub fn init() {
             .map(|dsn| dsn.parse().ok())
             .flatten(),
         release: Some(release.to_owned()),
-        environment: Some(
-            gethostname::gethostname()
-                .to_string_lossy()
-                .to_string()
-                .into(),
-        ),
         ..Default::default()
     });
 

@@ -1,6 +1,5 @@
 use {leptos_router::ToHref, std::fmt};
 
-pub mod nav;
 pub mod not_found;
 pub mod signin;
 pub mod signup;

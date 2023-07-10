@@ -26,7 +26,6 @@ console_log = "1.0"
 const_format = "0.2"
 derive_more = "0.99"
 futures-util = "0.3"
-gethostname = {version = "0.4", optional = true}
 gloo-net = {version = "0.3", features = ["http"]}
 leptos = {version = "0.4", features = ["nightly"]}
 leptos_actix = {version = "0.4", optional = true}
@@ -60,7 +59,6 @@ ssr = [
   "actix-files",
   "actix-governor",
   "actix-web",
-  "gethostname",
   "leptos_actix",
   "sentry",
   "sentry-actix",
@@ -81,7 +79,6 @@ denylist = [
   "actix-files",
   "actix-governor",
   "actix-web",
-  "gethostname",
   "leptos_actix",
   "sentry",
   "sentry-actix",
