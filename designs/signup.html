@@ -3,38 +3,73 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="../style.css" rel="stylesheet" />
 
-<style>
-    .lds-dual-ring {
-        display: inline-block;
-        width: 80px;
-        height: 80px;
-    }
-
-    .lds-dual-ring:after {
-        content: " ";
-        display: block;
-        width: 64px;
-        height: 64px;
-        margin: 8px;
-        border-radius: 50%;
-        border: 6px solid #fff;
-        border-color: #fff transparent #fff transparent;
-        animation: lds-dual-ring 1.2s linear infinite;
-    }
-
-    @keyframes lds-dual-ring {
-        0% {
-            transform: rotate(0deg);
-        }
-
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-</style>
 
 <body>
-    <div class="lds-dual-ring"></div>
+    <main style="max-width: 544px;" class="mx-auto py-4 px-4">
+
+        <div class="Box Box--spacious">
+            <div class="Box-header">
+                <h1 class="Box-title">
+                    Create an account
+                </h1>
+            </div>
+            <div class="Box-body">
+                <form>
+                    <div class="form-group">
+                        <div class="form-group-header">
+                            <label for="example-text">Example Text</label>
+                        </div>
+                        <div class="form-group-body">
+                            <input class="form-control" type="text" value="Example Value" id="example-text" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-group-header">
+                            <label for="example-text">Example Text</label>
+                        </div>
+                        <div class="form-group-body">
+                            <input class="form-control" type="text" value="Example Value" id="example-text" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-group-header">
+                            <label for="example-text">Example Text</label>
+                        </div>
+                        <div class="form-group-body">
+                            <input class="form-control" type="text" value="Example Value" id="example-text" />
+                        </div>
+                    </div>
+
+
+                </form>
+                <p class="mt-4">By clicking foo you agree to the foobar and agreement thingy</p>
+                <div class=" text-right mt-4">
+
+                    <button class="btn btn-secondary mr-1">
+                        Cancel
+                    </button>
+                    <button class="btn btn-primary">
+                        Submit
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="Box my-4">
+            <div class="Box-body text-center">
+                <div class="blankslate">
+                    <p class="color-fg-default">New to GitHub? Create an account.</p>
+                </div>
+            </div>
+        </div>
+        <div class="Box my-4">
+            <div class="Box-body text-center">
+                <p class="color-fg-subtle">Copyrigth &copy; 2021</p>
+
+            </div>
+        </div>
+
+    </main>
+
 
 </body>
 

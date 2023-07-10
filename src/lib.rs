@@ -51,9 +51,8 @@ pub fn App(cx: Scope) -> impl IntoView {
         <Stylesheet href=formatcp!("{OUT_DIR}/{}.css", env!("CARGO_PKG_NAME"))/>
         <Meta name="description" content="The best forum on the internet."/>
 
-        // adding `set_is_routing` causes the router to wait for async data to load on new pages
-        <Router fallback=|cx| view! { cx, <NotFound/> }>
         <div style="max-width: 1280px; min-height: 100" class="mx-auto mb-0 py-1 px-2">
+        <Router>
              <nav class="UnderlineNav" aria-label="nav bar">
                 <div class="UnderlineNav-body">
                     <a class="UnderlineNav-item app-link" href="#home" aria-current="page">{"Home"}</a>
@@ -65,17 +64,16 @@ pub fn App(cx: Scope) -> impl IntoView {
                     <A href=Routes::Signup class="btn btn-sm btn-primary">{t.sign_up()}</A>
                 </div>
             </nav>
-            <main>
             <Routes>
                 <Route path=Routes::Home view=Stories/>
                 <Route path="users/:id" view=User/>
                 <Route path="stories/:id" view=Story/>
                 <Route path=Routes::Signin view=Signin/>
                 <Route path=Routes::Signup view=Signup/>
+                <Route path="*" view=NotFound/>
             </Routes>
-            </main>
-        </div>
         </Router>
+        </div>
     }
 }
 

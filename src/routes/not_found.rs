@@ -1,4 +1,8 @@
-use {crate::internationalization::Translations, leptos::*};
+use {
+    crate::{internationalization::Translations, routes::Routes},
+    leptos::*,
+    leptos_router::*,
+};
 
 #[component]
 pub fn NotFound(cx: Scope) -> impl IntoView {
@@ -10,7 +14,7 @@ pub fn NotFound(cx: Scope) -> impl IntoView {
                 <h3 class="blankslate-heading">{t.not_found()}</h3>
                 <p>{t.page_not_found_desc()}</p>
                 <div class="blankslate-action">
-                    <button class="btn btn-primary" type="button">{t.home()}</button>
+                    <A href=Routes::Home class="btn btn-primary">{t.home()}</A>
                 </div>
             </div>
         </div>
