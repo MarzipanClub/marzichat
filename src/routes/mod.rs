@@ -1,10 +1,12 @@
 use {leptos_router::ToHref, std::fmt};
 
 pub mod not_found;
+pub mod privacy;
 pub mod signin;
 pub mod signup;
 pub mod stories;
 pub mod story;
+pub mod terms;
 pub mod users;
 
 const ROOT: &str = "/";
@@ -12,6 +14,8 @@ const ABOUT: &str = "/about";
 const NEWSLETTER: &str = "/newsletter";
 const SIGNIN: &str = "/signin";
 const SIGNUP: &str = "/signup";
+const PRIVACY_POLICY: &str = "/privacy-policy";
+const TERMS_AND_CONDITIONS: &str = "/terms-and-conditions";
 
 /// The route to a page in the app.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -21,6 +25,8 @@ pub enum Routes {
     Newsletter,
     Signin,
     Signup,
+    PrivacyPolicy,
+    TermsAndConditions,
 }
 
 impl fmt::Display for Routes {
@@ -31,6 +37,8 @@ impl fmt::Display for Routes {
             Routes::Newsletter => write!(f, "{NEWSLETTER}"),
             Routes::Signin => write!(f, "{SIGNIN}"),
             Routes::Signup => write!(f, "{SIGNUP}"),
+            Routes::PrivacyPolicy => write!(f, "{PRIVACY_POLICY}"),
+            Routes::TermsAndConditions => write!(f, "{TERMS_AND_CONDITIONS}"),
         }
     }
 }
@@ -49,6 +57,8 @@ impl ToHref for Routes {
             Routes::Newsletter => Box::new(|| NEWSLETTER.into()),
             Routes::Signin => Box::new(|| SIGNIN.into()),
             Routes::Signup => Box::new(|| SIGNUP.into()),
+            Routes::PrivacyPolicy => Box::new(|| PRIVACY_POLICY.into()),
+            Routes::TermsAndConditions => Box::new(|| TERMS_AND_CONDITIONS.into()),
         }
     }
 }

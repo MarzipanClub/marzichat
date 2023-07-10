@@ -1,49 +1,73 @@
-use {
-    crate::api::{self, User},
-    leptos::*,
-    leptos_router::*,
-};
+use {crate::routes::Routes, leptos::*, leptos_router::*};
 
 #[component]
 pub fn Signup(cx: Scope) -> impl IntoView {
-    let params = use_params_map(cx);
-    let user = create_resource(
-        cx,
-        move || params().get("id").cloned().unwrap_or_default(),
-        move |id| async move {
-            if id.is_empty() {
-                None
-            } else {
-                api::fetch_api::<User>(cx, &api::user(&id)).await
-            }
-        },
-    );
     view! { cx,
-        <div class="user-view">
-            <Suspense fallback=|| view! { cx, "Loading..." }>
-                {move || user.read(cx).map(|user| match user {
-                    None => view! { cx,  <h1>"User not found."</h1> }.into_any(),
-                    Some(user) => view! { cx,
-                        <div>
-                            <h1>"User: " {&user.id}</h1>
-                            <ul class="meta">
-                                <li>
-                                    <span class="label">"Created: "</span> {user.created}
-                                </li>
-                                <li>
-                                <span class="label">"Karma: "</span> {user.karma}
-                                </li>
-                                <li inner_html={user.about} class="about"></li>
-                            </ul>
-                            <p class="links">
-                                <a href=format!("https://news.ycombinator.com/submitted?id={}", user.id)>"submissions"</a>
-                                " | "
-                                <a href=format!("https://news.ycombinator.com/threads?id={}", user.id)>"comments"</a>
-                            </p>
+        <main class="container-sm my-4">
+            <div class="Box Box--spacious">
+                <div class="Box-header">
+                    <h1 class="Box-title">
+                        {"Create an account"}
+                    </h1>
+                </div>
+                <div class="Box-body">
+                    <form>
+                        <div class="form-group">
+                            <div class="form-group-header">
+                                <label for="example-text">{"Email"}</label>
+                            </div>
+                            <div class="form-group-body">
+                                <input class="form-control width-full" type="text" value="Example Value"
+                                    id="example-text" />
+                            </div>
                         </div>
-                    }.into_any()
-                })}
-            </Suspense>
-        </div>
+                        <div class="flash flash-success">
+                           {" Flash error inside a Box."}
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group-header">
+                                <label for="example-text">{"Username"}</label>
+                            </div>
+                            <div class="form-group-body">
+                                <input class="form-control  width-full" type="text" value="Example Value" id="example-text" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group-header">
+                                <label for="example-text">{"Password"}</label>
+                            </div>
+                            <div class="form-group-body">
+                                <input class="form-control  width-full" type="text" value="Example Value" id="example-text" />
+                            </div>
+                        </div>
+                    </form>
+                    <p class="color-fg-default">{"By continuing, you agree to the Marzichat "}
+                        <A href=Routes::Signin>{"Terms and Conditions"}</A>
+                        {" and "}
+                        <A href=Routes::Signin>{"Privacy Policy"}</A>
+                        {"."}
+                    </p>
+                    <div class=" text-right mt-4">
+                        <button class="btn btn-primary">
+                            {"Create free account"}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="Box mt-4">
+                <div class="Box-body text-center">
+                    <div class="blankslate">
+                        <p class="color-fg-default">{"Already have an account? "}
+                            <A href=Routes::Signin>{"Sign in."}</A>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="Box mt-4">
+                <div class="Box-body text-center">
+                    <p class="color-fg-subtle">{"Copyright © "}{crate::current_year()}</p>
+                </div>
+            </div>
+        </main>
     }
 }

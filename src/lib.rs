@@ -25,10 +25,14 @@ use {
     leptos::*,
     leptos_meta::*,
     leptos_router::*,
-    routes::{not_found::*, signin::*, signup::*, stories::*, story::*, users::*},
+    routes::{
+        not_found::*, privacy::*, signin::*, signup::*, stories::*, story::*, terms::*, users::*,
+    },
+    std::sync::OnceLock,
 };
 
 pub mod api;
+pub mod components;
 pub mod internationalization;
 pub mod routes;
 pub mod types;
@@ -37,6 +41,9 @@ include!(concat!(env!("OUT_DIR"), "/info.rs"));
 
 /// The name of the site/product.
 pub const PRODUCT_NAME: &str = "Marzichat";
+
+/// Customer support email address.
+pub const SUPPORT_EMAIL: &str = "hello@marzipan.club";
 
 /// The site-root relative folder where all compiled output is written to by
 /// leptos.
@@ -70,6 +77,8 @@ pub fn App(cx: Scope) -> impl IntoView {
                 <Route path="stories/:id" view=Story/>
                 <Route path=Routes::Signin view=Signin/>
                 <Route path=Routes::Signup view=Signup/>
+                <Route path=Routes::PrivacyPolicy view=PrivacyPolicy/>
+                <Route path=Routes::TermsAndConditions view=TermsAndConditions/>
                 <Route path="*" view=NotFound/>
             </Routes>
         </Router>
@@ -98,4 +107,10 @@ pub fn summary() -> String {
     format!(
             "{PRODUCT_NAME} v{VERSION} ({GIT_SHORT_SHA})\nBuilt {build_time}.\n\n{BUILD_TIME}\n{GIT_SHA}\n{COMPILER}"
         )
+}
+
+/// Returns the current year as a static string.
+pub fn current_year() -> &'static str {
+    static YEAR: OnceLock<String> = OnceLock::new();
+    YEAR.get_or_init(|| chrono::Utc::now().date_naive().format("%Y").to_string())
 }
