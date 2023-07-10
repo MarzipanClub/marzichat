@@ -201,6 +201,22 @@ impl Translations {
 
     translations!(home, "Home", "Inicio", "Startseite", "Accueil");
 
+    translations!(
+        sign_in,
+        "Sign in",
+        "Registrarse",
+        "Anmelden",
+        "Se connecter"
+    );
+
+    translations!(
+        sign_up,
+        "Sign up",
+        "Inscribirse",
+        "Registrieren",
+        "S'inscrire"
+    );
+
     /// Create a new `Translations` instance for the given `Language`.
     pub fn for_language(language: Language) -> Self {
         Self(language)

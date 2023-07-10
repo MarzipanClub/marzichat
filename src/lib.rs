@@ -16,7 +16,7 @@
 )]
 
 use {
-    crate::{internationalization::Language, types::*},
+    crate::{internationalization::Language, routes::Routes, types::*},
     const_format::formatcp,
     leptos::*,
     leptos_meta::*,
@@ -38,31 +38,32 @@ pub const PRODUCT_NAME: &str = "Marzichat";
 /// leptos.
 pub const OUT_DIR: &str = "/pkg";
 
-/// The path to the compiled css file when using leptos.
-const CSS: &str = formatcp!("{OUT_DIR}/marzichat.css");
-
 #[component]
 pub fn App(cx: Scope) -> impl IntoView {
     provide_meta_context(cx);
     let (is_routing, set_is_routing) = create_signal(cx, false);
 
     view! { cx,
-        <Stylesheet href=CSS/>
+        <Stylesheet href=formatcp!("{OUT_DIR}/{}.css", env!("CARGO_PKG_NAME"))/>
         <Meta name="description" content="The best forum on the internet."/>
+
         // adding `set_is_routing` causes the router to wait for async data to load on new pages
         <Router set_is_routing>
+        <div style="max-width: 1280px; min-height: 100" class="mx-auto mb-0 py-1 px-2">
+            <Nav/>
             // shows a progress bar while async data are loading
             <RoutingProgress is_routing max_time=std::time::Duration::from_millis(250)/>
             <main>
-                <Routes>
-                    <Route path="" view=Stories/>
-                    <Route path="users/:id" view=User/>
-                    <Route path="stories/:id" view=Story/>
-                    <Route path="signup" view=Signup/>
-                    <Route path="signin" view=Signin/>
-                    <Route path="*" view=NotFound/>
-                </Routes>
+            <Routes>
+                <Route path=Routes::Home view=Stories/>
+                <Route path="users/:id" view=User/>
+                <Route path="stories/:id" view=Story/>
+                <Route path=Routes::Signin view=Signin/>
+                <Route path=Routes::Signup view=Signup/>
+                <Route path="*" view=NotFound/>
+            </Routes>
             </main>
+        </div>
         </Router>
     }
 }

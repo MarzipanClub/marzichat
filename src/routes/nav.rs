@@ -1,35 +1,23 @@
 use {
+    crate::{internationalization::Translations, Routes},
     leptos::{component, view, IntoView, Scope},
     leptos_router::*,
 };
 
 #[component]
 pub fn Nav(cx: Scope) -> impl IntoView {
+    let t = Translations::default();
     view! { cx,
-        <header class="header">
-            <nav class="inner">
-                <A href="/home">
-                    <strong>"HN"</strong>
-                </A>
-                <A href="/new">
-                    <strong>"New"</strong>
-                </A>
-                <A href="/show">
-                    <strong>"Show"</strong>
-                </A>
-                <A href="/ask">
-                    <strong>"Ask"</strong>
-                </A>
-                <A href="/job">
-                    <strong>"Jobs"</strong>
-                </A>
-                <A href="/signup">
-                    <strong>"Signup"</strong>
-                </A>
-                <a class="github" href="http://github.com/gbj/leptos" target="_blank" rel="noreferrer">
-                    "Built with Leptos"
-                </a>
-            </nav>
-        </header>
+         <nav class="UnderlineNav" aria-label="nav bar">
+            <div class="UnderlineNav-body">
+                <a class="UnderlineNav-item app-link" href="#home" aria-current="page">{"Home"}</a>
+                <a class="UnderlineNav-item app-link" href="#about">{"About"}</a>
+                <a class="UnderlineNav-item app-link" href="#newsletter">{"Newsletter"}</a>
+            </div>
+            <div class="UnderlineNav-actions">
+                <A href=Routes::Signin class="btn btn-sm mx-2">{t.sign_in()}</A>
+                <A href=Routes::Signup class="btn btn-sm btn-primary">{t.sign_up()}</A>
+            </div>
+        </nav>
     }
 }
