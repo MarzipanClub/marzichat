@@ -76,14 +76,14 @@ pub fn App(cx: Scope) -> impl IntoView {
                         <Route path=ABOUT view=NotFound/> // TODO: build about page
 
                         <Route path=HELP_AND_SAFETY view=NotFound/> // TODO: build HelpAndSafety page
-                        <Route path="/help" view=NotFound/> // TODO: build HelpAndSafety page
-                        <Route path="/safety" view=NotFound/> // TODO: build HelpAndSafety page
+                        <Route path="/help" view=|cx| view! { cx, <Redirect path=HELP_AND_SAFETY/> }/>
+                        <Route path="/safety" view=|cx| view! { cx, <Redirect path=HELP_AND_SAFETY/> }/>
 
                         <Route path=PRIVACY_POLICY view=PrivacyPolicy/>
-                        <Route path="/privacy" view=PrivacyPolicy/>
+                        <Route path="/privacy" view=|cx| view! { cx, <Redirect path=PRIVACY_POLICY/> }/>
 
                         <Route path=TERMS_AND_CONDITIONS view=TermsAndConditions/>
-                        <Route path="/terms" view=TermsAndConditions/>
+                        <Route path="/terms" view=|cx| view! { cx, <Redirect path=TERMS_AND_CONDITIONS/> }/>
 
                         <Route path="*" view=NotFound/>
                     </Routes>
