@@ -1,11 +1,12 @@
 use {
-    crate::{routes::*, scroll_to_top},
+    crate::{internationalization::Translations, routes::*, scroll_to_top},
     leptos::*,
     leptos_router::*,
 };
 
 #[component]
 pub fn Signup(cx: Scope) -> impl IntoView {
+    let t = Translations::default();
     scroll_to_top();
     view! { cx,
         <main class="container-sm my-4">
@@ -19,36 +20,44 @@ pub fn Signup(cx: Scope) -> impl IntoView {
                     <form>
                         <div class="form-group">
                             <div class="form-group-header">
-                                <label for="example-text">{"Email"}</label>
+                                <label for="email">{t.email()}</label>
                             </div>
                             <div class="form-group-body">
-                                <input class="form-control width-full" type="text" value="Example Value"
-                                    id="example-text" />
+                                <input class="form-control width-full" type="text"
+                                    id="email" />
                             </div>
                         </div>
-                        <div class="flash flash-success">Flash error inside a Box.</div>
+                        <div class="flash flash-success">"Flash error inside a Box."</div>
                         <div class="form-group">
                             <div class="form-group-header">
-                                <label for="example-text">{"Username"}</label>
+                                <label for="username">{t.username()}</label>
                             </div>
                             <div class="form-group-body">
-                                <input class="form-control  width-full" type="text" value="Example Value" id="example-text" />
+                                <input class="form-control  width-full" type="text" id="username" />
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="form-group-header">
-                                <label for="example-text">{"Password"}</label>
+                                <label for="password">{t.password()}</label>
                             </div>
                             <div class="form-group-body">
-                                <input class="form-control  width-full" type="text" value="Example Value" id="example-text" />
+                                <input class="form-control  width-full" type="text" id="password" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group-header">
+                                <label for="password_again">{t.retype_password()}</label>
+                            </div>
+                            <div class="form-group-body">
+                                <input class="form-control  width-full" type="text" id="password_again" />
                             </div>
                         </div>
                     </form>
-                    <p class="color-fg-default">{"By continuing, you agree to the Marzichat "}
-                        <A href=TERMS_AND_CONDITIONS>{"Terms and Conditions"}</A>
-                        {" and "}
-                        <A href=PRIVACY_POLICY>{"Privacy Policy"}</A>
-                        {"."}
+                    <p class="color-fg-default">{t.terms_and_privacy_disclaimer_1()}
+                        <A href=TERMS_AND_CONDITIONS>{t.terms_and_conditions()}</A>
+                        {t.terms_and_privacy_disclaimer_2()}
+                        <A href=PRIVACY_POLICY>{t.privacy_policy()}</A>
+                        {t.terms_and_privacy_disclaimer_3()}
                     </p>
                     <div class=" text-right mt-4">
                         <button class="btn btn-primary">{"Create free account"}</button>
@@ -58,7 +67,7 @@ pub fn Signup(cx: Scope) -> impl IntoView {
             <div class="Box mt-4">
                 <div class="Box-body text-center">
                     <div class="blankslate color-fg-default">
-                        {"Already have an account? "}<A href=SIGNIN>{"Sign in."}</A>
+                        {"Already have an account? "}<A href=SIGNIN>{"Sign in"}</A>{"."}
                     </div>
                 </div>
             </div>

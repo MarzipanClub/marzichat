@@ -4,6 +4,8 @@
 //! app.
 
 use {
+    crate::PRODUCT_NAME,
+    const_format::formatcp,
     derive_more::{Display, From},
     serde::{Deserialize, Serialize},
     std::fmt::Display,
@@ -257,6 +259,72 @@ impl Translations {
         "Ayuda y seguridad",
         "Hilfe und Sicherheit",
         "Aide et sécurité"
+    );
+
+    translations!(email, "Email", "Correo electrónico", "E-Mail", "Email");
+
+    translations!(
+        username,
+        "Username",
+        "Nombre de usuario",
+        "Benutzername",
+        "Nom d'utilisateur"
+    );
+
+    translations!(
+        password,
+        "Password",
+        "Contraseña",
+        "Passwort",
+        "Mot de passe"
+    );
+
+    translations!(
+        retype_password,
+        "Retype password",
+        "Vuelve a escribir la contraseña",
+        "Passwort erneut eingeben",
+        "Retaper le mot de passe"
+    );
+
+    translations!(
+        terms_and_privacy_disclaimer_1,
+        formatcp!("By continuing, you agree to the {PRODUCT_NAME} "),
+        "Al continuar, aceptas los ",
+        formatcp!("Durch die Fortsetzung stimmst du den {PRODUCT_NAME} "),
+        "En continuant, tu acceptes les "
+    );
+
+    translations!(
+        terms_and_privacy_disclaimer_2,
+        " and ",
+        " y ",
+        " und ",
+        " et "
+    );
+
+    translations!(
+        terms_and_privacy_disclaimer_3,
+        ".",
+        formatcp!(" de {PRODUCT_NAME}."),
+        " zu.",
+        formatcp!(" de {PRODUCT_NAME}.")
+    );
+
+    translations!(
+        terms_and_conditions,
+        "Terms and Conditions",
+        "Términos y condiciones",
+        "Allgemeine Geschäftsbedingungen",
+        "Conditions générales"
+    );
+
+    translations!(
+        privacy_policy,
+        "Privacy Policy",
+        "Política de privacidad",
+        "Datenschutzerklärung",
+        "Politique de confidentialité"
     );
 
     /// Create a new `Translations` instance for the given `Language`.
