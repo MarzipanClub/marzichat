@@ -58,34 +58,35 @@ pub fn App(cx: Scope) -> impl IntoView {
     view! { cx,
         <Stylesheet href=formatcp!("{OUT_DIR}/{}.css", env!("CARGO_PKG_NAME"))/>
         <Meta name="description" content="The best forum on the internet."/>
+        <div class="Appframe">
+            <Router>
+                <Nav/>
+                <div class="container-xl p-3 pt-8">
+                    <Routes>
+                        <Route path=HOME view=Stories/>
+                        <Route path="users/:id" view=User/>
+                        <Route path="stories/:id" view=Story/>
 
-        <Router>
-            <Nav/>
-            <div class="container-xl p-3">
-                <Routes>
-                    <Route path=HOME view=Stories/>
-                    <Route path="users/:id" view=User/>
-                    <Route path="stories/:id" view=Story/>
+                        <Route path=SIGNIN view=Signin/>
+                        <Route path=SIGNUP view=Signup/>
 
-                    <Route path=SIGNIN view=Signin/>
-                    <Route path=SIGNUP view=Signup/>
+                        <Route path=ABOUT view=NotFound/> // TODO: build about page
 
-                    <Route path=ABOUT view=NotFound/> // TODO: build about page
+                        <Route path=HELP_AND_SAFETY view=NotFound/> // TODO: build HelpAndSafety page
+                        <Route path="/help" view=NotFound/> // TODO: build HelpAndSafety page
+                        <Route path="/safety" view=NotFound/> // TODO: build HelpAndSafety page
 
-                    <Route path=HELP_AND_SAFETY view=NotFound/> // TODO: build HelpAndSafety page
-                    <Route path="/help" view=NotFound/> // TODO: build HelpAndSafety page
-                    <Route path="/safety" view=NotFound/> // TODO: build HelpAndSafety page
+                        <Route path=PRIVACY_POLICY view=PrivacyPolicy/>
+                        <Route path="/privacy" view=PrivacyPolicy/>
 
-                    <Route path=PRIVACY_POLICY view=PrivacyPolicy/>
-                    <Route path="/privacy" view=PrivacyPolicy/>
+                        <Route path=TERMS_AND_CONDITIONS view=TermsAndConditions/>
+                        <Route path="/terms" view=TermsAndConditions/>
 
-                    <Route path=TERMS_AND_CONDITIONS view=TermsAndConditions/>
-                    <Route path="/terms" view=TermsAndConditions/>
-
-                    <Route path="*" view=NotFound/>
-                </Routes>
-            </div>
-        </Router>
+                        <Route path="*" view=NotFound/>
+                    </Routes>
+                </div>
+            </Router>
+        </div>
     }
 }
 

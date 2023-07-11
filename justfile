@@ -17,8 +17,8 @@ rust-analyzer-check:
     cargo check-all-features --message-format=json-diagnostic-rendered-ansi
 
 # run watching for changes
-watch:
-    cargo leptos watch
+watch args="":
+    cargo leptos watch {{args}}
 
 # creates a new up and down migration
 new-migration name:

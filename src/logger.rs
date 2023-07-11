@@ -14,14 +14,16 @@ pub fn init() {
         )
         .with(sentry_tracing::layer());
 
-    if cfg!(debug_assertions) {
-        log.with(layer().without_time().with_line_number(true))
-            .init();
-    } else {
-        log.with(layer().with_line_number(true))
-            .with(tracing_journald::Layer::new().expect("failed to initialize journald layer"))
-            .init();
-    }
+    // show line numbers and hide timestamps in debug builds
+    #[cfg(debug_assertions)]
+    let log = log.with(layer().without_time().with_line_number(true));
+
+    // journal is a linux-only feature
+    #[cfg(target_os = "linux")]
+    let log =
+        log.with(tracing_journald::Layer::new().expect("failed to initialize journald layer"));
+
+    log.init();
 
     let release = sentry::release_name!().expect("error getting release name");
 
