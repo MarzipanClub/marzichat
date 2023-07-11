@@ -42,6 +42,9 @@ pub const PRODUCT_NAME: &str = "Marzichat";
 /// Company name.
 pub const COMPANY_NAME: &str = "Marzipan Club, LLC";
 
+/// The site url.
+pub const SITE_URL: &str = "marzichat.com";
+
 /// Customer support email address.
 pub const SUPPORT_EMAIL: &str = "hello@marzipan.club";
 
