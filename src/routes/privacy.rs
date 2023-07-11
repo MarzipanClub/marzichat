@@ -1,5 +1,5 @@
 use {
-    crate::{COMPANY_NAME, PRODUCT_NAME, SITE_URL, SUPPORT_EMAIL},
+    crate::{scroll_to_top, COMPANY_NAME, PRODUCT_NAME, SITE_URL, SUPPORT_EMAIL},
     const_format::formatcp,
     leptos::*,
 };
@@ -7,6 +7,7 @@ use {
 #[component]
 pub fn PrivacyPolicy(cx: Scope) -> impl IntoView {
     const EMAIL: &str = formatcp!(r#"<a href="mailto:{SUPPORT_EMAIL}">{SUPPORT_EMAIL}</a>"#);
+    scroll_to_top();
     view! { cx,
         <main class="p-4 lh-condensed">
             <h1>{""}{PRODUCT_NAME}{" Privacy Policy"}</h1>

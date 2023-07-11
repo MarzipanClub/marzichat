@@ -1,7 +1,12 @@
-use {crate::routes::*, leptos::*, leptos_router::*};
+use {
+    crate::{routes::*, scroll_to_top},
+    leptos::*,
+    leptos_router::*,
+};
 
 #[component]
 pub fn Signup(cx: Scope) -> impl IntoView {
+    scroll_to_top();
     view! { cx,
         <main class="container-sm my-4">
             <div class="Box Box--spacious">
@@ -21,9 +26,7 @@ pub fn Signup(cx: Scope) -> impl IntoView {
                                     id="example-text" />
                             </div>
                         </div>
-                        <div class="flash flash-success">
-                           {" Flash error inside a Box."}
-                        </div>
+                        <div class="flash flash-success">Flash error inside a Box.</div>
                         <div class="form-group">
                             <div class="form-group-header">
                                 <label for="example-text">{"Username"}</label>

@@ -1,5 +1,5 @@
 use {
-    crate::{COMPANY_NAME, PRODUCT_NAME, SITE_URL, SUPPORT_EMAIL},
+    crate::{scroll_to_top, COMPANY_NAME, PRODUCT_NAME, SITE_URL, SUPPORT_EMAIL},
     const_format::formatcp,
     leptos::*,
 };
@@ -8,6 +8,7 @@ use {
 pub fn TermsAndConditions(cx: Scope) -> impl IntoView {
     const EMAIL: &str = formatcp!(r#"<a href="mailto:{SUPPORT_EMAIL}">{SUPPORT_EMAIL}</a>"#);
     const DISPUTE: &str = formatcp!("In the event of a dispute, you or {PRODUCT_NAME} must give the other a Notice of Dispute, which is a written statement that sets forth the name, address, and contact information of the party giving it, the facts giving rise to the dispute, and the relief requested. You must send any Notice of Dispute via email to: {EMAIL}. {PRODUCT_NAME} will send any Notice of Dispute to you by mail to your address if we have it, or otherwise to your email address. You and {PRODUCT_NAME} will attempt to resolve any dispute through informal negotiation within sixty (60) days from the date the Notice of Dispute is sent. After sixty (60) days, you or {PRODUCT_NAME} may commence arbitration.");
+    scroll_to_top();
     view! { cx,
         <main class="p-4 lh-condensed">
             <h1>{""}{PRODUCT_NAME}{" Terms & Conditions"}</h1>

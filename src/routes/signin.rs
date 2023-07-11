@@ -1,11 +1,15 @@
 use {
-    crate::api::{self, User},
+    crate::{
+        api::{self, User},
+        scroll_to_top,
+    },
     leptos::*,
     leptos_router::*,
 };
 
 #[component]
 pub fn Signin(cx: Scope) -> impl IntoView {
+    scroll_to_top();
     let params = use_params_map(cx);
     let user = create_resource(
         cx,

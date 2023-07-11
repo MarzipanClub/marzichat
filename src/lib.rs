@@ -61,35 +61,33 @@ pub fn App(cx: Scope) -> impl IntoView {
     view! { cx,
         <Stylesheet href=formatcp!("{OUT_DIR}/{}.css", env!("CARGO_PKG_NAME"))/>
         <Meta name="description" content="The best forum on the internet."/>
-        <div class="Appframe">
-            <Router>
-                <Nav/>
-                <div class="container-xl p-3 pt-8">
-                    <Routes>
-                        <Route path=HOME view=Stories/>
-                        <Route path="users/:id" view=User/>
-                        <Route path="stories/:id" view=Story/>
+        <Router>
+            <Nav/>
+            <div class="container-xl p-3 pt-8">
+                <Routes>
+                    <Route path=HOME view=Stories/>
+                    <Route path="users/:id" view=User/>
+                    <Route path="stories/:id" view=Story/>
 
-                        <Route path=SIGNIN view=Signin/>
-                        <Route path=SIGNUP view=Signup/>
+                    <Route path=SIGNIN view=Signin/>
+                    <Route path=SIGNUP view=Signup/>
 
-                        <Route path=ABOUT view=NotFound/> // TODO: build about page
+                    <Route path=ABOUT view=NotFound/> // TODO: build about page
 
-                        <Route path=HELP_AND_SAFETY view=NotFound/> // TODO: build HelpAndSafety page
-                        <Route path="/help" view=|cx| view! { cx, <Redirect path=HELP_AND_SAFETY/> }/>
-                        <Route path="/safety" view=|cx| view! { cx, <Redirect path=HELP_AND_SAFETY/> }/>
+                    <Route path=HELP_AND_SAFETY view=NotFound/> // TODO: build HelpAndSafety page
+                    <Route path="/help" view=|cx| view! { cx, <Redirect path=HELP_AND_SAFETY/> }/>
+                    <Route path="/safety" view=|cx| view! { cx, <Redirect path=HELP_AND_SAFETY/> }/>
 
-                        <Route path=PRIVACY_POLICY view=PrivacyPolicy/>
-                        <Route path="/privacy" view=|cx| view! { cx, <Redirect path=PRIVACY_POLICY/> }/>
+                    <Route path=PRIVACY_POLICY view=PrivacyPolicy/>
+                    <Route path="/privacy" view=|cx| view! { cx, <Redirect path=PRIVACY_POLICY/> }/>
 
-                        <Route path=TERMS_AND_CONDITIONS view=TermsAndConditions/>
-                        <Route path="/terms" view=|cx| view! { cx, <Redirect path=TERMS_AND_CONDITIONS/> }/>
+                    <Route path=TERMS_AND_CONDITIONS view=TermsAndConditions/>
+                    <Route path="/terms" view=|cx| view! { cx, <Redirect path=TERMS_AND_CONDITIONS/> }/>
 
-                        <Route path="*" view=NotFound/>
-                    </Routes>
-                </div>
-            </Router>
-        </div>
+                    <Route path="*" view=NotFound/>
+                </Routes>
+            </div>
+        </Router>
     }
 }
 
@@ -138,4 +136,10 @@ where
 {
     #[cfg(feature = "hydrate")]
     drop(leptos_use::on_click_outside(cx, target, handler));
+}
+
+/// Scroll to the top of the page on first render.
+pub fn scroll_to_top() {
+    #[cfg(feature = "hydrate")]
+    window().scroll_to_with_x_and_y(0.0, 0.0);
 }
