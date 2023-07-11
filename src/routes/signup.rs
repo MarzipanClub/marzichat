@@ -7,6 +7,10 @@ use {
 #[component]
 pub fn Signup(cx: Scope) -> impl IntoView {
     let t = Translations::default();
+    let (email, set_email) = create_signal(cx, String::default());
+    let (username, set_username) = create_signal(cx, String::default());
+    let (password, set_password) = create_signal(cx, String::default());
+    let (password_again, set_password_again) = create_signal(cx, String::default());
     scroll_to_top();
     view! { cx,
         <main class="container-sm my-4">
@@ -23,8 +27,10 @@ pub fn Signup(cx: Scope) -> impl IntoView {
                                 <label for="email">{t.email()}</label>
                             </div>
                             <div class="form-group-body">
-                                <input class="form-control width-full" type="text"
-                                    id="email" />
+                                <input class="form-control width-full" type="text" id="email"
+                                    on:input=move |ev| set_email(event_target_value(&ev))
+                                    prop:value=email
+                                />
                             </div>
                         </div>
                         <div class="flash flash-success">"Flash error inside a Box."</div>
@@ -33,7 +39,10 @@ pub fn Signup(cx: Scope) -> impl IntoView {
                                 <label for="username">{t.username()}</label>
                             </div>
                             <div class="form-group-body">
-                                <input class="form-control  width-full" type="text" id="username" />
+                                <input class="form-control width-full" type="text" id="username"
+                                    on:input=move |ev| set_username(event_target_value(&ev))
+                                    prop:value=username
+                                />
                             </div>
                         </div>
                         <div class="form-group">
@@ -41,7 +50,10 @@ pub fn Signup(cx: Scope) -> impl IntoView {
                                 <label for="password">{t.password()}</label>
                             </div>
                             <div class="form-group-body">
-                                <input class="form-control  width-full" type="text" id="password" />
+                                <input class="form-control width-full" type="text" id="password"
+                                    on:input=move |ev| set_password(event_target_value(&ev))
+                                    prop:value=password
+                                />
                             </div>
                         </div>
                         <div class="form-group">
@@ -49,7 +61,10 @@ pub fn Signup(cx: Scope) -> impl IntoView {
                                 <label for="password_again">{t.retype_password()}</label>
                             </div>
                             <div class="form-group-body">
-                                <input class="form-control  width-full" type="text" id="password_again" />
+                                <input class="form-control width-full" type="text" id="password_again"
+                                    on:input=move |ev| set_password_again(event_target_value(&ev))
+                                    prop:value=password_again
+                                />
                             </div>
                         </div>
                     </form>
@@ -60,14 +75,14 @@ pub fn Signup(cx: Scope) -> impl IntoView {
                         {t.terms_and_privacy_disclaimer_3()}
                     </p>
                     <div class=" text-right mt-4">
-                        <button class="btn btn-primary">{"Create free account"}</button>
+                        <button class="btn btn-primary">{t.create_free_account()}</button>
                     </div>
                 </div>
             </div>
             <div class="Box mt-4">
                 <div class="Box-body text-center">
                     <div class="blankslate color-fg-default">
-                        {"Already have an account? "}<A href=SIGNIN>{"Sign in"}</A>{"."}
+                        {t.already_have_an_account()}{" "}<A href=SIGNIN>{t.sign_in()}</A>{"."}
                     </div>
                 </div>
             </div>

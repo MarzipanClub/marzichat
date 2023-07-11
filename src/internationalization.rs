@@ -238,6 +238,14 @@ impl Translations {
     );
 
     translations!(
+        create_free_account,
+        "Create free account",
+        "Crea cuenta gratuita",
+        "Erstelle kostenloses Konto",
+        "Créer compte gratuit"
+    );
+
+    translations!(
         join_the_discussion_by_signing_up,
         "Join the discussion by signing up!",
         "¡Únete a la discusión registrándote!",
@@ -325,6 +333,14 @@ impl Translations {
         "Política de privacidad",
         "Datenschutzerklärung",
         "Politique de confidentialité"
+    );
+
+    translations!(
+        already_have_an_account,
+        "Already have an account?",
+        "¿Ya tienes una cuenta?",
+        "Hast du bereits ein Konto?",
+        "Tu as déjà un compte ?"
     );
 
     /// Create a new `Translations` instance for the given `Language`.
