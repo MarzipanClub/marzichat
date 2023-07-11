@@ -1,5 +1,3 @@
-use {leptos_router::ToHref, std::fmt};
-
 pub mod not_found;
 pub mod privacy;
 pub mod signin;
@@ -9,56 +7,10 @@ pub mod story;
 pub mod terms;
 pub mod users;
 
-const ROOT: &str = "/";
-const ABOUT: &str = "/about";
-const NEWSLETTER: &str = "/newsletter";
-const SIGNIN: &str = "/signin";
-const SIGNUP: &str = "/signup";
-const PRIVACY_POLICY: &str = "/privacy-policy";
-const TERMS_AND_CONDITIONS: &str = "/terms-and-conditions";
-
-/// The route to a page in the app.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum Routes {
-    Home,
-    About,
-    Newsletter,
-    Signin,
-    Signup,
-    PrivacyPolicy,
-    TermsAndConditions,
-}
-
-impl fmt::Display for Routes {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Routes::Home => write!(f, "{ROOT}"),
-            Routes::About => write!(f, "{ABOUT}"),
-            Routes::Newsletter => write!(f, "{NEWSLETTER}"),
-            Routes::Signin => write!(f, "{SIGNIN}"),
-            Routes::Signup => write!(f, "{SIGNUP}"),
-            Routes::PrivacyPolicy => write!(f, "{PRIVACY_POLICY}"),
-            Routes::TermsAndConditions => write!(f, "{TERMS_AND_CONDITIONS}"),
-        }
-    }
-}
-
-impl From<Routes> for String {
-    fn from(route: Routes) -> Self {
-        route.to_string()
-    }
-}
-
-impl ToHref for Routes {
-    fn to_href(&self) -> Box<dyn Fn() -> String> {
-        match self {
-            Routes::Home => Box::new(|| ROOT.into()),
-            Routes::About => Box::new(|| ABOUT.into()),
-            Routes::Newsletter => Box::new(|| NEWSLETTER.into()),
-            Routes::Signin => Box::new(|| SIGNIN.into()),
-            Routes::Signup => Box::new(|| SIGNUP.into()),
-            Routes::PrivacyPolicy => Box::new(|| PRIVACY_POLICY.into()),
-            Routes::TermsAndConditions => Box::new(|| TERMS_AND_CONDITIONS.into()),
-        }
-    }
-}
+pub const HOME: &str = "/";
+pub const SIGNIN: &str = "/signin";
+pub const SIGNUP: &str = "/signup";
+pub const ABOUT: &str = "/about";
+pub const HELP_AND_SAFETY: &str = "/help-and-safety";
+pub const PRIVACY_POLICY: &str = "/privacy-policy";
+pub const TERMS_AND_CONDITIONS: &str = "/terms-and-conditions";

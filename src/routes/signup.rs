@@ -1,4 +1,4 @@
-use {crate::routes::Routes, leptos::*, leptos_router::*};
+use {crate::routes::*, leptos::*, leptos_router::*};
 
 #[component]
 pub fn Signup(cx: Scope) -> impl IntoView {
@@ -42,30 +42,26 @@ pub fn Signup(cx: Scope) -> impl IntoView {
                         </div>
                     </form>
                     <p class="color-fg-default">{"By continuing, you agree to the Marzichat "}
-                        <A href=Routes::Signin>{"Terms and Conditions"}</A>
+                        <A href=TERMS_AND_CONDITIONS>{"Terms and Conditions"}</A>
                         {" and "}
-                        <A href=Routes::Signin>{"Privacy Policy"}</A>
+                        <A href=PRIVACY_POLICY>{"Privacy Policy"}</A>
                         {"."}
                     </p>
                     <div class=" text-right mt-4">
-                        <button class="btn btn-primary">
-                            {"Create free account"}
-                        </button>
+                        <button class="btn btn-primary">{"Create free account"}</button>
                     </div>
                 </div>
             </div>
             <div class="Box mt-4">
                 <div class="Box-body text-center">
-                    <div class="blankslate">
-                        <p class="color-fg-default">{"Already have an account? "}
-                            <A href=Routes::Signin>{"Sign in."}</A>
-                        </p>
+                    <div class="blankslate color-fg-default">
+                        {"Already have an account? "}<A href=SIGNIN>{"Sign in."}</A>
                     </div>
                 </div>
             </div>
             <div class="Box mt-4">
-                <div class="Box-body text-center">
-                    <p class="color-fg-subtle">{"Copyright © "}{crate::current_year()}</p>
+                <div class="Box-body text-center color-fg-subtle">
+                    {crate::copyright()}
                 </div>
             </div>
         </main>

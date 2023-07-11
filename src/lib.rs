@@ -16,11 +16,8 @@
 )]
 
 use {
-    crate::{
-        internationalization::{Language, Translations},
-        routes::Routes,
-        types::*,
-    },
+    crate::{internationalization::Language, routes::*, types::*},
+    components::*,
     const_format::formatcp,
     leptos::*,
     leptos_meta::*,
@@ -42,6 +39,9 @@ include!(concat!(env!("OUT_DIR"), "/info.rs"));
 /// The name of the site/product.
 pub const PRODUCT_NAME: &str = "Marzichat";
 
+/// Company name.
+pub const COMPANY_NAME: &str = "Marzipan Club, LLC";
+
 /// Customer support email address.
 pub const SUPPORT_EMAIL: &str = "hello@marzipan.club";
 
@@ -49,40 +49,43 @@ pub const SUPPORT_EMAIL: &str = "hello@marzipan.club";
 /// leptos.
 pub const OUT_DIR: &str = "/pkg";
 
+/// Copyright notice.
+pub const COPYRIGHT: &str = "© 2021 Marzichat";
+
 #[component]
 pub fn App(cx: Scope) -> impl IntoView {
     provide_meta_context(cx);
-    let t = Translations::default();
-
     view! { cx,
         <Stylesheet href=formatcp!("{OUT_DIR}/{}.css", env!("CARGO_PKG_NAME"))/>
         <Meta name="description" content="The best forum on the internet."/>
 
-        <div style="max-width: 1280px; min-height: 100" class="mx-auto mb-0 py-1 px-2">
         <Router>
-             <nav class="UnderlineNav" aria-label="nav bar">
-                <div class="UnderlineNav-body">
-                    <a class="UnderlineNav-item app-link" href="#home" aria-current="page">{"Home"}</a>
-                    <a class="UnderlineNav-item app-link" href="#about">{"About"}</a>
-                    <a class="UnderlineNav-item app-link" href="#newsletter">{"Newsletter"}</a>
-                </div>
-                <div class="UnderlineNav-actions">
-                    <A href=Routes::Signin class="btn btn-sm mx-2">{t.sign_in()}</A>
-                    <A href=Routes::Signup class="btn btn-sm btn-primary">{t.sign_up()}</A>
-                </div>
-            </nav>
-            <Routes>
-                <Route path=Routes::Home view=Stories/>
-                <Route path="users/:id" view=User/>
-                <Route path="stories/:id" view=Story/>
-                <Route path=Routes::Signin view=Signin/>
-                <Route path=Routes::Signup view=Signup/>
-                <Route path=Routes::PrivacyPolicy view=PrivacyPolicy/>
-                <Route path=Routes::TermsAndConditions view=TermsAndConditions/>
-                <Route path="*" view=NotFound/>
-            </Routes>
+            <Nav/>
+            <div class="container-xl p-3">
+                <Routes>
+                    <Route path=HOME view=Stories/>
+                    <Route path="users/:id" view=User/>
+                    <Route path="stories/:id" view=Story/>
+
+                    <Route path=SIGNIN view=Signin/>
+                    <Route path=SIGNUP view=Signup/>
+
+                    <Route path=ABOUT view=NotFound/> // TODO: build about page
+
+                    <Route path=HELP_AND_SAFETY view=NotFound/> // TODO: build HelpAndSafety page
+                    <Route path="/help" view=NotFound/> // TODO: build HelpAndSafety page
+                    <Route path="/safety" view=NotFound/> // TODO: build HelpAndSafety page
+
+                    <Route path=PRIVACY_POLICY view=PrivacyPolicy/>
+                    <Route path="/privacy" view=PrivacyPolicy/>
+
+                    <Route path=TERMS_AND_CONDITIONS view=TermsAndConditions/>
+                    <Route path="/terms" view=TermsAndConditions/>
+
+                    <Route path="*" view=NotFound/>
+                </Routes>
+            </div>
         </Router>
-        </div>
     }
 }
 
@@ -109,8 +112,26 @@ pub fn summary() -> String {
         )
 }
 
-/// Returns the current year as a static string.
-pub fn current_year() -> &'static str {
-    static YEAR: OnceLock<String> = OnceLock::new();
-    YEAR.get_or_init(|| chrono::Utc::now().date_naive().format("%Y").to_string())
+/// Returns the copyright statement.
+pub fn copyright() -> &'static str {
+    static COPYRIGHT: OnceLock<String> = OnceLock::new();
+    COPYRIGHT.get_or_init(|| {
+        format!(
+            "© {} {COMPANY_NAME}",
+            chrono::Utc::now().date_naive().format("%Y").to_string()
+        )
+    })
+}
+
+/// Listen for clicks outside of an element. Useful for modals or dropdowns.
+#[allow(unused_variables)]
+pub fn on_click_outside<El, T, F>(cx: Scope, target: El, handler: F)
+where
+    El: Clone,
+    (Scope, El): Into<leptos_use::core::ElementMaybeSignal<T, web_sys::EventTarget>>,
+    T: Into<web_sys::EventTarget> + Clone + 'static,
+    F: FnMut(web_sys::Event) + Clone + 'static,
+{
+    #[cfg(feature = "hydrate")]
+    drop(leptos_use::on_click_outside(cx, target, handler));
 }

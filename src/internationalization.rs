@@ -204,7 +204,7 @@ impl Translations {
     translations!(
         sign_in,
         "Sign in",
-        "Registrarse",
+        "Iniciar sesión",
         "Anmelden",
         "Se connecter"
     );
@@ -215,6 +215,48 @@ impl Translations {
         "Inscribirse",
         "Registrieren",
         "S'inscrire"
+    );
+
+    translations!(
+        not_signed_in,
+        "Not signed in",
+        "No has iniciado sesión",
+        "Nicht angemeldet",
+        "Pas connecté"
+    );
+
+    translations!(account, "Account", "Cuenta", "Konto", "Compte");
+
+    translations!(
+        create_a_free_account,
+        "Create a free account",
+        "Crea una cuenta gratuita",
+        "Erstelle ein kostenloses Konto",
+        "Créer un compte gratuit"
+    );
+
+    translations!(
+        join_the_discussion_by_signing_up,
+        "Join the discussion by signing up!",
+        "¡Únete a la discusión registrándote!",
+        "Nimm an der Diskussion teil, indem du dich anmeldest!",
+        "Joins-toi la discussion en t'inscrivant !"
+    );
+
+    translations!(
+        about_marzichat,
+        "About Marzichat",
+        "Acerca de Marzichat",
+        "Über Marzichat",
+        "À propos de Marzichat"
+    );
+
+    translations!(
+        help_and_safety,
+        "Help and Safety",
+        "Ayuda y seguridad",
+        "Hilfe und Sicherheit",
+        "Aide et sécurité"
     );
 
     /// Create a new `Translations` instance for the given `Language`.
