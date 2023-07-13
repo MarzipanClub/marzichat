@@ -343,6 +343,30 @@ impl Translations {
         "Tu as déjà un compte ?"
     );
 
+    translations!(
+        please_enter_an_email,
+        "Please enter an email.",
+        "Por favor ingresa un correo electrónico.",
+        "Bitte gib eine E-Mail-Adresse ein.",
+        "Veuillez saisir un e-mail."
+    );
+
+    translations!(
+        email_seems_invalid_description,
+        " seems to be invalid or a temporary email. Please fix it or use another email.",
+        " parece ser inválido o un correo electrónico temporal. Por favor, arréglalo o usa otro correo electrónico.",
+        " scheint ungültig zu sein oder eine temporäre E-Mail zu sein. Bitte behebe es oder verwende eine andere E-Mail.",
+        " semble être invalide ou un courriel temporaire. Veuillez le corriger ou utiliser un autre courriel."
+    );
+
+    translations!(
+        please_enter_a_password,
+        "Please enter a password.",
+        "Por favor ingresa una contraseña.",
+        "Bitte gib ein Passwort ein.",
+        "Veuillez saisir un mot de passe."
+    );
+
     /// Create a new `Translations` instance for the given `Language`.
     pub fn for_language(language: Language) -> Self {
         Self(language)

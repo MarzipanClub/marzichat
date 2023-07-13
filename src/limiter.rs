@@ -23,7 +23,7 @@ use {
 pub fn governor() -> Governor<IpAddressExtractor, StateInformationMiddleware> {
     Governor::new(
         &GovernorConfigBuilder::default()
-            .per_millisecond(
+            .per_second(
                 std::env::var("REPLENISH_RATE_MILLISECONDS")
                     .expect("REPLENISH_RATE_MILLISECONDS not set")
                     .parse()

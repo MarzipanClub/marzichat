@@ -33,18 +33,23 @@ pub enum Violation {
     TooSimple,
 }
 
+/// Validate a password.
+pub fn validate(password: &str) -> Result<(), Violations<Violation>> {
+    let entropy_too_low = match zxcvbn::zxcvbn(password, &[]) {
+        Ok(entropy) => entropy.score() < MIN_ENTROPY_SCORE,
+        Err(_) => false, // if we get any errors here, the entropy is still too low
+    };
+    Validator::new()
+        .invalid_if(password.len() > Password::MAX_BYTES, Violation::TooLong)
+        .invalid_if(password.len() < Password::MIN_BYTES, Violation::TooShort)
+        .invalid_if(entropy_too_low, Violation::TooSimple)
+        .into()
+}
+
 impl Validate for Password {
     type Violation = Violation;
 
     fn validate(&self) -> Result<(), Violations<Self::Violation>> {
-        let entropy_too_low = match zxcvbn::zxcvbn(&self.0, &[]) {
-            Ok(entropy) => entropy.score() < MIN_ENTROPY_SCORE,
-            Err(_) => false, // if we get any errors here, the entropy is still too low
-        };
-        Validator::new()
-            .invalid_if(self.0.len() > Self::MAX_BYTES, Violation::TooLong)
-            .invalid_if(self.0.len() < Self::MIN_BYTES, Violation::TooShort)
-            .invalid_if(entropy_too_low, Violation::TooSimple)
-            .into()
+        validate(&self.0)
     }
 }

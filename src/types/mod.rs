@@ -91,7 +91,7 @@ pub mod validation {
     where
         E: PartialEq + Eq + fmt::Debug + fmt::Display,
     {
-        /// Returns true if the invalidity is contained in the set.
+        /// Returns true if the invalidity is contained in the vector.
         pub fn contains(&self, invalidity: &E) -> bool {
             self.0.contains(invalidity)
         }

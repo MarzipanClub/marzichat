@@ -22,13 +22,18 @@ pub enum Violation {
     Invalid,
 }
 
+/// Validate an email.
+pub fn validate(email: &str) -> Result<(), Violations<Violation>> {
+    Validator::new()
+        .invalid_if(email.len() > Email::MAX_BYTES, Violation::TooLong)
+        .invalid_if(!mailchecker::is_valid(email), Violation::Invalid)
+        .into()
+}
+
 impl Validate for Email {
     type Violation = Violation;
 
     fn validate(&self) -> Result<(), Violations<Self::Violation>> {
-        Validator::new()
-            .invalid_if(self.0.len() > Self::MAX_BYTES, Violation::TooLong)
-            .invalid_if(!mailchecker::is_valid(&self.0), Violation::Invalid)
-            .into()
+        validate(&self.0)
     }
 }

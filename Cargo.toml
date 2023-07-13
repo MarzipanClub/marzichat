@@ -21,6 +21,7 @@ actix-governor = {version = "0.4", optional = true}
 actix-web = {version = "4.3", optional = true, features = ["macros", "rustls"]}
 anyhow = "1.0"
 chrono = {version = "0.4", features = ["serde"]}
+colored = {version = "2.0", optional = true}
 console_error_panic_hook = "0.1"
 console_log = "1.0"
 const_format = "0.2"
@@ -35,13 +36,16 @@ leptos_router = {version = "0.4", features = ["nightly"]}
 log = "0.4"
 mailchecker = "5.0"
 reqwest = {version = "0.11", features = ["json"]}
+ron = {version = "0.8", optional = true}
 rustls-pemfile = "1.0"
 sentry = {version = "0.31", optional = true}
 sentry-actix = {version = "0.31", optional = true}
 sentry-tracing = {version = "0.31", optional = true}
 serde = {version = "1.0", features = ["derive"]}
 sqlx = {version = "0.7", optional = true}
+systemstat = {version = "0.2", optional = true}
 thiserror = "1.0"
+tokio = {version = "1.27", features = ["full"], optional = true}
 tracing = "0.1"
 tracing-journald = "0.3"
 tracing-subscriber = {version = "0.3", features = ["env-filter"]}
@@ -60,18 +64,22 @@ ssr = [
   "actix-files",
   "actix-governor",
   "actix-web",
+  "colored",
   "leptos_actix",
-  "sentry",
-  "sentry-actix",
-  "sentry-tracing",
-  "leptos/ssr",
   "leptos_meta/ssr",
   "leptos_router/ssr",
-  "sqlx/runtime-tokio-rustls",
+  "leptos/ssr",
+  "ron",
+  "sentry-actix",
+  "sentry-tracing",
+  "sentry",
+  "sqlx/chrono",
   "sqlx/macros",
   "sqlx/postgres",
+  "sqlx/runtime-tokio-rustls",
   "sqlx/uuid",
-  "sqlx/chrono",
+  "systemstat",
+  "tokio",
 ]
 
 [package.metadata.cargo-all-features]
@@ -80,15 +88,19 @@ denylist = [
   "actix-files",
   "actix-governor",
   "actix-web",
+  "colored",
   "leptos_actix",
-  "sentry",
+  "ron",
   "sentry-actix",
   "sentry-tracing",
-  "sqlx/runtime-tokio-rustls",
+  "sentry",
+  "sqlx/chrono",
   "sqlx/macros",
   "sqlx/postgres",
+  "sqlx/runtime-tokio-rustls",
   "sqlx/uuid",
-  "sqlx/chrono",
+  "systemstat",
+  "tokio",
 ]
 skip_feature_sets = [["ssr", "hydrate"]]
 

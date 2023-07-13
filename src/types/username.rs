@@ -29,18 +29,22 @@ pub enum Violation {
     Invalid,
 }
 
+/// Validate a username.
+pub fn validate(username: &str) -> Result<(), Violations<Violation>> {
+    let all_chars_valid = username
+        .chars()
+        .all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-');
+    Validator::new()
+        .invalid_if(username.len() > Username::MAX_BYTES, Violation::TooLong)
+        .invalid_if(username.len() < Username::MIN_BYTES, Violation::TooShort)
+        .invalid_if(!all_chars_valid, Violation::Invalid)
+        .into()
+}
+
 impl Validate for Username {
     type Violation = Violation;
 
     fn validate(&self) -> Result<(), Violations<Self::Violation>> {
-        let all_chars_valid = self
-            .0
-            .chars()
-            .all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-');
-        Validator::new()
-            .invalid_if(self.0.len() > Self::MAX_BYTES, Violation::TooLong)
-            .invalid_if(self.0.len() < Self::MIN_BYTES, Violation::TooShort)
-            .invalid_if(!all_chars_valid, Violation::Invalid)
-            .into()
+        validate(&self.0)
     }
 }

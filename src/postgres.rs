@@ -15,12 +15,9 @@ static POOL: OnceLock<Pool<Postgres>> = OnceLock::new();
 pub async fn init() {
     let url = env::var("DATABASE_URL").expect("DATABASE_URL not set");
     let max_connections = env::var("MAX_POSTGRES_CONNECTIONS")
-        .ok()
-        .map(|size| {
-            size.parse()
-                .expect("MAX_POSTGRES_CONNECTIONS is not a number")
-        })
-        .unwrap_or(100);
+        .expect("MAX_POSTGRES_CONNECTIONS not set")
+        .parse()
+        .expect("MAX_POSTGRES_CONNECTIONS is not a number");
 
     let pool = sqlx::postgres::PgPoolOptions::new()
         .max_connections(max_connections)
@@ -31,7 +28,7 @@ pub async fn init() {
     let current_pool_size = pool.size();
     tracing::info!(current_pool_size, max_connections, "connected",);
 
-    tracing::info!("running database migrations");
+    tracing::info!("running migrations");
     sqlx::migrate!()
         .run(&pool)
         .await

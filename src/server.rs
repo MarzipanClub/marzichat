@@ -7,7 +7,6 @@ use {
     anyhow::Result,
     leptos::*,
     leptos_actix::LeptosRoutes,
-    marzichat::{App, OUT_DIR},
     std::{
         env,
         fs::File,
@@ -53,22 +52,19 @@ pub async fn run() -> Result<()> {
     tracing::debug!("site_root: {}", leptos_options.site_root);
 
     // Generate the list of routes in your Leptos App
-    let routes = leptos_actix::generate_route_list(|cx| view! { cx, <App/> });
+    let routes = leptos_actix::generate_route_list(marzichat::App);
+    let output_dir = marzichat::OUT_DIR;
     let server = HttpServer::new(move || {
         App::new()
             .service(health)
             .service(info)
             .service(favicon)
             .service(Files::new(
-                OUT_DIR,
-                format!("{}/{OUT_DIR}", &leptos_options.site_root),
+                output_dir,
+                format!("{}/{output_dir}", &leptos_options.site_root),
             ))
             .route("/api/{tail:.*}", leptos_actix::handle_server_fns())
-            .leptos_routes(
-                leptos_options.to_owned(),
-                routes.to_owned(),
-                |cx| view! { cx, <App/> },
-            )
+            .leptos_routes(leptos_options.to_owned(), routes.to_owned(), marzichat::App)
             .wrap(crate::limiter::governor())
             .wrap(middleware::Logger::new("%s for %U %a in %Ts"))
             .wrap(sentry_actix::Sentry::new())

@@ -94,23 +94,20 @@ pub fn App(cx: Scope) -> impl IntoView {
 #[cfg(feature = "hydrate")]
 #[wasm_bindgen::prelude::wasm_bindgen]
 pub fn hydrate() {
-    _ = console_log::init_with_level(log::Level::Debug);
     console_error_panic_hook::set_once();
-    mount_to_body(move |cx| {
-        view! { cx, <App/> }
-    });
+    wasm_bindgen::UnwrapThrowExt::unwrap_throw(console_log::init_with_level(log::Level::Debug));
+    mount_to_body(App);
 }
 
 /// Returns a summary of the build info in plain text format.
 pub fn summary() -> String {
-    let build_time = datetime::ago(
-        &DateTime::from(
-            chrono::DateTime::parse_from_rfc3339(BUILD_TIME).expect("error parsing build time"),
-        ),
-        Language::English,
+    let build_time = DateTime::from(
+        chrono::DateTime::parse_from_rfc3339(BUILD_TIME).expect("error parsing build time"),
     );
+    let built_on = build_time.format("%c %Z").to_string();
+    let ago = datetime::ago(&build_time, Language::English);
     format!(
-            "{PRODUCT_NAME} v{VERSION} ({GIT_SHORT_SHA})\nBuilt {build_time}.\n\n{BUILD_TIME}\n{GIT_SHA}\n{COMPILER}"
+            "{PRODUCT_NAME} v{VERSION} ({GIT_SHORT_SHA})\nBuilt on {built_on} ({ago}).\n{GIT_SHA}\n{COMPILER}"
         )
 }
 

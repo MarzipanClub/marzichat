@@ -3,7 +3,7 @@ use {
         internationalization::Translations,
         routes::*,
         scroll_to_top,
-        types::{email::Email, password::Password, validation::Validate, Username},
+        types::{self, password},
     },
     leptos::*,
     leptos_router::*,
@@ -13,28 +13,32 @@ use {
 #[component]
 pub fn Signup(cx: Scope) -> impl IntoView {
     let t = Translations::default();
-    let (email, set_email) = create_signal(cx, String::default());
-    let (username, set_username) = create_signal(cx, String::default());
-    let (password, set_password) = create_signal(cx, String::default());
-    let (password_again, set_password_again) = create_signal(cx, String::default());
 
-    let (show_email_error, set_show_email_error) = create_signal(cx, false);
+    let (username, set_username) = create_signal(cx, String::new());
+    let (username_violations, set_username_violations) = create_signal(cx, Ok(()));
+    let on_username_change = move |e| {
+        let u = event_target_value(&e);
+        set_username_violations(types::username::validate(&u));
+        set_username(u);
+    };
+
+    let email_input = create_node_ref::<html::Input>(cx);
+    let password_input = create_node_ref::<html::Input>(cx);
+    let password_again_input = create_node_ref::<html::Input>(cx);
+
+    let is_password_warning = || false;
+    let is_password_errored = || false;
+    let is_email_errored = || false;
 
     let check_username_availability = use_throttle_fn(
         move || {
-            let username: Username = username().into();
-            if username.validate().is_err() {
-                leptos::log!("username is invalid!");
-            }
+            //
         },
         2000.0,
     );
 
-    let on_click = move |_| {
-        let email: Email = email().into();
-        if email.validate().is_err() {
-            set_show_email_error(true);
-        }
+    let submit = move |_| {
+        //
     };
 
     scroll_to_top();
@@ -48,56 +52,57 @@ pub fn Signup(cx: Scope) -> impl IntoView {
                 </div>
                 <div class="Box-body">
                     <form>
-                        <div class="form-group">
-                            <div class="form-group-header">
-                                <label for="email">{t.email()}</label>
-                            </div>
-                            <div class="form-group-body">
-                                <input class="form-control width-full" type="text" id="email"
-                                    on:input=move |ev| {  set_email(event_target_value(&ev)); set_show_email_error(false); }
-                                    prop:value=email
-                                />
-                            </div>
-                        </div>
-                        <Show when=move || show_email_error() fallback=|_| ()>
-                            <div class="flash flash-error">
-                                <Show when=move || !email().is_empty() fallback=|_| view! { cx, "Please enter an email." } >
-                                    <span class="text-bold">{email()}</span>
-                                    " seems to be invalid or a temporary email. Please fix it or use another email."
-                                </Show>
-                            </div>
-                        </Show>
+                        // username
                         <div class="form-group">
                             <div class="form-group-header">
                                 <label for="username">{t.username()}</label>
                             </div>
                             <div class="form-group-body">
                                 <input class="form-control width-full" type="text" id="username"
-                                    on:input=move |ev| { set_username(event_target_value(&ev)); check_username_availability(); }
+                                    on:input=on_username_change
                                     prop:value=username
                                 />
                             </div>
                         </div>
-                        <div class="form-group">
+
+                        // email
+                        <div class="form-group" class:errored=is_email_errored >
+                            <div class="form-group-header">
+                                <label for="email">{t.email()}</label>
+                            </div>
+                            <div class="form-group-body">
+                                <input class="form-control width-full" type="text" id="email" node_ref=email_input />
+                                <p class="note error">
+                                    // <Show when=move || !email().is_empty() fallback=move |_| t.please_enter_an_email() >
+                                    //     <span class="text-bold">{email()}</span>
+                                    //     {t.email_seems_invalid_description()}
+                                    // </Show>
+                                </p>
+                            </div>
+                        </div>
+
+                        // password
+                        <div class="form-group" class:warn=is_password_warning class:errored=is_password_errored >
                             <div class="form-group-header">
                                 <label for="password">{t.password()}</label>
                             </div>
                             <div class="form-group-body">
-                                <input class="form-control width-full" type="text" id="password"
-                                    on:input=move |ev| set_password(event_target_value(&ev))
-                                    prop:value=password
-                                />
+                                <input class="form-control width-full" type="text" id="password" node_ref=password_input />
+                                <p class="note" class:warning=is_password_warning class:error=is_password_errored>
+                                    // <Show when=move || !password().is_empty() fallback=move |_| t.please_enter_a_password() >
+                                    //     {"password has issues"}
+                                    // </Show>
+                                </p>
                             </div>
                         </div>
+
+                        // password again
                         <div class="form-group">
                             <div class="form-group-header">
                                 <label for="password_again">{t.retype_password()}</label>
                             </div>
                             <div class="form-group-body">
-                                <input class="form-control width-full" type="text" id="password_again"
-                                    on:input=move |ev| set_password_again(event_target_value(&ev))
-                                    prop:value=password_again
-                                />
+                                <input class="form-control width-full" type="text" id="password_again" node_ref=password_again_input />
                             </div>
                         </div>
                     </form>
@@ -108,7 +113,7 @@ pub fn Signup(cx: Scope) -> impl IntoView {
                         {t.terms_and_privacy_disclaimer_3()}
                     </p>
                     <div class=" text-right mt-4">
-                        <button class="btn btn-primary" on:click=on_click>{t.create_free_account()}</button>
+                        <button class="btn btn-primary" on:click=submit>{t.create_free_account()}</button>
                     </div>
                 </div>
             </div>
@@ -126,4 +131,10 @@ pub fn Signup(cx: Scope) -> impl IntoView {
             </div>
         </main>
     }
+}
+
+#[server(CheckUsernameAvailability, "/api")]
+pub async fn check_username_availability() -> Result<bool, ServerFnError> {
+    // tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+    Ok(true)
 }
