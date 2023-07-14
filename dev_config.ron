@@ -16,8 +16,7 @@
             burst_size: 10,
             replenish_interval_seconds: 1
         ),
-        tls: None
+        tls: None,
+        os_threads_per_bind_address: 1,
     ),
-    io_threads: 1,
-    cpu_threads: 1,
 )

@@ -25,7 +25,8 @@ mod server;
 
 #[cfg(feature = "ssr")]
 #[fncmd::fncmd]
-fn main(
+#[tokio::main(flavor = "current_thread")]
+async fn main(
     /// Config file path if not using CONFIG env var.
     #[opt(short, long)]
     config: Option<std::path::PathBuf>,
@@ -61,16 +62,9 @@ fn main(
             }
         } else {
             let config = config::parse(&std::path::PathBuf::from(config))?;
-            tokio::runtime::Builder::new_multi_thread()
-                .enable_all()
-                .worker_threads(config.io_threads.get())
-                .build()
-                .expect("failed to build tokio runtime")
-                .block_on(async {
-                    logger::init(config.logging);
-                    postgres::init(config.postgres).await;
-                    server::run(config.server).await
-                })
+            logger::init(config.logging);
+            postgres::init(config.postgres).await;
+            server::run(config.server).await
         }
     }
 }

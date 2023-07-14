@@ -95,6 +95,10 @@ pub async fn run(config: ServerConfig) -> Result<()> {
     tracing::info!(socket_addresses = ?server.addrs(), "binding");
     tracing::info!("✅ ready");
 
-    server.run().await?;
+    server
+        .workers(config.os_threads_per_bind_address.get())
+        .run()
+        .await?;
+
     Ok(())
 }

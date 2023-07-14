@@ -27,8 +27,6 @@ pub struct Config {
     pub logging: LoggingConfig,
     pub postgres: PostgresConfig,
     pub server: ServerConfig,
-    pub io_threads: NonZeroUsize,
-    pub cpu_threads: NonZeroUsize,
 }
 
 /// Logging filters and system metric warning configuration.
@@ -74,6 +72,9 @@ pub struct ServerConfig {
     pub rate_limiter: RateLimiterConfig,
     #[serde(deserialize_with = "parse_tls_config")]
     pub tls: Option<TlsConfig>,
+
+    /// Sets number of workers to start per bind address.
+    pub os_threads_per_bind_address: NonZeroUsize,
 }
 
 /// The rate limiter configuration.
