@@ -10,11 +10,15 @@ use {
     sentry::types::Dsn,
     serde::{Deserialize, Deserializer},
     std::{
+        fs::File,
+        io::BufReader,
         num::{NonZeroU32, NonZeroU64, NonZeroUsize},
         path::{Path, PathBuf},
     },
     tracing_subscriber::EnvFilter,
 };
+
+pub type TlsConfig = rustls::ServerConfig;
 
 /// The root configuration.
 // dont' derive Debug to avoid leaking secrets
@@ -22,8 +26,7 @@ use {
 pub struct Config {
     pub logging: LoggingConfig,
     pub postgres: PostgresConfig,
-    pub rate_limiter: RateLimiterConfig,
-    pub tls: Option<TlsConfig>,
+    pub server: ServerConfig,
     pub io_threads: NonZeroUsize,
     pub cpu_threads: NonZeroUsize,
 }
@@ -65,26 +68,34 @@ pub struct PostgresConfig {
     pub url: String,
 }
 
-/// The rate limiter configuration.
+/// The server configuration.
 #[derive(Deserialize)]
+pub struct ServerConfig {
+    pub rate_limiter: RateLimiterConfig,
+    #[serde(deserialize_with = "parse_tls_config")]
+    pub tls: Option<TlsConfig>,
+}
+
+/// The rate limiter configuration.
+#[derive(Deserialize, Clone)]
 pub struct RateLimiterConfig {
     /// The burst size for rate limiting.
     ///
     /// Sets the quota size that defines how many requests can occur before the
     /// governor middleware starts blocking requests from an IP address and
     /// clients have to wait until the elements of the quota are replenished.
-    pub rate_limiter_burst_size: NonZeroU32,
+    pub burst_size: NonZeroU32,
 
     /// The replenish rate for rate limiting.
     ///
     /// Sets the interval (in seconds) after which one element of the quota is
     /// replenished.
-    pub rate_limiter_replenish_interval_seconds: NonZeroU64,
+    pub replenish_interval_seconds: NonZeroU64,
 }
 
 /// The paths to the tls certificate and private key.
 #[derive(Deserialize)]
-pub struct TlsConfig {
+pub struct TlsCertPaths {
     /// The filepath to the tls certificate.
     pub cert: PathBuf,
 
@@ -109,4 +120,33 @@ where
     Ok(EnvFilter::builder()
         .parse(directives)
         .map_err(serde::de::Error::custom)?)
+}
+
+fn parse_tls_config<'de, D>(deserializer: D) -> Result<Option<TlsConfig>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let tls: Option<TlsCertPaths> = Deserialize::deserialize(deserializer)?;
+    tls.map(|tls| create_tls(&tls.cert, &tls.cert_key).map_err(serde::de::Error::custom))
+        .transpose()
+}
+
+fn create_tls(cert: &Path, cert_key: &Path) -> Result<TlsConfig> {
+    let open = |path| File::open(path).with_context(|| format!("error opening {path:?}"));
+    let cert_chain = rustls_pemfile::certs(&mut BufReader::new(open(cert)?))
+        .context("couldn't parse cert")?
+        .into_iter()
+        .map(rustls::Certificate)
+        .collect();
+    let key = {
+        let mut keys = rustls_pemfile::pkcs8_private_keys(&mut BufReader::new(open(cert_key)?))
+            .context("couldn't parse cert key")?;
+        anyhow::ensure!(!keys.is_empty(), "no cert key found");
+        rustls::PrivateKey(keys.swap_remove(0))
+    };
+    TlsConfig::builder()
+        .with_safe_defaults()
+        .with_no_client_auth()
+        .with_single_cert(cert_chain, key)
+        .context("couldn't create certificate chain")
 }

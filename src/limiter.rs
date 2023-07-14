@@ -2,7 +2,7 @@
 #![cfg(feature = "ssr")]
 
 use {
-    crate::address,
+    crate::{address, config::RateLimiterConfig},
     actix_governor::{
         governor::{
             clock::{Clock, DefaultClock, QuantaInstant},
@@ -19,22 +19,14 @@ use {
     std::net::IpAddr,
 };
 
-/// Returns a new rate limiter governor.
-pub fn governor() -> Governor<IpAddressExtractor, StateInformationMiddleware> {
+/// Returns a new rate limiter governor layer
+pub fn layer(
+    config: RateLimiterConfig,
+) -> Governor<IpAddressExtractor, StateInformationMiddleware> {
     Governor::new(
         &GovernorConfigBuilder::default()
-            .per_second(
-                std::env::var("REPLENISH_RATE_MILLISECONDS")
-                    .expect("REPLENISH_RATE_MILLISECONDS not set")
-                    .parse()
-                    .expect("REPLENISH_RATE_MILLISECONDS is not a number"),
-            )
-            .burst_size(
-                std::env::var("BURST_SIZE")
-                    .expect("BURST_SIZE not set")
-                    .parse()
-                    .expect("BURST_SIZE is not a number"),
-            )
+            .per_second(config.replenish_interval_seconds.get())
+            .burst_size(config.burst_size.get())
             .key_extractor(IpAddressExtractor)
             .use_headers()
             .finish()

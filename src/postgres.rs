@@ -2,26 +2,22 @@
 #![cfg(feature = "ssr")]
 
 use {
+    crate::config::PostgresConfig,
     anyhow::Result,
     marzichat::{internationalization::Language, types::*},
     sqlx::{error::DatabaseError, Pool, Postgres},
-    std::{env, sync::OnceLock},
+    std::sync::OnceLock,
 };
 
 static POOL: OnceLock<Pool<Postgres>> = OnceLock::new();
 
 /// Creates a postgres connection pool and runs all migrations.
 #[deny(dead_code)]
-pub async fn init() {
-    let url = env::var("DATABASE_URL").expect("DATABASE_URL not set");
-    let max_connections = env::var("MAX_POSTGRES_CONNECTIONS")
-        .expect("MAX_POSTGRES_CONNECTIONS not set")
-        .parse()
-        .expect("MAX_POSTGRES_CONNECTIONS is not a number");
-
+pub async fn init(config: PostgresConfig) {
+    let max_connections = config.max_connections.get();
     let pool = sqlx::postgres::PgPoolOptions::new()
         .max_connections(max_connections)
-        .connect(&url)
+        .connect(&config.url)
         .await
         .expect("unable to create postgres connection pool");
 

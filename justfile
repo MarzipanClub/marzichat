@@ -1,10 +1,8 @@
-export LOG := "marzichat=trace,actix_files=trace,hyper=warn,reqwest=warn,sqlx=info,debug"
+# used by sqlx-cli when creating/running/reverting migrations
 export DATABASE_URL := "postgresql://marzichat@127.0.0.1/marzichat"
-export MAX_POSTGRES_CONNECTIONS := "1"
-export REPLENISH_RATE_MILLISECONDS := "200"
-export BURST_SIZE := "10"
-export IO_WORKERS := "1"
-export CPU_WORKERS := "1"
+
+# used by marzichat to load the config
+export CONFIG := "dev_config.ron"
 
 # list all recipes
 default:

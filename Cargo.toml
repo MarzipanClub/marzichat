@@ -21,13 +21,14 @@ actix-governor = {version = "0.4", optional = true}
 actix-web = {version = "4.3", optional = true, features = ["macros", "rustls"]}
 anyhow = "1.0"
 chrono = {version = "0.4", features = ["serde"]}
-colored = {version = "2.0", optional = true}
 console_error_panic_hook = "0.1"
 console_log = "1.0"
 const_format = "0.2"
 derive_more = "0.99"
+fncmd = {version = "2.1", optional = true}
 futures-util = "0.3"
 gloo-net = {version = "0.3", features = ["http"]}
+indoc = {version = "2.0", optional = true}
 leptos = {version = "0.4", features = ["nightly"]}
 leptos-use = "0.4"
 leptos_actix = {version = "0.4", optional = true}
@@ -64,7 +65,8 @@ ssr = [
   "actix-files",
   "actix-governor",
   "actix-web",
-  "colored",
+  "fncmd",
+  "indoc",
   "leptos_actix",
   "leptos_meta/ssr",
   "leptos_router/ssr",
@@ -88,7 +90,8 @@ denylist = [
   "actix-files",
   "actix-governor",
   "actix-web",
-  "colored",
+  "fncmd",
+  "indoc",
   "leptos_actix",
   "ron",
   "sentry-actix",
@@ -119,7 +122,7 @@ style-file = "style.scss"
 # [Optional] Files in the asset-dir will be copied to the site-root directory
 assets-dir = "public"
 
-# The IP and port (ex: 127.0.0.1:3000) where the server serves the content. Use it in your server setup.
+# The IP and port (ex: 127.0.0.1:3000) where the server serves the content from in debug builds.
 site-addr = "127.0.0.1:3000"
 
 # The port to use for automatic reload monitoring

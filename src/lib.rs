@@ -107,7 +107,7 @@ pub fn summary() -> String {
     let built_on = build_time.format("%c %Z").to_string();
     let ago = datetime::ago(&build_time, Language::English);
     format!(
-            "{PRODUCT_NAME} v{VERSION} ({GIT_SHORT_SHA})\nBuilt on {built_on} ({ago}).\n{GIT_SHA}\n{COMPILER}"
+            "{PRODUCT_NAME} {VERSION} ({GIT_SHORT_SHA})\nBuilt on {built_on} ({ago}).\n{GIT_SHA}\n{COMPILER}"
         )
 }
 

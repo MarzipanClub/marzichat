@@ -1,0 +1,23 @@
+(
+    logging: (
+        directives: "marzichat=trace,actix_files=trace,hyper=warn,reqwest=warn,sqlx=info,debug",
+        sentry_data_source_name: None,
+        machine_stats_interval_seconds: 60,
+        cpu_temp_warn_threshold_celsius: 45,
+        system_memory_usage_warn_threshold_percentage: 0.85,
+        cpu_load_warn_limit: 0.85
+    ),
+    postgres: (
+        max_connections: 1,
+        url: "postgresql://marzichat@127.0.0.1/marzichat"
+    ),
+    server: (
+        rate_limiter: (
+            burst_size: 10,
+            replenish_interval_seconds: 1
+        ),
+        tls: None
+    ),
+    io_threads: 1,
+    cpu_threads: 1,
+)

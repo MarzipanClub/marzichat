@@ -24,35 +24,45 @@ mod redirect;
 mod server;
 
 #[cfg(feature = "ssr")]
-fn main() -> anyhow::Result<()> {
-    println!("{}", marzichat::summary());
-    let args = std::env::args_os().collect::<Vec<std::ffi::OsString>>();
+#[fncmd::fncmd]
+fn main(
+    /// Config file path if not using CONFIG env var.
+    #[opt(short, long)]
+    config: Option<std::path::PathBuf>,
 
-    match (args.get(1), args.get(2)) {
-        (Some(validate), Some(config)) if validate == "validate" => {
-            println!("validating config");
-            match config::parse(&std::path::PathBuf::from(config)) {
-                Ok(_) => {
-                    println!("config is valid");
-                    Ok(())
-                }
-                Err(error) => Err(anyhow::anyhow!("invalid config: {error}")),
+    /// Validate the config and exit without running the server.
+    #[opt]
+    dry_run: bool,
+) -> anyhow::Result<()> {
+    use anyhow::Context;
+
+    let config = match config {
+        Some(config) => config,
+        None => std::env::var_os("CONFIG")
+            .context("CONFIG env var not set and --config not passed in as argument")?
+            .into(),
+    };
+
+    if dry_run {
+        match config::parse(&std::path::PathBuf::from(config)) {
+            Ok(_) => {
+                println!("config is valid");
+                Ok(())
             }
+            Err(error) => Err(anyhow::anyhow!("invalid config: {error}")),
         }
-        (Some(config), _) => {
-            let config = config::parse(&std::path::PathBuf::from(config))?;
-            logger::init(config.logging);
-            tokio::runtime::Builder::new_multi_thread()
-                .enable_all()
-                .worker_threads(config.io_threads.get())
-                .build()
-                .expect("failed to build tokio runtime")
-                .block_on(async {
-                    postgres::init().await;
-                    server::run().await
-                })
-        }
-        _ => Err(anyhow::anyhow!("invalid arguments")),
+    } else {
+        let config = config::parse(&std::path::PathBuf::from(config))?;
+        tokio::runtime::Builder::new_multi_thread()
+            .enable_all()
+            .worker_threads(config.io_threads.get())
+            .build()
+            .expect("failed to build tokio runtime")
+            .block_on(async {
+                logger::init(config.logging);
+                postgres::init(config.postgres).await;
+                server::run(config.server).await
+            })
     }
 }
 
