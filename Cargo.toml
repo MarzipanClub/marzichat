@@ -28,7 +28,7 @@ derive_more = "0.99"
 fncmd = {version = "2.1", optional = true}
 futures-util = "0.3"
 gloo-net = {version = "0.3", features = ["http"]}
-indoc = {version = "2.0", optional = true}
+indoc = "2.0"
 leptos = {version = "0.4", features = ["nightly"]}
 leptos-use = "0.4"
 leptos_actix = {version = "0.4", optional = true}
@@ -66,7 +66,6 @@ ssr = [
   "actix-governor",
   "actix-web",
   "fncmd",
-  "indoc",
   "leptos_actix",
   "leptos_meta/ssr",
   "leptos_router/ssr",
@@ -91,7 +90,6 @@ denylist = [
   "actix-governor",
   "actix-web",
   "fncmd",
-  "indoc",
   "leptos_actix",
   "ron",
   "sentry-actix",

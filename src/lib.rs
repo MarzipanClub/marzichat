@@ -106,9 +106,27 @@ pub fn summary() -> String {
     );
     let built_on = build_time.format("%c %Z").to_string();
     let ago = datetime::ago(&build_time, Language::English);
-    format!(
-            "{PRODUCT_NAME} {VERSION} ({GIT_SHORT_SHA})\nBuilt on {built_on} ({ago}).\n{GIT_SHA}\n{COMPILER}"
-        )
+
+    let logo = indoc::indoc! {r#"
+         __  __                _      _           _
+        |  \/  |              (_)    | |         | |
+        | \  / | __ _ _ __ _____  ___| |__   __ _| |_
+        | |\/| |/ _` | '__|_  / |/ __| '_ \ / _` | __|
+        | |  | | (_| | |   / /| | (__| | | | (_| | |_
+        |_|  |_|\__,_|_|  /___|_|\___|_| |_|\__,_|\__|
+
+    "#};
+    let copyright = copyright();
+    indoc::formatdoc! {"
+        {logo}
+        {PRODUCT_NAME} {VERSION} ({GIT_SHORT_SHA})
+        Built on {built_on} ({ago}).
+        {GIT_SHA}
+        {COMPILER}
+        {copyright}
+
+        Made with ❤️ in Seattle by Jesus Guzman, Jr.
+    "}
 }
 
 /// Returns the copyright statement.
