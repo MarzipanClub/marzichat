@@ -51,17 +51,13 @@ async fn main(
                 .context("CONFIG env var not set and --config not passed in as argument")?
                 .into(),
         };
-
+        let config = config::parse_from_file(&config).context("invalid config")?;
         if dry_run {
-            match config::parse(&std::path::PathBuf::from(config)) {
-                Ok(_) => {
-                    println!("config is valid");
-                    Ok(())
-                }
-                Err(error) => Err(anyhow::anyhow!("invalid config: {error}")),
-            }
+            sqlx::postgres::PgPool::connect(&config.postgres.url)
+                .await
+                .context("postgres unreachable")?;
+            Ok(())
         } else {
-            let config = config::parse(&std::path::PathBuf::from(config))?;
             logger::init(config.logging);
             postgres::init(config.postgres).await;
             server::run(config.server).await

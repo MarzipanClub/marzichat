@@ -104,13 +104,13 @@ pub struct TlsCertPaths {
     pub cert_key: PathBuf,
 }
 
-/// Parses the config.
-pub fn parse(config: &Path) -> Result<Config> {
-    Ok(ron::from_str(
-        &std::fs::read_to_string(config)
-            .with_context(|| format!("failed to read config file {config:?}"))?,
+/// Parses the config by reading the entire contents of a config into memory and
+/// then parsing it.
+pub fn parse_from_file<P: AsRef<Path>>(config: P) -> Result<Config> {
+    Ok(
+        ron::from_str(&std::fs::read_to_string(config).context("failed to read config")?)
+            .context("failed to parse config file")?,
     )
-    .context("failed to parse config file")?)
 }
 
 fn parse_env_filter<'de, D>(deserializer: D) -> Result<EnvFilter, D::Error>
