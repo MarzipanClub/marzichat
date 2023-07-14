@@ -33,39 +33,50 @@ fn main(
     /// Validate the config and exit without running the server.
     #[opt]
     dry_run: bool,
+
+    /// Print info and exit.
+    #[opt(short, long)]
+    info: bool,
 ) -> anyhow::Result<()> {
     use anyhow::Context;
 
-    let config = match config {
-        Some(config) => config,
-        None => std::env::var_os("CONFIG")
-            .context("CONFIG env var not set and --config not passed in as argument")?
-            .into(),
-    };
-
-    if dry_run {
-        match config::parse(&std::path::PathBuf::from(config)) {
-            Ok(_) => {
-                println!("config is valid");
-                Ok(())
-            }
-            Err(error) => Err(anyhow::anyhow!("invalid config: {error}")),
-        }
+    if info {
+        println!("{}", marzichat::summary());
+        Ok(())
     } else {
-        let config = config::parse(&std::path::PathBuf::from(config))?;
-        tokio::runtime::Builder::new_multi_thread()
-            .enable_all()
-            .worker_threads(config.io_threads.get())
-            .build()
-            .expect("failed to build tokio runtime")
-            .block_on(async {
-                logger::init(config.logging);
-                postgres::init(config.postgres).await;
-                server::run(config.server).await
-            })
+        let config = match config {
+            Some(config) => config,
+            None => std::env::var_os("CONFIG")
+                .context("CONFIG env var not set and --config not passed in as argument")?
+                .into(),
+        };
+
+        if dry_run {
+            match config::parse(&std::path::PathBuf::from(config)) {
+                Ok(_) => {
+                    println!("config is valid");
+                    Ok(())
+                }
+                Err(error) => Err(anyhow::anyhow!("invalid config: {error}")),
+            }
+        } else {
+            let config = config::parse(&std::path::PathBuf::from(config))?;
+            tokio::runtime::Builder::new_multi_thread()
+                .enable_all()
+                .worker_threads(config.io_threads.get())
+                .build()
+                .expect("failed to build tokio runtime")
+                .block_on(async {
+                    logger::init(config.logging);
+                    postgres::init(config.postgres).await;
+                    server::run(config.server).await
+                })
+        }
     }
 }
 
 // no main function if we're not using ssr feature
+// because wasm is loaded from the lib.rs using the `hydrate()`
+// as the entry point
 #[cfg(not(feature = "ssr"))]
 fn main() {}
