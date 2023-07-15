@@ -58,8 +58,17 @@ async fn main(
                 .context("postgres unreachable")?;
             Ok(())
         } else {
+            // initialize a cpu-bound thread pool
             logger::init(config.logging);
             postgres::init(config.postgres).await;
+
+            let cpu_threads = config.cpu_threads.get();
+            tracing::info!(cpu_threads, "starting rayon thread pool");
+            rayon::ThreadPoolBuilder::new()
+                .num_threads(cpu_threads)
+                .build_global()
+                .expect("unable to create rayon thread pool");
+
             server::run(config.server).await
         }
     }

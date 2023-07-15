@@ -27,6 +27,7 @@ pub struct Config {
     pub logging: LoggingConfig,
     pub postgres: PostgresConfig,
     pub server: ServerConfig,
+    pub cpu_threads: NonZeroUsize,
 }
 
 /// Logging filters and system metric warning configuration.
@@ -75,6 +76,21 @@ pub struct ServerConfig {
 
     /// Sets number of workers to start per bind address.
     pub os_threads_per_bind_address: NonZeroUsize,
+
+    /// Defines a timeout for connection shutdown.
+    /// If a shutdown procedure does not complete within this time, the request
+    /// is dropped.
+    pub client_disconnect_timeout_milliseconds: NonZeroU64,
+
+    /// Defines a timeout for reading client request head.
+    /// If a client does not transmit the entire set headers within this time,
+    /// the request is terminated with a 408 (Request Timeout) error.
+    pub client_request_timeout_milliseconds: NonZeroU64,
+
+    /// Defines a timeout for reading client request head.
+    /// If a client does not transmit the entire set headers within this time,
+    ///  the request is terminated with a 408 (Request Timeout) error.
+    pub shutdown_timeout_seconds: NonZeroU64,
 }
 
 /// The rate limiter configuration.

@@ -1,6 +1,6 @@
 (
     logging: (
-        directives: "marzichat=trace,actix_files=trace,hyper=warn,reqwest=warn,sqlx=info,debug",
+        directives: "marzichat=trace,actix_files=info,actix_server=warn,hyper=warn,reqwest=warn,sqlx=info,debug",
         sentry_data_source_name: None,
         machine_stats_interval_seconds: 60,
         cpu_temp_warn_threshold_celsius: 45,
@@ -18,5 +18,9 @@
         ),
         tls: None,
         os_threads_per_bind_address: 1,
+        client_disconnect_timeout_milliseconds: 1200,
+        client_request_timeout_milliseconds: 2000,
+        shutdown_timeout_seconds: 10
     ),
+    cpu_threads: 1,
 )

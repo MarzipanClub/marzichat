@@ -37,7 +37,7 @@ pub fn init(config: LoggingConfig) {
 
     tracing::info!(%release);
     if !guard.is_enabled() {
-        tracing::warn!("No sentry_data_source_name was configured. Sentry is disabled.");
+        tracing::warn!("Sentry not configured");
     }
 
     // keep the guard for the lifetime of the program

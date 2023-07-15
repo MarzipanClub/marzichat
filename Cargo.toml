@@ -36,6 +36,7 @@ leptos_meta = {version = "0.4", features = ["nightly"]}
 leptos_router = {version = "0.4", features = ["nightly"]}
 log = "0.4"
 mailchecker = "5.0"
+rayon = {version = "1.7", optional = true}
 reqwest = {version = "0.11", features = ["json"]}
 ron = {version = "0.8", optional = true}
 rustls-pemfile = "1.0"
@@ -70,6 +71,7 @@ ssr = [
   "leptos_meta/ssr",
   "leptos_router/ssr",
   "leptos/ssr",
+  "rayon",
   "ron",
   "sentry-actix",
   "sentry-tracing",
@@ -91,6 +93,7 @@ denylist = [
   "actix-web",
   "fncmd",
   "leptos_actix",
+  "rayon",
   "ron",
   "sentry-actix",
   "sentry-tracing",

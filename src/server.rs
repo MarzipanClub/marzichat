@@ -2,7 +2,7 @@
 #![cfg(feature = "ssr")]
 
 use {
-    crate::config::{RateLimiterConfig, ServerConfig, TlsConfig},
+    crate::config::ServerConfig,
     actix_files::Files,
     actix_web::*,
     anyhow::Result,
@@ -11,6 +11,7 @@ use {
     std::{
         net::{Ipv4Addr, Ipv6Addr, SocketAddr},
         path::Path,
+        time::Duration,
     },
 };
 
@@ -88,15 +89,22 @@ pub async fn run(config: ServerConfig) -> Result<()> {
             .bind_rustls(https.as_ref(), tls)
             .expect("couldn't bind to port 443")
     } else {
-        tracing::warn!("No tls config found. Running in http mode instead.");
+        tracing::warn!("Tls not configured");
         server.bind(&site_addr).expect("couldn't bind port")
     };
 
-    tracing::info!(socket_addresses = ?server.addrs(), "binding");
-    tracing::info!("✅ ready");
+    let workers = config.os_threads_per_bind_address.get();
+    tracing::info!(socket_addrs = ?server.addrs(), threads_per_addr = workers, "binding");
 
     server
-        .workers(config.os_threads_per_bind_address.get())
+        .workers(workers)
+        .client_disconnect_timeout(Duration::from_millis(
+            config.client_disconnect_timeout_milliseconds.get(),
+        ))
+        .client_request_timeout(Duration::from_millis(
+            config.client_request_timeout_milliseconds.get(),
+        ))
+        .shutdown_timeout(config.shutdown_timeout_seconds.get())
         .run()
         .await?;
 
